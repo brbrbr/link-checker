@@ -29,7 +29,7 @@ require_once BLC_DIRECTORY_LEGACY . '/includes/transactions-manager.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/class-updateplugin.php';
 
 
-	require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 
 
 if (!class_exists('wsBrokenLinkChecker')) {
@@ -85,6 +85,17 @@ if (!class_exists('wsBrokenLinkChecker')) {
 		public $is_textdomain_loaded = false;
 
 		protected $is_settings_tab = false;
+
+		public const BLC_PARKED_UNCHECKED = 0;
+		public const BLC_PARKED_PARKED = 1;
+		public const BLC_PARKED_CHECKED = 2;
+
+		public const DOMAINPARKINGSQL = [
+			'sedo.com' => "`url` like '%sedo.com%' OR `final_url` like '%sedo.com%'",
+			'buy-domain' => "`final_url` like '%buy-domain%'",
+			'(sedo)parking' => "`url` REGEXP( 'https?://www?[0-9]') OR `final_url` REGEXP( 'https?://www?[0-9]')",
+			'dan.com' => "`log` like '%dan.com%'",
+		];
 
 		/**
 		 * Class constructor
@@ -382,39 +393,39 @@ if (!class_exists('wsBrokenLinkChecker')) {
 			$this->blc_resynch(true);
 		}
 
-		
-	/**
-	 * (Re)create synchronization records for all containers and mark them all as unparsed.
-	 *
-	 * @param bool $forced If true, the plugin will recreate all synch. records from scratch.
-	 * @return void
-	 */
-	function blc_resynch($forced = false)
-	{
-		global $wpdb, $blclog;
 
-		if ($forced) {
-			$blclog->info('... Forced resynchronization initiated');
+		/**
+		 * (Re)create synchronization records for all containers and mark them all as unparsed.
+		 *
+		 * @param bool $forced If true, the plugin will recreate all synch. records from scratch.
+		 * @return void
+		 */
+		function blc_resynch($forced = false)
+		{
+			global $wpdb, $blclog;
 
-			// Drop all synchronization records
-			$wpdb->query("TRUNCATE {$wpdb->prefix}blc_synch");
-		} else {
-			$blclog->info('... Resynchronization initiated');
+			if ($forced) {
+				$blclog->info('... Forced resynchronization initiated');
+
+				// Drop all synchronization records
+				$wpdb->query("TRUNCATE {$wpdb->prefix}blc_synch");
+			} else {
+				$blclog->info('... Resynchronization initiated');
+			}
+
+			// Remove invalid DB entries
+			blcUtility::blc_cleanup_database();
+
+			// (Re)create and update synch. records for all container types.
+			$blclog->info('... (Re)creating container records');
+			blcContainerHelper::resynch($forced);
+
+			$blclog->info('... Setting resync. flags');
+			blcUtility::blc_got_unsynched_items();
+
+			// All done.
+			$blclog->info('Database resynchronization complete.');
 		}
-
-		// Remove invalid DB entries
-		blcUtility::blc_cleanup_database();
-
-		// (Re)create and update synch. records for all container types.
-		$blclog->info('... (Re)creating container records');
-		blcContainerHelper::resynch($forced);
-
-		$blclog->info('... Setting resync. flags');
-		blcUtility::blc_got_unsynched_items();
-
-		// All done.
-		$blclog->info('Database resynchronization complete.');
-	}
 
 		/**
 		 * A hook executed when the plugin is deactivated.
@@ -1691,7 +1702,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 				);
 				$this->print_module_checkbox($module_id, $module_data, $moduleManager->is_active($module_id));
 
-				$extra_settings = apply_filters('blc-module-settings-' . $module_id,'',	$current_settings);
+				$extra_settings = apply_filters('blc-module-settings-' . $module_id, '',	$current_settings);
 
 				if (!empty($extra_settings)) {
 
@@ -1991,10 +2002,10 @@ if (!class_exists('wsBrokenLinkChecker')) {
 
 			<div class="wrap">
 				<?php
-			
+
 
 				$this->local_header();
-				$blc_link_query->print_filter_heading( $current_filter );
+				$blc_link_query->print_filter_heading($current_filter);
 				$this->local_nav();
 				$blc_link_query->print_filter_menu($filter_id);
 
@@ -2632,7 +2643,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 					),
 					$processed_links
 				);
-			} else  {
+			} else {
 				$messages[] =	__('No links marked as not broken');
 			}
 
@@ -3151,10 +3162,32 @@ if (!class_exists('wsBrokenLinkChecker')) {
 				$get_links_time = microtime(true) - $start;
 			}
 			//FB::log('No links need to be checked right now.');
-
+			$this->updateParking();
 			$this->release_lock();
 			$blclog->info('work(): All done.');
 			//FB::log('All done.');
+		}
+
+		private function updateParking($reset = false)
+		{
+			global $wpdb;
+			if ($reset) {
+				$q = "UPDATE `{$wpdb->prefix}blc_links`SET `parked` = %d";
+				$wpdb->prepare(
+					$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+					self::BLC_PARKED_UNCHECKED
+				);
+			}
+			$parked = join(' OR ', self::DOMAINPARKINGSQL);
+			$q = "UPDATE {$wpdb->prefix}blc_links`
+            SET `parked` = IF ($parked,%d,%d)
+            WHERE  `being_checked` = 0 AND `broken` = 0 `warning` = 0 AND  `parked` = %d";
+			$wpdb->prepare(
+				$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				self::BLC_PARKED_PARKED,
+				self::BLC_PARKED_CHECKED,
+				self::BLC_PARKED_UNCHECKED,
+			);
 		}
 
 		/**
@@ -3867,9 +3900,9 @@ if (!class_exists('wsBrokenLinkChecker')) {
 
 			if (!$link->is_new) {
 				//FB::info($link, 'Link loaded');
-			
-					require_once dirname($this->loader) . '/includes/admin/table-printer.php';
-				
+
+				require_once dirname($this->loader) . '/includes/admin/table-printer.php';
+
 				blcTablePrinter::details_row_contents($link);
 				die();
 			} else {

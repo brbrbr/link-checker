@@ -16,12 +16,7 @@ class blcLinkQuery
 
 	var $valid_url_params = array();
 
-	public const DOMAINPARKINGSQL = [
-		'sedo.com' => "`url` like '%sedo.com%' OR `final_url` like '%sedo.com%'",
-		'buy-domain' => "`final_url` like '%buy-domain%'",
-		'(sedo)parking' => "`url` REGEXP( 'https?://www?[0-9]') OR `final_url` REGEXP( 'https?://www?[0-9]')",
-		'dan.com' => "`log` like '%dan.com%'",
-	];
+
 
 	function __construct()
 	{
@@ -80,14 +75,14 @@ class blcLinkQuery
 
 			'parked'    => array(
 				'params'       => array(
-					'where_expr'          => join(' OR ', self::DOMAINPARKINGSQL),
+					'where_expr'          =>  '( `parked` = 1 )', // BLC_PARKED_PARKED
 					's_include_dismissed' => false,
 				),
 				'name'         => __('Parking', 'broken-link-checker'),
 				'heading'      => __('Possible Parked Domain', 'broken-link-checker'),
 				'heading_zero' => __('No parked links found', 'broken-link-checker'),
 				'native'       => true,
-				'no_count'       => __('<a href="https://brokenlinkchecker.dev/documents/parked-domains" target="_blank">info</a>'),
+				
 			),
 		);
 
@@ -680,15 +675,12 @@ class blcLinkQuery
 	function count_filter_results()
 	{
 		foreach ($this->native_filters as $filter_id => $filter) {
-			if (($filter['no_count'] ?? false) !== false) {
-				$this->native_filters[$filter_id]['count'] = $filter['no_count'];
-
-			} else {
+		
 			$this->native_filters[$filter_id]['count'] = $this->get_filter_links(
 				$filter,
 				array('count_only' => true)
 			);
-		}
+		
 		}
 
 		foreach ($this->custom_filters as $filter_id => $filter) {

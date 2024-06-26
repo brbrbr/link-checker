@@ -3171,22 +3171,28 @@ if (!class_exists('wsBrokenLinkChecker')) {
 		private function updateParking($reset = false)
 		{
 			global $wpdb;
+		
 			if ($reset) {
 				$q = "UPDATE `{$wpdb->prefix}blc_links`SET `parked` = %d";
-				$wpdb->prepare(
-					$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-					self::BLC_PARKED_UNCHECKED
+				$wpdb->query(
+					$wpdb->prepare(
+						$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+						self::BLC_PARKED_UNCHECKED
+					)
 				);
 			}
-			$parked = join(' OR ', self::DOMAINPARKINGSQL);
-			$q = "UPDATE {$wpdb->prefix}blc_links`
+			$parked = str_replace('%','%%',join(' OR ', self::DOMAINPARKINGSQL));
+			$q = "UPDATE `{$wpdb->prefix}blc_links`
             SET `parked` = IF ($parked,%d,%d)
-            WHERE  `being_checked` = 0 AND `broken` = 0 `warning` = 0 AND  `parked` = %d";
-			$wpdb->prepare(
-				$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				self::BLC_PARKED_PARKED,
-				self::BLC_PARKED_CHECKED,
-				self::BLC_PARKED_UNCHECKED,
+            WHERE  `being_checked` = 0 AND `broken` = 0 AND `warning` = 0 AND  `parked` = %d";
+
+			$wpdb->query(
+				$wpdb->prepare(
+					$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+				[	self::BLC_PARKED_PARKED,
+					self::BLC_PARKED_CHECKED,
+					self::BLC_PARKED_UNCHECKED,]
+				)
 			);
 		}
 
@@ -3862,14 +3868,16 @@ if (!class_exists('wsBrokenLinkChecker')) {
 			$transactionManager->commit();
 
 			$status   = $link->analyse_status();
+			$count = $this->updateParking();
 			$response = array(
 				'status_text'    => $status['text'],
 				'status_code'    => $status['code'],
 				'http_code'      => empty($link->http_code) ? '' : $link->http_code,
 				'redirect_count' => $link->redirect_count,
 				'final_url'      => $link->final_url,
+				'parking' => $count,
 			);
-
+		
 			die(json_encode($response));
 		}
 

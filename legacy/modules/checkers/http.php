@@ -459,7 +459,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 			'|',
 			array(
 				$result['http_code'],
-				blcLink::remove_query_string($result['final_url']),
+				($result['redirect_count']> 0 ?'redirect':'final')
 			)
 		);
 

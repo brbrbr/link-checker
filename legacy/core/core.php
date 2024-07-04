@@ -1974,14 +1974,14 @@ if (!class_exists('wsBrokenLinkChecker')) {
 			$blc_link_query->count_filter_results();
 
 			//Run the selected filter (defaults to displaying broken links)
-			$selected_filter_id =  $_GET['filter_id'] ?: 'broken';
+			$selected_filter_id =  $_GET['filter_id'] ?? 'broken';
 			$current_filter     = $blc_link_query->exec_filter(
 				$selected_filter_id,
-				isset($_GET['paged']) ? intval($_GET['paged']) : 1,
+				intval($_GET['paged'] ?? 1),
 				$this->conf->options['table_links_per_page'],
 				'broken',
-				isset($_GET['orderby']) ? $_GET['orderby'] : '',
-				isset($_GET['order']) ? $_GET['order'] : ''
+				$_GET['orderby'] ?? '',
+				$_GET['order'] ?? ''
 			);
 
 			//exec_filter() returns an array with filter data, including the actual filter ID that was used.
@@ -3171,7 +3171,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 		private function updateParking($reset = false)
 		{
 			global $wpdb;
-		
+
 			if ($reset) {
 				$q = "UPDATE `{$wpdb->prefix}blc_links`SET `parked` = %d";
 				$wpdb->query(
@@ -3181,7 +3181,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 					)
 				);
 			}
-			$parked = str_replace('%','%%',join(' OR ', self::DOMAINPARKINGSQL));
+			$parked = str_replace('%', '%%', join(' OR ', self::DOMAINPARKINGSQL));
 			$q = "UPDATE `{$wpdb->prefix}blc_links`
             SET `parked` = IF ($parked,%d,%d)
             WHERE  `being_checked` = 0 AND `broken` = 0 AND `warning` = 0 AND  `parked` = %d";
@@ -3189,9 +3189,11 @@ if (!class_exists('wsBrokenLinkChecker')) {
 			$wpdb->query(
 				$wpdb->prepare(
 					$q, //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-				[	self::BLC_PARKED_PARKED,
-					self::BLC_PARKED_CHECKED,
-					self::BLC_PARKED_UNCHECKED,]
+					[
+						self::BLC_PARKED_PARKED,
+						self::BLC_PARKED_CHECKED,
+						self::BLC_PARKED_UNCHECKED,
+					]
 				)
 			);
 		}
@@ -3877,7 +3879,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 				'final_url'      => $link->final_url,
 				'parking' => $count,
 			);
-		
+
 			die(json_encode($response));
 		}
 

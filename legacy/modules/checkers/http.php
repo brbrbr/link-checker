@@ -309,9 +309,6 @@ class blcCurlHttp extends blcHttpCheckerBase
 			$options[CURLOPT_HTTPHEADER] = $request_headers;
 		}
 
-
-
-
 		// Apply filter for additional options
 		curl_setopt_array($ch, apply_filters('broken-link-checker-curl-options', $options));
 

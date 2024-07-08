@@ -9,7 +9,7 @@
 
 
 // To prevent conflicts, only one version of the plugin can be activated at any given time.
-if ( defined('BLC_ACTIVE')) {
+if (defined('BLC_ACTIVE')) {
 	trigger_error(
 		'Another version of Broken Link Checker is already active. Please deactivate it before activating this one.',
 		E_USER_ERROR
@@ -66,7 +66,7 @@ if ( defined('BLC_ACTIVE')) {
 					Logging
 	 */
 
-	 require_once  BLC_DIRECTORY_LEGACY . '/includes/logger.php';
+	require_once  BLC_DIRECTORY_LEGACY . '/includes/logger.php';
 
 	$blc_config_manager = blc_get_configuration();
 	global $blclog;
@@ -77,7 +77,7 @@ if ( defined('BLC_ACTIVE')) {
 	}
 
 
-	
+
 
 	/***********************************************
 					Utility hooks
@@ -137,7 +137,7 @@ if ( defined('BLC_ACTIVE')) {
 				return;
 			}
 			$init_done = true;
-			
+
 			//moved the IF up. No need to load all the crap every time on the front page
 
 			if (is_admin() || defined('DOING_CRON')) {
@@ -145,20 +145,11 @@ if ( defined('BLC_ACTIVE')) {
 				if (BLC_DATABASE_VERSION !== $blc_config_manager->options['current_db_version']) {
 
 					require_once BLC_DIRECTORY_LEGACY . '/includes/admin/db-upgrade.php';
+					require_once BLC_DIRECTORY_LEGACY . '/includes/wp-mutex.php';
 
-					if (is_multisite()) {
-						$last_upgrade_time = intval(get_site_option('wpmudev_blc_last_db_upgrade', 0));
-						$last_upgrade_diff = time() - $last_upgrade_time;
-
-						if (apply_filters('wpmudev_blc_db_upgrade_cooldown_sec', 30) <= $last_upgrade_diff) {
-							update_site_option('wpmudev_blc_last_db_upgrade', time());
-
-							// Also updates the DB ver. in options['current_db_version'].
-							blcDatabaseUpgrader::upgrade_database();
-						}
-					} else {
-						// Also updates the DB ver. in options['current_db_version'].
+					if (WPMutex::acquire('blc_dbupdate')) {
 						blcDatabaseUpgrader::upgrade_database();
+						WPMutex::release('blc_dbupdate');
 					}
 				}
 

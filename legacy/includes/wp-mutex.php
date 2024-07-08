@@ -11,9 +11,10 @@ if ( ! class_exists( 'WPMutex' ) ) :
 		 * @param bool $network_wide
 		 * @return bool
 		 */
-		static function acquire( $name, $timeout = 0, $network_wide = false ) {
+		static function acquire( $name, $timeout = 0, $dbWide = true ) {
 			global $wpdb; /* @var wpdb $wpdb */
-			if ( ! $network_wide ) {
+			$dbWide = apply_filters('broken-link-checker-acquire-lock', $dbWide,$name);
+			if ( ! $dbWide ) {
 				$name = self::get_private_name( $name );
 			}
 			$state = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, %d)', $name, $timeout ) );
@@ -45,11 +46,7 @@ if ( ! class_exists( 'WPMutex' ) ) :
 		 * @return string
 		 */
 		private static function get_private_name( $name ) {
-			global $current_blog;
-			if ( function_exists( 'is_multisite' ) && is_multisite() && isset( $current_blog->blog_id ) ) {
-				$name .= '-blog-' . $current_blog->blog_id;
-			}
-			return $name;
+			return $name . home_url();
 		}
 	}
 

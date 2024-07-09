@@ -91,10 +91,15 @@ if (!class_exists('wsBrokenLinkChecker')) {
 		public const BLC_PARKED_CHECKED = 2;
 
 		public const DOMAINPARKINGSQL = [
-			'sedo.com' => "`url` like '%sedo.com%' OR `final_url` like '%sedo.com%'",
-			'buy-domain' => "`final_url` like '%buy-domain%'",
-			'(sedo)parking' => "`url` REGEXP( 'https?://www?[0-9]') OR `final_url` REGEXP( 'https?://www?[0-9]')",
-			'dan.com' => "`log` like '%dan.com%'",
+			'sedo.com'      => " `final_url` like '%sedo.com%'",
+			'buy-domain'    => "`final_url` like '%buy-domain%'",
+			'(sedo)parking' => "`final_url` REGEXP( 'https?://www?[0-9]')",
+			'dan.com'       => "`log` like '%dan.com%'",
+			'domein.link'   => "`final_url` like '%domein.link%'",
+			'gopremium.net'   => "`final_url` like '%gopremium.net%'",
+			'koopdomeinnaam.nl'   => "`final_url` like '%koopdomeinnaam.nl%'",
+
+
 		];
 
 		/**
@@ -2926,7 +2931,6 @@ if (!class_exists('wsBrokenLinkChecker')) {
 			if (!$this->acquire_lock()) {
 				//FB::warn("Another instance of BLC is already working. Stop.");
 				$blclog->info('Another instance of BLC is already working. Stop.');
-
 				return;
 			}
 
@@ -2974,6 +2978,8 @@ if (!class_exists('wsBrokenLinkChecker')) {
 				&& (!defined('BLC_DEBUG') || !constant('BLC_DEBUG'))
 			) {
 				@ob_end_clean(); //Discard the existing buffer, if any
+				header('Expires: Wed, 11 Jan 1984 05:00:00 GMT');
+				header('Cache-Control: no-cache, must-revalidate, max-age=0');
 				header('Connection: close');
 				ob_start();
 				echo ('Connection closed'); //This could be anything
@@ -2981,8 +2987,14 @@ if (!class_exists('wsBrokenLinkChecker')) {
 				header("Content-Length: $size");
 				ob_end_flush(); // Strange behaviour, will not work
 				flush();        // Unless both are called !
-			}
 
+				session_write_close();
+				if (function_exists('fastcgi_finish_request')) {
+					fastcgi_finish_request();
+				} elseif (function_exists('litespeed_finish_request')) {
+					litespeed_finish_request();
+				}
+			}
 			//Load modules for this context
 			$moduleManager = blcModuleManager::getInstance();
 			$moduleManager->load_modules('work');

@@ -11,12 +11,10 @@ if ( ! class_exists( 'WPMutex' ) ) :
 		 * @param bool $network_wide
 		 * @return bool
 		 */
-		static function acquire( $name, $timeout = 0, $dbWide = true ) {
+		static function acquire( $name, $timeout = 0 ) {
 			global $wpdb; /* @var wpdb $wpdb */
-			$dbWide = apply_filters('broken-link-checker-acquire-lock', $dbWide,$name);
-			if ( ! $dbWide ) {
-				$name = self::get_private_name( $name );
-			}
+			$name = apply_filters('broken-link-checker-acquire-lock-name', $name);
+		
 			$state = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, %d)', $name, $timeout ) );
 			return 1 == $state;
 		}
@@ -37,17 +35,7 @@ if ( ! class_exists( 'WPMutex' ) ) :
 			return 1 == $released;
 		}
 
-		/**
-		 * Given a generic lock name, create a new one that's unique to the current blog.
-		 *
-		 * @access private
-		 *
-		 * @param string $name
-		 * @return string
-		 */
-		private static function get_private_name( $name ) {
-			return $name . home_url();
-		}
+
 	}
 
 endif;

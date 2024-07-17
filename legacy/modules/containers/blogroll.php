@@ -287,21 +287,5 @@ class blcBookmarkManager extends blcContainerManager {
 		blc_cleanup_links( $link_ids );
 	}
 
-	/**
-	 * Get the message to display after $n bookmarks have been deleted.
-	 *
-	 * @param int $n Number of deleted bookmarks.
-	 * @return string The delete confirmation message.
-	 */
-	function ui_bulk_delete_message( $n ) {
-		return sprintf(
-			_n(
-				'%d blogroll link deleted.',
-				'%d blogroll links deleted.',
-				$n,
-				'broken-link-checker'
-			),
-			$n
-		);
-	}
+
 }

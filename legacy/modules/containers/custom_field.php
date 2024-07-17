@@ -29,7 +29,8 @@ ModuleClassName: blcPostMetaManager
  * @package Broken Link Checker
  * @access public
  */
-class blcPostMeta extends blcContainer {
+class blcPostMeta extends blcContainer
+{
 
 	var $meta_type = 'post';
 
@@ -40,16 +41,18 @@ class blcPostMeta extends blcContainer {
 	 * @param bool $ensure_consistency
 	 * @return object The wrapped object.
 	 */
-	function get_wrapped_object( $ensure_consistency = false ) {
-		if ( is_null( $this->wrapped_object ) || $ensure_consistency ) {
-			$this->wrapped_object = get_metadata( $this->meta_type, $this->container_id );
+	function get_wrapped_object($ensure_consistency = false)
+	{
+		if (is_null($this->wrapped_object) || $ensure_consistency) {
+			$this->wrapped_object = get_metadata($this->meta_type, $this->container_id);
 		}
 
 		return $this->wrapped_object;
 	}
 
-	function update_wrapped_object() {
-		trigger_error( 'Function blcPostMeta::update_wrapped_object() does nothing and should not be used.', E_USER_WARNING );
+	function update_wrapped_object()
+	{
+		trigger_error('Function blcPostMeta::update_wrapped_object() does nothing and should not be used.', E_USER_WARNING);
 	}
 
 	/**
@@ -60,15 +63,16 @@ class blcPostMeta extends blcContainer {
 	 * @param string $field Field name. If omitted, the value of the default field will be returned.
 	 * @return array
 	 */
-	function get_field( $field = '', $single = false ) {
-		$get_only_first_field = ( 'metadata' !== $this->fields[ $field ] );
+	function get_field($field = '', $single = false)
+	{
+		$get_only_first_field = ('metadata' !== $this->fields[$field]);
 
 		//override the get only first by a param
-		if ( $single ) {
+		if ($single) {
 			$get_only_first_field = true;
 		}
 
-		return get_metadata( $this->meta_type, $this->container_id, $field, $get_only_first_field );
+		return get_metadata($this->meta_type, $this->container_id, $field, $get_only_first_field);
 	}
 
 	/**
@@ -81,15 +85,16 @@ class blcPostMeta extends blcContainer {
 	 * @param string $old_value old meta value.
 	 * @return bool|WP_Error True on success, an error object if something went wrong.
 	 */
-	function update_field( $field, $new_value, $old_value = '' ) {
+	function update_field($field, $new_value, $old_value = '')
+	{
 
 		//necessary for metas that store more than one value in a key
-		$meta_value     = $this->get_field( $field, true );
+		$meta_value     = $this->get_field($field, true);
 		$new_meta_value = $meta_value;
-		if ( is_array( $meta_value ) ) {
-			foreach ( $meta_value as $key => $meta ) {
-				if ( $meta === $old_value ) {
-					$new_meta_value[ $key ] = $new_value;
+		if (is_array($meta_value)) {
+			foreach ($meta_value as $key => $meta) {
+				if ($meta === $old_value) {
+					$new_meta_value[$key] = $new_value;
 				}
 			}
 			$new_value = $new_meta_value;
@@ -97,14 +102,14 @@ class blcPostMeta extends blcContainer {
 		}
 
 		//update the medatadata
-		$rez = update_metadata( $this->meta_type, $this->container_id, $field, $new_value, $old_value );
-		if ( $rez ) {
+		$rez = update_metadata($this->meta_type, $this->container_id, $field, $new_value, $old_value);
+		if ($rez) {
 			return true;
 		} else {
 			return new WP_Error(
 				'metadata_update_failed',
 				sprintf(
-					__( "Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker' ),
+					__("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'),
 					$field,
 					$this->meta_type,
 					$this->container_id
@@ -122,19 +127,20 @@ class blcPostMeta extends blcContainer {
 	 * @param string $raw_url
 	 * @return bool|WP_Error True on success, or an error object if something went wrong.
 	 */
-	function unlink( $field_name, $parser, $url, $raw_url = '' ) {
-		if ( 'metadata' !== $this->fields[ $field_name ] ) {
-			return parent::unlink( $field_name, $parser, $url, $raw_url );
+	function unlink($field_name, $parser, $url, $raw_url = '')
+	{
+		if ('metadata' !== $this->fields[$field_name]) {
+			return parent::unlink($field_name, $parser, $url, $raw_url);
 		}
 
-		$rez = delete_metadata( $this->meta_type, $this->container_id, $field_name, $raw_url );
-		if ( $rez ) {
+		$rez = delete_metadata($this->meta_type, $this->container_id, $field_name, $raw_url);
+		if ($rez) {
 			return true;
 		} else {
 			return new WP_Error(
 				'metadata_delete_failed',
 				sprintf(
-					__( "Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker' ),
+					__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'),
 					$field_name,
 					$this->meta_type,
 					$this->container_id
@@ -154,7 +160,8 @@ class blcPostMeta extends blcContainer {
 	 * @param null $new_text
 	 * @return string|WP_Error The new value of raw_url on success, or an error object if something went wrong.
 	 */
-	function edit_link( $field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null ) {
+	function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
+	{
 		/*
 		FB::log(sprintf(
 			'Editing %s[%d]:%s - %s to %s',
@@ -166,11 +173,11 @@ class blcPostMeta extends blcContainer {
 		));
 		*/
 
-		if ( 'metadata' !== $this->fields[ $field_name ] ) {
-			return parent::edit_link( $field_name, $parser, $new_url, $old_url, $old_raw_url, $new_text );
+		if ('metadata' !== $this->fields[$field_name]) {
+			return parent::edit_link($field_name, $parser, $new_url, $old_url, $old_raw_url, $new_text);
 		}
 
-		if ( empty( $old_raw_url ) ) {
+		if (empty($old_raw_url)) {
 			$old_raw_url = $old_url;
 		}
 
@@ -178,11 +185,11 @@ class blcPostMeta extends blcContainer {
 		//The default metadata parser ignores them, but we're still going
 		//to set this argument to a valid value in case someone writes a
 		//custom meta parser that needs it.
-		$old_value = $this->get_field( $field_name );
+		$old_value = $this->get_field($field_name);
 
 		//Get the new field value (a string).
-		$edit_result = $parser->edit( $old_value, $new_url, $old_url, $old_raw_url );
-		if ( is_wp_error( $edit_result ) ) {
+		$edit_result = $parser->edit($old_value, $new_url, $old_url, $old_raw_url);
+		if (is_wp_error($edit_result)) {
 			return $edit_result;
 		}
 
@@ -190,8 +197,8 @@ class blcPostMeta extends blcContainer {
 		//Notice how $old_raw_url is used instead of $old_value. $old_raw_url contains the entire old
 		//value of the metadata field (see blcMetadataParser::parse()) and thus can be used to
 		//differentiate between multiple meta fields with identical names.
-		$update_result = $this->update_field( $field_name, $edit_result['content'], $old_raw_url );
-		if ( is_wp_error( $update_result ) ) {
+		$update_result = $this->update_field($field_name, $edit_result['content'], $old_raw_url);
+		if (is_wp_error($update_result)) {
 			return $update_result;
 		}
 
@@ -205,28 +212,30 @@ class blcPostMeta extends blcContainer {
 	 * @param string $field
 	 * @return string
 	 */
-	function default_link_text( $field = '' ) {
+	function default_link_text($field = '')
+	{
 		//Just use the field name. There's no way to know how the links inside custom fields are
 		//used, so no way to know the "real" link text. Displaying the field name at least gives
 		//the user a clue where to look if they want to find/modify the field.
 		return $field;
 	}
 
-	function ui_get_source( $container_field = '', $context = 'display' ) {
-		if ( ! post_type_exists( get_post_type( $this->container_id ) ) ) {
+	function ui_get_source($container_field = '', $context = 'display')
+	{
+		if (!post_type_exists(get_post_type($this->container_id))) {
 			//Error: Invalid post type. The user probably removed a CPT without removing the actual posts.
 			$post_html = '';
 
-			$post = get_post( $this->container_id );
-			if ( $post ) {
+			$post = get_post($this->container_id);
+			if ($post) {
 				$post_html .= sprintf(
 					'<span class="row-title">%s</span><br>',
-					get_the_title( $post )
+					get_the_title($post)
 				);
 			}
 			$post_html .= sprintf(
 				'Invalid post type "%s"',
-				htmlentities( $this->container_type )
+				htmlentities($this->container_type)
 			);
 
 			return $post_html;
@@ -234,42 +243,43 @@ class blcPostMeta extends blcContainer {
 
 		$post_html = sprintf(
 			'<a class="row-title" href="%s" title="%s">%s</a>',
-			esc_url( $this->get_edit_url() ),
-			esc_attr( __( 'Edit this post' ) ),
-			get_the_title( $this->container_id )
+			esc_url($this->get_edit_url()),
+			esc_attr(__('Edit this post')),
+			get_the_title($this->container_id)
 		);
 
 		return $post_html;
 	}
 
-	function ui_get_action_links( $container_field ) {
+	function ui_get_action_links($container_field)
+	{
 		$actions = array();
-		if ( ! post_type_exists( get_post_type( $this->container_id ) ) ) {
+		if (!post_type_exists(get_post_type($this->container_id))) {
 			return $actions;
 		}
 
-		if ( current_user_can( 'edit_post', $this->container_id ) ) {
-			$actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr( __( 'Edit this item' ) ) . '">' . __( 'Edit' ) . '</a>';
+		if (current_user_can('edit_post', $this->container_id)) {
+			$actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr(__('Edit this item')) . '">' . __('Edit') . '</a>';
 
-			if ( $this->current_user_can_delete() ) {
-				if ( $this->can_be_trashed() ) {
+			if ($this->current_user_can_delete()) {
+				if ($this->can_be_trashed()) {
 					$actions['trash'] = sprintf(
 						"<span><a class='submitdelete' title='%s' href='%s'>%s</a>",
-						esc_attr( __( 'Move this item to the Trash' ) ),
-						get_delete_post_link( $this->container_id, '', false ),
-						__( 'Trash' )
+						esc_attr(__('Move this item to the Trash')),
+						get_delete_post_link($this->container_id, '', false),
+						__('Trash')
 					);
 				} else {
 					$actions['delete'] = sprintf(
 						"<span><a class='submitdelete' title='%s' href='%s'>%s</a>",
-						esc_attr( __( 'Delete this item permanently' ) ),
-						get_delete_post_link( $this->container_id, '', true ),
-						__( 'Delete' )
+						esc_attr(__('Delete this item permanently')),
+						get_delete_post_link($this->container_id, '', true),
+						__('Delete')
 					);
 				}
 			}
 		}
-		$actions['view'] = '<span class="view"><a href="' . esc_url( get_permalink( $this->container_id ) ) . '" title="' . esc_attr( sprintf( __( 'View "%s"', 'broken-link-checker' ), get_the_title( $this->container_id ) ) ) . '" rel="permalink">' . __( 'View' ) . '</a>';
+		$actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'broken-link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
 
 		return $actions;
 	}
@@ -282,34 +292,35 @@ class blcPostMeta extends blcContainer {
 	 *
 	 * @return string
 	 */
-	function get_edit_url() {
+	function get_edit_url()
+	{
 		/*
 		The below is a near-exact copy of the get_post_edit_link() function.
 		Unfortunately we can't just call that function because it has a hardcoded
 		caps-check which fails when called from the email notification script
 		executed by Cron.
 		*/
-		$post = get_post( $this->container_id );
+		$post = get_post($this->container_id);
 
-		if ( ! $post ) {
+		if (!$post) {
 			return '';
 		}
 
 		$context = 'display';
 
 		//WP 3.0
-		if ( 'display' === $context ) {
+		if ('display' === $context) {
 			$action = '&amp;action=edit';
 		} else {
 			$action = '&action=edit';
 		}
 
-		$post_type_object = get_post_type_object( $post->post_type );
-		if ( ! $post_type_object ) {
+		$post_type_object = get_post_type_object($post->post_type);
+		if (!$post_type_object) {
 			return '';
 		}
 
-		return apply_filters( 'get_edit_post_link', admin_url( sprintf( $post_type_object->_edit_link . $action, $post->ID ) ), $post->ID, $context );
+		return apply_filters('get_edit_post_link', admin_url(sprintf($post_type_object->_edit_link . $action, $post->ID)), $post->ID, $context);
 	}
 
 	/**
@@ -318,8 +329,9 @@ class blcPostMeta extends blcContainer {
 	 *
 	 * @return string
 	 */
-	function base_url() {
-		return get_permalink( $this->container_id );
+	function base_url()
+	{
+		return get_permalink($this->container_id);
 	}
 
 	/**
@@ -328,18 +340,19 @@ class blcPostMeta extends blcContainer {
 	 *
 	 * @return bool|WP_error
 	 */
-	function delete_wrapped_object() {
-		if ( EMPTY_TRASH_DAYS ) {
+	function delete_wrapped_object()
+	{
+		if (EMPTY_TRASH_DAYS) {
 			return $this->trash_wrapped_object();
 		} else {
-			if ( wp_delete_post( $this->container_id ) ) {
+			if (wp_delete_post($this->container_id)) {
 				return true;
 			} else {
 				return new WP_Error(
 					'delete_failed',
 					sprintf(
-						__( 'Failed to delete post "%1$s" (%2$d)', 'broken-link-checker' ),
-						get_the_title( $this->container_id ),
+						__('Failed to delete post "%1$s" (%2$d)', 'broken-link-checker'),
+						get_the_title($this->container_id),
 						$this->container_id
 					)
 				);
@@ -352,85 +365,91 @@ class blcPostMeta extends blcContainer {
 	 *
 	 * @return bool|WP_Error
 	 */
-	function trash_wrapped_object() {
-		if ( ! EMPTY_TRASH_DAYS ) {
+	function trash_wrapped_object()
+	{
+		if (!EMPTY_TRASH_DAYS) {
 			return new WP_Error(
 				'trash_disabled',
 				sprintf(
-					__( 'Can\'t move post "%1$s" (%2$d) to the trash because the trash feature is disabled', 'broken-link-checker' ),
-					get_the_title( $this->container_id ),
+					__('Can\'t move post "%1$s" (%2$d) to the trash because the trash feature is disabled', 'broken-link-checker'),
+					get_the_title($this->container_id),
 					$this->container_id
 				)
 			);
 		}
 
-		$post = &get_post( $this->container_id );
-		if ( 'trash' === $post->post_status ) {
+		$post = get_post($this->container_id);
+		if ('trash' === $post->post_status) {
 			//Prevent conflicts between post and custom field containers trying to trash the same post.
 			return true;
 		}
 
-		if ( wp_trash_post( $this->container_id ) ) {
+		if (wp_trash_post($this->container_id)) {
 			return true;
 		} else {
 			return new WP_Error(
 				'trash_failed',
 				sprintf(
-					__( 'Failed to move post "%1$s" (%2$d) to the trash', 'broken-link-checker' ),
-					get_the_title( $this->container_id ),
+					__('Failed to move post "%1$s" (%2$d) to the trash', 'broken-link-checker'),
+					get_the_title($this->container_id),
 					$this->container_id
 				)
 			);
 		}
 	}
 
-	function current_user_can_delete() {
-		$post             = get_post( $this->container_id );
-		$post_type_object = get_post_type_object( $post->post_type );
-		return current_user_can( $post_type_object->cap->delete_post, $this->container_id );
+	function current_user_can_delete()
+	{
+		$post             = get_post($this->container_id);
+		$post_type_object = get_post_type_object($post->post_type);
+		return current_user_can($post_type_object->cap->delete_post, $this->container_id);
 	}
 
-	function can_be_trashed() {
-		return defined( 'EMPTY_TRASH_DAYS' ) && EMPTY_TRASH_DAYS;
+	function can_be_trashed()
+	{
+		return defined('EMPTY_TRASH_DAYS') && EMPTY_TRASH_DAYS;
 	}
 }
 
-class blcPostMetaManager extends blcContainerManager {
+class blcPostMetaManager extends blcContainerManager
+{
 	var $container_class_name  = 'blcPostMeta';
 	var $meta_type             = 'post';
 	protected $selected_fields = array();
 
-	function init() {
+	function init()
+	{
 		parent::init();
 
 		//Figure out which custom fields we're interested in.
-		if ( is_array( $this->plugin_conf->options['custom_fields'] ) ) {
+		if (is_array($this->plugin_conf->options['custom_fields'])) {
 			$prefix_formats = array(
 				'html' => 'html',
 				'url'  => 'metadata',
 			);
-			foreach ( $this->plugin_conf->options['custom_fields'] as $meta_name ) {
+			foreach ($this->plugin_conf->options['custom_fields'] as $meta_name) {
 				//The user can add an optional "format:" prefix to specify the format of the custom field.
-				$parts = explode( ':', $meta_name, 2 );
-				if ( ( count( $parts ) == 2 ) && in_array( $parts[0], $prefix_formats ) ) {
-					$this->selected_fields[ $parts[1] ] = $prefix_formats[ $parts[0] ];
+				$parts = explode(':', $meta_name, 2);
+				if (count($parts) == 2) {
+					$type = strtolower($parts[0]);
+					$this->selected_fields[$parts[1]] = $prefix_formats[$type]??'metadata';
 				} else {
-					$this->selected_fields[ $meta_name ] = 'metadata';
+					$this->selected_fields[$meta_name] = 'metadata';
 				}
 			}
 		}
-
+	
 		//Intercept 2.9+ style metadata modification actions
-		add_action( "added_{$this->meta_type}_meta", array( $this, 'meta_modified' ), 10, 4 );
-		add_action( "updated_{$this->meta_type}_meta", array( $this, 'meta_modified' ), 10, 4 );
-		add_action( "deleted_{$this->meta_type}_meta", array( $this, 'meta_modified' ), 10, 4 );
+		add_action("added_{$this->meta_type}_meta", array($this, 'meta_modified'), 10, 4);
+		add_action("updated_{$this->meta_type}_meta", array($this, 'meta_modified'), 10, 4);
+		add_action("deleted_{$this->meta_type}_meta", array($this, 'meta_modified'), 10, 4);
 
 		//When a post is deleted, also delete the custom field container associated with it.
-		add_action( 'delete_post', array( $this, 'post_deleted' ) );
-		add_action( 'trash_post', array( $this, 'post_deleted' ) );
+		add_action('delete_post', array($this, 'post_deleted'));
+		add_action('trash_post', array($this, 'post_deleted'));
 
 		//Re-parse custom fields when a post is restored from trash
-		add_action( 'untrashed_post', array( $this, 'post_untrashed' ) );
+		add_action('untrashed_post', array($this, 'post_untrashed'));
 	}
 
 
@@ -439,7 +458,8 @@ class blcPostMetaManager extends blcContainerManager {
 	 *
 	 * @return array
 	 */
-	function get_parseable_fields() {
+	function get_parseable_fields()
+	{
 		return $this->selected_fields;
 	}
 
@@ -452,8 +472,9 @@ class blcPostMetaManager extends blcContainerManager {
 	 *
 	 * @return array of blcPostMeta indexed by "container_type|container_id"
 	 */
-	function get_containers( $containers, $purpose = '', $load_wrapped_objects = false ) {
-		$containers = $this->make_containers( $containers );
+	function get_containers($containers, $purpose = '', $load_wrapped_objects = false)
+	{
+		$containers = $this->make_containers($containers);
 
 		/*
 		When links from custom fields are displayed in Tools -> Broken Links,
@@ -467,15 +488,15 @@ class blcPostMetaManager extends blcContainerManager {
 		Calling get_posts() will automatically populate the post cache, so we
 		don't need to actually store the results anywhere in the container object().
 		*/
-		$preload = $load_wrapped_objects || in_array( $purpose, array( BLC_FOR_DISPLAY ) );
-		if ( $preload ) {
+		$preload = $load_wrapped_objects || in_array($purpose, array(BLC_FOR_DISPLAY));
+		if ($preload) {
 			$post_ids = array();
-			foreach ( $containers as $container ) {
+			foreach ($containers as $container) {
 				$post_ids[] = $container->container_id;
 			}
 
-			$args = array( 'include' => implode( ',', $post_ids ) );
-			get_posts( $args );
+			$args = array('include' => implode(',', $post_ids));
+			get_posts($args);
 		}
 
 		return $containers;
@@ -487,49 +508,51 @@ class blcPostMetaManager extends blcContainerManager {
 	 * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
 	 * @return void
 	 */
-	function resynch( $forced = false ) {
-		global $wpdb; /** @var wpdb $wpdb */
+	function resynch($forced = false)
+	{
+		global $wpdb;
+		/** @var wpdb $wpdb */
 		global $blclog;
 
 		//Only check custom fields on selected post types. By default, that's "post" and "page".
-		$post_types = array( 'post', 'page' );
-		if ( class_exists( 'blcPostTypeOverlord' ) ) {
+		$post_types = array('post', 'page');
+		if (class_exists('blcPostTypeOverlord')) {
 			$overlord   = blcPostTypeOverlord::getInstance();
-			$post_types = array_merge( $post_types, $overlord->enabled_post_types );
-			$post_types = array_unique( $post_types );
+			$post_types = array_merge($post_types, $overlord->enabled_post_types);
+			$post_types = array_unique($post_types);
 		}
 
-		$escaped_post_types = "'" . implode( "', '", array_map( 'esc_sql', $post_types ) ) . "'";
+		$escaped_post_types = "'" . implode("', '", array_map('esc_sql', $post_types)) . "'";
 
-		if ( $forced ) {
+		if ($forced) {
 			//Create new synchronization records for all posts.
-			$blclog->log( '...... Creating synch records for all custom fields on ' . $escaped_post_types );
-			$start = microtime( true );
+			$blclog->log('...... Creating synch records for all custom fields on ' . $escaped_post_types);
+			$start = microtime(true);
 			$q     = "INSERT INTO {$wpdb->prefix}blc_synch(container_id, container_type, synched)
 				  SELECT id, '{$this->container_type}', 0
 				  FROM {$wpdb->posts}
 				  WHERE
 				  	{$wpdb->posts}.post_status = 'publish'
 	 				AND {$wpdb->posts}.post_type IN ({$escaped_post_types})";
-			$wpdb->query( $q ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$blclog->log( sprintf( '...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime( true ) - $start ) );
+			$wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
 		} else {
 			//Delete synch records corresponding to posts that no longer exist.
-			$blclog->log( '...... Deleting custom field synch records corresponding to deleted posts' );
-			$start = microtime( true );
+			$blclog->log('...... Deleting custom field synch records corresponding to deleted posts');
+			$start = microtime(true);
 			$q     = "DELETE synch.*
 				  FROM
 					 {$wpdb->prefix}blc_synch AS synch LEFT JOIN {$wpdb->posts} AS posts
 					 ON posts.ID = synch.container_id
 				  WHERE
 					 synch.container_type = '{$this->container_type}' AND posts.ID IS NULL";
-			$wpdb->query( $q ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$blclog->log( sprintf( '...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime( true ) - $start ) );
+			$wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
 
 			//Remove the 'synched' flag from all posts that have been updated
 			//since the last time they were parsed/synchronized.
-			$blclog->log( '...... Marking custom fields on changed posts as unsynched' );
-			$start = microtime( true );
+			$blclog->log('...... Marking custom fields on changed posts as unsynched');
+			$start = microtime(true);
 			$q     = "UPDATE
 					{$wpdb->prefix}blc_synch AS synch
 					JOIN {$wpdb->posts} AS posts ON (synch.container_id = posts.ID and synch.container_type='{$this->container_type}')
@@ -537,12 +560,12 @@ class blcPostMetaManager extends blcContainerManager {
 					synched = 0
 				  WHERE
 					synch.last_synch < posts.post_modified";
-			$wpdb->query( $q ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$blclog->log( sprintf( '...... %d rows updated in %.3f seconds', $wpdb->rows_affected, microtime( true ) - $start ) );
+			$wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$blclog->log(sprintf('...... %d rows updated in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
 
 			//Create synch. records for posts that don't have them.
-			$blclog->log( '...... Creating custom field synch records for new ' . $escaped_post_types );
-			$start = microtime( true );
+			$blclog->log('...... Creating custom field synch records for new ' . $escaped_post_types);
+			$start = microtime(true);
 			$q     = "INSERT INTO {$wpdb->prefix}blc_synch(container_id, container_type, synched)
 				  SELECT id, '{$this->container_type}', 0
 				  FROM
@@ -552,8 +575,8 @@ class blcPostMetaManager extends blcContainerManager {
 				  	posts.post_status = 'publish'
 	 				AND posts.post_type IN ({$escaped_post_types})
 					AND synch.container_id IS NULL";
-			$wpdb->query( $q ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-			$blclog->log( sprintf( '...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime( true ) - $start ) );
+			$wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			$blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
 		}
 	}
 
@@ -566,19 +589,21 @@ class blcPostMetaManager extends blcContainerManager {
 	 * @param string $meta_value
 	 * @return void
 	 */
-	function meta_modified( $meta_id, $object_id = 0, $meta_key = '', $meta_value = '' ) {
-		global $wpdb; /** @var wpdb $wpdb */
+	function meta_modified($meta_id, $object_id = 0, $meta_key = '', $meta_value = '')
+	{
+		global $wpdb;
+		/** @var wpdb $wpdb */
 
 		//If object_id isn't specified then the hook was probably called from the
 		//stupidly inconsistent delete_meta() function in /wp-admin/includes/post.php.
-		if ( empty( $object_id ) ) {
+		if (empty($object_id)) {
 			//We must manually retrieve object_id and meta_key from the DB.
-			if ( is_array( $meta_id ) ) {
-				$meta_id = array_shift( $meta_id );
+			if (is_array($meta_id)) {
+				$meta_id = array_shift($meta_id);
 			}
 
-			$meta = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $wpdb->postmeta WHERE meta_id = %d", $meta_id ), ARRAY_A );
-			if ( empty( $meta ) ) {
+			$meta = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->postmeta WHERE meta_id = %d", $meta_id), ARRAY_A);
+			if (empty($meta)) {
 				return;
 			}
 
@@ -588,20 +613,20 @@ class blcPostMetaManager extends blcContainerManager {
 
 		//Metadata changes only matter to us if the modified key
 		//is one that the user wants checked.
-		if ( empty( $this->selected_fields ) ) {
+		if (empty($this->selected_fields)) {
 			return;
 		}
-		if ( ! array_key_exists( $meta_key, $this->selected_fields ) ) {
+		if (!array_key_exists($meta_key, $this->selected_fields)) {
 			return;
 		}
 
 		//Skip revisions. We only care about custom fields on the main post.
-		$post = get_post( $object_id );
-		if ( empty( $post ) || ! isset( $post->post_type ) || ( 'revision' === $post->post_type ) ) {
+		$post = get_post($object_id);
+		if (empty($post) || !isset($post->post_type) || ('revision' === $post->post_type)) {
 			return;
 		}
 
-		$container = blcContainerHelper::get_container( array( $this->container_type, intval( $object_id ) ) );
+		$container = blcContainerHelper::get_container(array($this->container_type, intval($object_id)));
 		$container->mark_as_unsynched();
 	}
 
@@ -611,11 +636,12 @@ class blcPostMetaManager extends blcContainerManager {
 	 * @param int $post_id
 	 * @return void
 	 */
-	function post_deleted( $post_id ) {
+	function post_deleted($post_id)
+	{
 		//Get the associated container object
 
-		$container = blcContainerHelper::get_container( array( $this->container_type, intval( $post_id ) ) );
-		if ( null != $container ) {
+		$container = blcContainerHelper::get_container(array($this->container_type, intval($post_id)));
+		if (null != $container) {
 			//Delete it
 			$container->delete();
 			//Clean up any dangling links
@@ -624,37 +650,18 @@ class blcPostMetaManager extends blcContainerManager {
 	}
 
 	/**
-	* When a post is restored, mark all of its custom fields as unparsed.
-	* Called via the 'untrashed_post' action.
-	*
-	* @param int $post_id
-	* @return void
-	*/
-	function post_untrashed( $post_id ) {
+	 * When a post is restored, mark all of its custom fields as unparsed.
+	 * Called via the 'untrashed_post' action.
+	 *
+	 * @param int $post_id
+	 * @return void
+	 */
+	function post_untrashed($post_id)
+	{
 		//Get the associated container object
-		$container = blcContainerHelper::get_container( array( $this->container_type, intval( $post_id ) ) );
+		$container = blcContainerHelper::get_container(array($this->container_type, intval($post_id)));
 		$container->mark_as_unsynched();
 	}
 
-	/**
-	 * Get the message to display after $n posts have been deleted.
-	 *
-	 * @uses blcAnyPostContainerManager::ui_bulk_delete_message()
-	 *
-	 * @param int $n Number of deleted posts.
-	 * @return string A delete confirmation message, e.g. "5 posts were moved to the trash"
-	 */
-	function ui_bulk_delete_message( $n ) {
-		return blcAnyPostContainerManager::ui_bulk_delete_message( $n );
-	}
 
-	/**
-	 * Get the message to display after $n posts have been trashed.
-	 *
-	 * @param int $n Number of deleted posts.
-	 * @return string A confirmation message, e.g. "5 posts were moved to trash"
-	 */
-	function ui_bulk_trash_message( $n ) {
-		return blcAnyPostContainerManager::ui_bulk_trash_message( $n );
-	}
 }

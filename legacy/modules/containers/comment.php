@@ -352,45 +352,8 @@ class blcCommentManager extends blcContainerManager {
 		}
 	}
 
-	/**
-	 * Get the message to display after $n comments have been deleted.
-	 *
-	 * @param int $n Number of deleted comments.
-	 * @return string A delete confirmation message, e.g. "5 comments were deleted"
-	 */
-	function ui_bulk_delete_message( $n ) {
-		if ( EMPTY_TRASH_DAYS ) {
-			return $this->ui_bulk_trash_message( $n );
-		} else {
-			return sprintf(
-				_n(
-					'%d comment has been deleted.',
-					'%d comments have been deleted.',
-					$n,
-					'broken-link-checker'
-				),
-				$n
-			);
-		}
-	}
 
-	/**
-	 * Get the message to display after $n comments have been moved to the trash.
-	 *
-	 * @param int $n Number of trashed comments.
-	 * @return string A delete confirmation message, e.g. "5 comments were moved to trash"
-	 */
-	function ui_bulk_trash_message( $n ) {
-		return sprintf(
-			_n(
-				'%d comment moved to the Trash.',
-				'%d comments moved to the Trash.',
-				$n,
-				'broken-link-checker'
-			),
-			$n
-		);
-	}
+
 
 	/**
 	 * Instantiate multiple containers of the container type managed by this class.

@@ -364,6 +364,8 @@ class wsBrokenLinkChecker
 		wp_enqueue_script('jquery-ui-dialog');
 		wp_enqueue_script('jquery-ui-tabs');
 		wp_enqueue_script('jquery-cookie', plugins_url('js/jquery.cookie.js', BLC_PLUGIN_FILE_LEGACY), array(), '1.0.0', false); // Used for storing last widget states, etc.
+		wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), ['jquery'], '2.3.0.6337', false);
+		wp_set_script_translations('options-page-js', 'broken-link-checker');
 	}
 
 	/**
@@ -1662,8 +1664,10 @@ class wsBrokenLinkChecker
 		</div>
 
 	<?php
-		//The various JS for this page is stored in a separate file for the purposes readability.
-		require_once dirname($this->loader) . '/includes/admin/options-page-js.php';
+
+
+
+
 	}
 	private function checkAndCreateFile($input)
 	{
@@ -1950,12 +1954,6 @@ class wsBrokenLinkChecker
 				break;
 
 				// @noinspection PhpMissingBreakStatementInspection Deliberate fall-through.
-			case 'bulk-delete-sources':
-				$force_delete = true;
-				//intentional fall through
-			case 'bulk-trash-sources':
-				list($message, $msg_class) = $this->do_bulk_delete_sources($selected_links, $force_delete);
-				break;
 
 			case 'bulk-unlink':
 				list($message, $msg_class) = $this->do_bulk_unlink($selected_links);
@@ -2424,135 +2422,7 @@ class wsBrokenLinkChecker
 		return array($message, $msg_class);
 	}
 
-	/**
-	 * Delete or trash posts, bookmarks and other items that contain any of the specified links.
-	 *
-	 * Will prefer moving stuff to trash to permanent deletion. If it encounters an item that
-	 * can't be moved to the trash, it will skip that item by default.
-	 *
-	 * @param array $selected_links An array of link IDs
-	 * @param bool $force_delete Whether to bypass trash and force deletion. Defaults to false.
-	 *
-	 * @return array Confirmation message and its CSS class.
-	 */
-	function do_bulk_delete_sources($selected_links, $force_delete = false)
-	{
-		$message   = '';
-		$msg_class = 'updated';
 
-		//Delete posts, blogroll entries and any other link containers that contain any of the selected links.
-		//
-		//Note that once all containers containing a particular link have been deleted,
-		//there is no need to explicitly delete the link record itself. The hooks attached to
-		//the actions that execute when something is deleted (e.g. "post_deleted") will
-		//take care of that.
-
-		check_admin_referer('bulk-action');
-
-		if (count($selected_links) > 0) {
-			$messages = array();
-
-			//Fetch all the selected links
-			$links = blc_get_links(
-				array(
-					'link_ids'       => $selected_links,
-					'load_instances' => true,
-				)
-			);
-
-			//Make a list of all containers associated with these links, with each container
-			//listed only once.
-			$containers = array();
-			foreach ($links as $link) {
-				/* @var blcLink $link */
-				$instances = $link->get_instances();
-				foreach ($instances as $instance) {
-					/* @var blcLinkInstance $instance */
-					$key                = $instance->container_type . '|' . $instance->container_id;
-					$containers[$key] = array($instance->container_type, $instance->container_id);
-				}
-			}
-
-			//Instantiate the containers
-			$containers = blcContainerHelper::get_containers($containers);
-
-			//Delete/trash their associated entities
-			$deleted = array();
-			$skipped = array();
-			foreach ($containers as $container) {
-				/* @var blcContainer $container */
-				if (!$container->current_user_can_delete()) {
-					continue;
-				}
-
-				if ($force_delete) {
-					$rez = $container->delete_wrapped_object();
-				} else {
-					if ($container->can_be_trashed()) {
-						$rez = $container->trash_wrapped_object();
-					} else {
-						$skipped[] = $container;
-						continue;
-					}
-				}
-
-				if (is_wp_error($rez)) {
-					/* @var WP_Error $rez */
-					//Record error messages for later display
-					$messages[] = $rez->get_error_message();
-					$msg_class  = 'error';
-				} else {
-					//Keep track of how many of each type were deleted.
-					$container_type = $container->container_type;
-					if (isset($deleted[$container_type])) {
-						$deleted[$container_type]++;
-					} else {
-						$deleted[$container_type] = 1;
-					}
-				}
-			}
-
-			//Generate delete confirmation messages
-			foreach ($deleted as $container_type => $number) {
-				if ($force_delete) {
-					$messages[] = blcContainerHelper::ui_bulk_delete_message($container_type, $number);
-				} else {
-					$messages[] = blcContainerHelper::ui_bulk_trash_message($container_type, $number);
-				}
-			}
-
-			//If some items couldn't be trashed, let the user know
-			if (count($skipped) > 0) {
-				$message = sprintf(
-					_n(
-						"%d item was skipped because it can't be moved to the Trash. You need to delete it manually.",
-						"%d items were skipped because they can't be moved to the Trash. You need to delete them manually.",
-						count($skipped)
-					),
-					count($skipped)
-				);
-				$message .= '<br><ul>';
-				foreach ($skipped as $container) {
-					$message .= sprintf(
-						'<li>%s</li>',
-						$container->ui_get_source('')
-					);
-				}
-				$message .= '</ul>';
-
-				$messages[] = $message;
-			}
-
-			if (count($messages) > 0) {
-				$message = implode('<p>', $messages);
-			} else {
-				$message   = __("Didn't find anything to delete!", 'broken-link-checker');
-				$msg_class = 'error';
-			}
-		}
-
-		return array($message, $msg_class);
-	}
 
 	/**
 	 * Mark multiple links as unchecked.

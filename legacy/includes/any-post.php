@@ -753,6 +753,7 @@ class blcAnyPostContainerManager extends blcContainerManager {
 		//responsible for is enabled.
 		$overlord = blcPostTypeOverlord::getInstance();
 		$overlord->post_type_enabled( $this->container_type );
+	
 	}
 
 	/**
@@ -801,54 +802,5 @@ class blcAnyPostContainerManager extends blcContainerManager {
 		$overlord->resynch( $this->container_type, $forced );
 	}
 
-	/**
-	 * Get the message to display after $n posts have been deleted.
-	 *
-	 * @param int $n Number of deleted posts.
-	 * @return string A delete confirmation message, e.g. "5 posts were moved deleted"
-	 */
-	function ui_bulk_delete_message( $n ) {
-		//Since the "Trash" feature has been introduced, calling wp_delete_post
-		//doesn't actually delete the post (unless you set force_delete to True),
-		//just moves it to the trash. So we pick the message accordingly.
-		//(If possible, BLC *always* moves to trash instead of deleting permanently.)
-		if ( function_exists( 'wp_trash_post' ) && EMPTY_TRASH_DAYS ) {
-			return blcAnyPostContainerManager::ui_bulk_trash_message( $n );
-		} else {
-			$post_type_object = get_post_type_object( $this->container_type );
-			$type_name        = '';
 
-			if ( $this->container_type == 'post' || is_null( $post_type_object ) ) {
-				$delete_msg = _n( '%d post deleted.', '%d posts deleted.', $n, 'broken-link-checker' );
-			} elseif ( $this->container_type == 'page' ) {
-				$delete_msg = _n( '%d page deleted.', '%d pages deleted.', $n, 'broken-link-checker' );
-			} else {
-				$delete_msg = _n( '%1$d "%2$s" deleted.', '%1$d "%2$s" deleted.', $n, 'broken-link-checker' );
-				$type_name  = ( $n == 1 ? $post_type_object->labels->singular_name : $post_type_object->labels->name );
-			}
-			return sprintf( $delete_msg, $n, $type_name );
-		}
-	}
-
-
-	/**
-	 * Get the message to display after $n posts have been trashed.
-	 *
-	 * @param int $n Number of deleted posts.
-	 * @return string A confirmation message, e.g. "5 posts were moved to trash"
-	 */
-	function ui_bulk_trash_message( $n ) {
-		$post_type_object = get_post_type_object( $this->container_type );
-		$type_name        = '';
-
-		if ( $this->container_type == 'post' || is_null( $post_type_object ) ) {
-			$delete_msg = _n( '%d post moved to the Trash.', '%d posts moved to the Trash.', $n, 'broken-link-checker' );
-		} elseif ( $this->container_type == 'page' ) {
-			$delete_msg = _n( '%d page moved to the Trash.', '%d pages moved to the Trash.', $n, 'broken-link-checker' );
-		} else {
-			$delete_msg = _n( '%1$d "%2$s" moved to the Trash.', '%1$d "%2$s" moved to the Trash.', $n, 'broken-link-checker' );
-			$type_name  = ( $n == 1 ? $post_type_object->labels->singular_name : $post_type_object->labels->name );
-		}
-		return sprintf( $delete_msg, $n, $type_name );
-	}
 }

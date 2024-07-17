@@ -721,27 +721,4 @@ class blcAcfMetaManager extends blcContainerManager {
 		$container->mark_as_unsynched();
 	}
 
-	/**
-	 * Get the message to display after $n posts have been deleted.
-	 *
-	 * @uses blcAnyPostContainerManager::ui_bulk_delete_message()
-	 *
-	 * @param int $n Number of deleted posts.
-	 *
-	 * @return string A delete confirmation message, e.g. "5 posts were moved to the trash"
-	 */
-	function ui_bulk_delete_message( $n ) {
-		return blcAnyPostContainerManager::ui_bulk_delete_message( $n );
-	}
-
-	/**
-	 * Get the message to display after $n posts have been trashed.
-	 *
-	 * @param int $n Number of deleted posts.
-	 *
-	 * @return string A confirmation message, e.g. "5 posts were moved to trash"
-	 */
-	function ui_bulk_trash_message( $n ) {
-		return blcAnyPostContainerManager::ui_bulk_trash_message( $n );
-	}
 }

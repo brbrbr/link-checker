@@ -300,12 +300,7 @@
 				'bulk-dismiss'    => __('Dismiss', 'broken-link-checker'),
 				'bulk-unlink'     => __('Unlink', 'broken-link-checker'),
 			);
-			if (EMPTY_TRASH_DAYS) {
-				$bulk_actions['bulk-trash-sources'] = __('Move sources to Trash', 'broken-link-checker');
-			} else {
-				$bulk_actions['bulk-delete-sources'] = __('Delete sources', 'broken-link-checker');
-			}
-
+	
 			$bulk_actions_html = '';
 			foreach ($bulk_actions as $value => $name) {
 				$bulk_actions_html .= sprintf('<option value="%s">%s</option>', $value, $name);

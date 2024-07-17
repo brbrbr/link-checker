@@ -120,36 +120,6 @@ class blcContainerManager extends blcModule
 		return $this->fields;
 	}
 
-	/**
-	 * Get the message to display after $n containers have been deleted.
-	 *
-	 * @param int $n Number of deleted containers.
-	 * @return string A delete confirmation message, e.g. "5 posts were moved to trash"
-	 */
-	function ui_bulk_delete_message($n)
-	{
-		return sprintf(
-			_n(
-				"%1\$d '%2\$s' has been deleted",
-				"%1\$d '%2\$s' have been deleted",
-				$n,
-				'broken-link-checker'
-			),
-			$n,
-			$this->container_type
-		);
-	}
-
-	/**
-	 * Get the message to display after $n containers have been moved to the trash.
-	 *
-	 * @param int $n Number of trashed containers.
-	 * @return string A delete confirmation message, e.g. "5 posts were moved to trash"
-	 */
-	function ui_bulk_trash_message($n)
-	{
-		return $this->ui_bulk_delete_message($n);
-	}
 }
 
 /**
@@ -966,39 +936,5 @@ class blcContainerHelper
 		return false !== $rez;
 	}
 
-	/**
-	 * Get the message to display after $n containers of a specific type have been deleted.
-	 *
-	 * @param string $container_type
-	 * @param int $n Number of deleted containers.
-	 * @return string A delete confirmation message, e.g. "5 posts were moved to trash"
-	 */
-	static function ui_bulk_delete_message($container_type, $n)
-	{
-		$manager = blcContainerHelper::get_manager($container_type);
-		if (is_null($manager)) {
-			return sprintf(__("Container type '%s' not recognized", 'broken-link-checker'), $container_type);
-		} else {
-			return $manager->ui_bulk_delete_message($n);
-		}
-	}
 
-	/**
-	 * Get the message to display after $n containers of a specific type have been moved to the trash.
-	 *
-	 * @see blcContainerHelper::ui_bulk_delete_message()
-	 *
-	 * @param string $container_type
-	 * @param int $n
-	 * @return string
-	 */
-	static function ui_bulk_trash_message($container_type, $n)
-	{
-		$manager = blcContainerHelper::get_manager($container_type);
-		if (is_null($manager)) {
-			return sprintf(__("Container type '%s' not recognized", 'broken-link-checker'), $container_type);
-		} else {
-			return $manager->ui_bulk_trash_message($n);
-		}
-	}
 }

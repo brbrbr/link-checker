@@ -135,7 +135,7 @@ class blcLinkQuery
 	{
 		global $wpdb;
 		/** @var wpdb $wpdb */
-
+		$params =[];
 		$filter_data = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}blc_filters ORDER BY name ASC", ARRAY_A);
 		$filters     = array();
 

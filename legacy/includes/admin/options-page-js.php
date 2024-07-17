@@ -138,6 +138,17 @@ jQuery(function($){
 	blcToggleLogOptions();
 	$('#logging_enabled').change(blcToggleLogOptions);
 
+
+	//Enable/disable log-related options depending on whether "Enable logging" is on.
+	function blcToggleCookiesptions() {
+		$('.blc-cookie-options')
+			.find('input,select')
+			.prop('disabled', ! $('#cookies_enabled').is(':checked'));
+	}
+
+	blcToggleCookiesptions();
+	$('#cookies_enabled').change(blcToggleCookiesptions);
+
 	//
 	$('#target_resource_usage').change(function() {
 		$('#target_resource_usage_percent').text($(this).val() + '%')

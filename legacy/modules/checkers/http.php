@@ -29,7 +29,7 @@ class blcHttpChecker extends blcChecker
 	{
 		parent::init();
 
-		$conf                    = blc_get_configuration();
+		$conf                    = $this->plugin_conf;
 		$this->token_bucket_list = new blcTokenBucketList(
 			$conf->get('http_throttle_rate', 3),
 			$conf->get('http_throttle_period', 15),
@@ -215,7 +215,10 @@ class blcCurlHttp extends blcHttpCheckerBase
 		$options = [];
 
 		// Get the BLC configuration. It's used below to set the right timeout values and such.
-		$conf = blc_get_configuration();
+		$conf = $this->plugin_conf->options;
+	
+
+
 
 		// Init curl.
 		$ch              = curl_init();
@@ -226,10 +229,6 @@ class blcCurlHttp extends blcHttpCheckerBase
 		$request_headers = $signature['headers'] ?? [];
 		$request_headers['Accept-Language'] =  'Accept-Language: ' . $this->getLanguage();
 
-
-
-
-
 		$options = [
 			CURLOPT_ENCODING => "",
 			CURLOPT_URL =>  $this->urlencodefix($url),
@@ -238,12 +237,11 @@ class blcCurlHttp extends blcHttpCheckerBase
 			CURLOPT_MAXREDIRS => 5,
 			CURLOPT_USERAGENT => $ua,
 			// Set the timeout
-			CURLOPT_TIMEOUT =>  $conf->options['timeout'],
-			CURLOPT_CONNECTTIMEOUT =>  $conf->options['timeout'],
-
+			CURLOPT_TIMEOUT =>  $conf['timeout'],
+			CURLOPT_CONNECTTIMEOUT => $conf['timeout'],
 			// Register a callback function which will process the HTTP header(s).
 			// It can be called multiple times if the remote server performs a redirect.
-			CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
+		//	CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
 
 			// Add a semi-plausible referer header to avoid tripping up some bot traps
 			CURLOPT_REFERER => home_url(),
@@ -253,7 +251,11 @@ class blcCurlHttp extends blcHttpCheckerBase
 			// Record request headers.
 			CURLINFO_HEADER_OUT => true,
 		];
-
+	
+		if ($conf['cookies_enabled']) {
+				  $options[CURLOPT_COOKIEJAR] = $conf['cookie_jar'];
+				  $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
+		}
 
 		// Close the connection after the request (disables keep-alive). The plugin rate-limits requests,
 		// so it's likely we'd overrun the keep-alive timeout anyway.
@@ -292,8 +294,8 @@ class blcCurlHttp extends blcHttpCheckerBase
 
 		if ('https' === strtolower(parse_url($url, PHP_URL_SCHEME))) {
 			// Require valid ssl
-			$options[CURLOPT_SSL_VERIFYPEER] = 2;
-			$options[CURLOPT_SSL_VERIFYHOST] = true;
+			$options[CURLOPT_SSL_VERIFYPEER] = true;
+			$options[CURLOPT_SSL_VERIFYHOST] = 2;
 		}
 
 		if ($nobody) {
@@ -358,7 +360,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 					// More often than not, this error code indicates that the connection attempt
 					// timed out. This heuristic tries to distinguish between connections that fail
 					// due to timeouts and those that fail due to other causes.
-					if ($result['request_duration'] >= 0.9 * $conf->options['timeout']) {
+					if ($result['request_duration'] >= 0.9 * $conf['timeout']) {
 						$result['timeout'] = true;
 					} else {
 						$result['status_code'] = BLC_LINK_STATUS_WARNING;
@@ -393,7 +395,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 			)
 		);
 
-		$retryGet = apply_filters('blc-retry-with-get-checker',true, $result);
+		$retryGet = apply_filters('broken-link-checker-retry-with-get-after-head',true, $result);
 
 		if ($nobody && !$result['timeout'] && $retryGet && ($result['broken'] || $result['redirect_count'] == 1)) {
 			// The site in question might be expecting GET instead of HEAD, so lets retry the request
@@ -489,8 +491,8 @@ class blcWPHttp extends blcHttpCheckerBase
 		$log    = '';
 
 		// Get the timeout setting from the BLC configuration.
-		$conf    = blc_get_configuration();
-		$timeout = $conf->options['timeout'];
+		$conf    = $this->plugin_conf->options;
+		$timeout = $conf['timeout'];
 
 	
 

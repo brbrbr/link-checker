@@ -1,23 +1,24 @@
 <?php
 
-apply_filters('wpmudev_blc_db_upgrade_cooldown_sec', 30);
 
 /** 
 * By default only one instance of the broken link checker runs per database server. 
 * this to avoid to many outgoing http requests.
 * with this filter the behaviour can be changed'.
-'
+* currently there are two names
+* blc_lock - when the checker wants to start working
+* blc_dbupdate - for a database upgrade
 * be friendly to your neighbours and leave it on server
-
 */
-apply_filters('broken-link-checker-acquire-lock-name',$name);
+
+add_filter('broken-link-checker-acquire-lock-name','broken_link_checker_acquire_lock_name_example',accepted_args : 1);
 function broken_link_checker_acquire_lock_name_example($name) {
     return $name; //default server (database) wide
     //the crc32 is to ensure the $name is not to long
-    return $name . crc32(__FILE__); //per installation ( multisite)
-    return $name . crc32(home_url()); //per site
+    return $name . crc32(DB_NAME); //per database ( multisite)
+    return $name . crc32(DB_NAME . get_current_blog_id()); //per (sub)site  -assuming that not multiple single sites run in the same database
+    return $name . crc32(home_url()); //should have the same effect as above if multiple single sites run in the same database
     return $name . crc32(uniqid()); //per call. This would allow multiple instances running per site!!
-
 }
 
 /**
@@ -26,12 +27,16 @@ function broken_link_checker_acquire_lock_name_example($name) {
  * 
  */
 apply_filters('broken-link-checker-curl-options', $options);
-apply_filters('broken-link-checker-curl-before-close', $ch, $content, $this->last_headers);
+
 /**
  * Retry with GET after HEAD request
- * (only for broken and redirecting links)
+ * To save bandwidth request are made as a HEAD request: 'is the resouce on your server'
+ * not all servers response well to a HEAD request, so in case of a broken (or redirecting) link
+ * the request is re-tried with a proper GET request.
  */
-apply_filters('blc-retry-with-get-checker', true, $result);
+apply_filters('broken-link-checker-retry-with-get-after-head', true, $result);
+
+apply_filters('broken-link-checker-curl-before-close', $ch, $content, $this->last_headers);
 apply_filters('blc_youtube_api_key', $conf->options['youtube_api_key']);
 apply_filters('blc-parser-html-link-content', $content);
 

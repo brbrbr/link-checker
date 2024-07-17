@@ -35,6 +35,8 @@ if ( ! class_exists( 'blcConfigurationManager' ) ) {
 			if ( ! empty( $this->option_name ) ) {
 				$this->load_options();
 			}
+
+		
 		}
 
 		function set_defaults( $default_settings = null ) {
@@ -80,6 +82,14 @@ if ( ! class_exists( 'blcConfigurationManager' ) ) {
 				$this->db_option_loaded = true;
 				return true;
 			}
+			if ( empty($this->option['log_file'])) {
+
+			}
+
+			$this->option['log_file'] = $this->option['log_file'] ?:self::get_default_log_directory(). '/'. self::get_default_log_basename();
+			$this->option['cookie_jar'] = $this->option['cookie_jar'] ?:self::get_default_log_directory(). '/'. self::get_default_cookie_basename();
+
+			
 		}
 
 		/**
@@ -126,6 +136,21 @@ if ( ! class_exists( 'blcConfigurationManager' ) ) {
 		function set( $key, $value ) {
 			$this->options[ $key ] = $value;
 		}
+		public static function get_default_log_directory()
+		{
+			$uploads = wp_upload_dir();
+
+			return $uploads['basedir'] . '/broken-link-checker';
+		}
+
+		public static function get_default_log_basename()
+		{
+			return 'blc-log.txt';
+		}
+		public static function get_default_cookie_basename()
+		{
+			return 'blc-cookie.txt';
+		}
 	}
 	$GLOBALS['blc_config_manager'] = new blcConfigurationManager(
 		// Save the plugin's configuration into this DB option
@@ -170,10 +195,11 @@ if ( ! class_exists( 'blcConfigurationManager' ) ) {
 			'highlight_permanent_failures'     => false, // Highlight links that have appear to be permanently broken (in Tools -> Broken Links).
 			'failure_duration_threshold'       => 3, // (days) Assume a link is permanently broken if it still hasn't recovered after this many days.
 			'logging_enabled'                  => false,
-			'log_file'                         => '',
+			'log_file'                         =>  '',
+			'cookies_enabled'                  => true,
+			'cookie_jar'                       =>'',
 			'incorrect_path'                   => false,
 			'clear_log_on'                     => '',
-			'custom_log_file_enabled'          => false,
 			'installation_complete'            => false,
 			'installation_flag_cleared_on'     => 0,
 			'installation_flag_set_on'         => 0,

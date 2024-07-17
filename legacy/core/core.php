@@ -645,6 +645,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 				check_admin_referer('link-checker-options');
 
 				$cleanPost = $_POST;
+
 				if (function_exists('wp_magic_quotes')) {
 					$cleanPost = stripslashes_deep($cleanPost); // Ceterum censeo, WP shouldn't mangle superglobals.
 				}
@@ -813,63 +814,36 @@ if (!class_exists('wsBrokenLinkChecker')) {
 
 				//Logging. The plugin can log various events and results for debugging purposes.
 				$this->conf->options['logging_enabled']         = !empty($_POST['logging_enabled']);
-				$this->conf->options['custom_log_file_enabled'] = !empty($_POST['custom_log_file_enabled']);
+				$this->conf->options['cookies_enabled']         = !empty($_POST['cookies_enabled']);
+				$this->conf->options['clear_log_on'] = strval($cleanPost['clear_log_on']);
 
-				if ($this->conf->options['logging_enabled']) {
-					if ($this->conf->options['custom_log_file_enabled']) {
+				//process the log snd cookie file option even if logging_enabled is false
+				//if the value is changed and then logging_enabled is unchecked the change wouldn't be saved. 
+				$log_file       = self::checkAndCreateFile($cleanPost['log_file']);
 
-						$log_file       = esc_url_raw(strval($cleanPost['log_file']));
-						$file_type_data = wp_check_filetype($log_file);
-
-						if (substr($log_file, 0, 7) === 'phar://' || !isset($file_type_data['type']) || empty($file_type_data['type'])) {
-							$log_file = '';
-						}
-
-						if (!empty($log_file) && !file_exists($log_file)) {
-							if (!file_exists(dirname($log_file))) {
-								mkdir(dirname($log_file), 0750, true);
-							}
-							// Attempt to create the log file if not already there.
-							if (!is_file($log_file)) {
-								// Add a .htaccess to hide the log file from site visitors.
-								file_put_contents(dirname($log_file) . '/.htaccess', 'Deny from all');
-								file_put_contents($log_file, '');
-							}
-						}
-
-						//revert to default
-						if (!is_writable($log_file) || !is_file($log_file)) {
-							$this->conf->options['custom_log_file_enabled'] = '';
-							$log_directory                                  = self::get_default_log_directory();
-							$log_file                                       = $log_directory . '/' . self::get_default_log_basename();
-						}
-					} else {
-						//Default log file is /wp-content/uploads/broken-link-checker/blc-log.txt
-						$log_directory = self::get_default_log_directory();
-						$log_file      = $log_directory . '/' . self::get_default_log_basename();
-
-						//Attempt to create the log directory.
-						if (!is_dir($log_directory)) {
-							if (mkdir($log_directory, 0750)) {
-								//Add a .htaccess to hide the log file from site visitors.
-								file_put_contents($log_directory . '/.htaccess', 'Deny from all');
-							}
-						}
-					}
-
-					$this->conf->options['log_file']     = $log_file;
-					$this->conf->options['clear_log_on'] = strval($cleanPost['clear_log_on']);
-
-					// Attempt to create the log file if not already there.
-					if (!is_file($log_file)) {
-						file_put_contents($log_file, '');
-					}
-
-					//The log file must be writable.
-					if (!is_writable($log_file) || !is_file($log_file)) {
-						$this->conf->options['logging_enabled'] = false;
-					}
+				if (!$log_file) {
+					$log_file = self::checkAndCreateFile(blcConfigurationManager::get_default_log_directory() . '/' . blcConfigurationManager::get_default_log_basename());
 				}
+				if (!$log_file) {
+					$this->conf->options['logging_enabled'] = false;
+				} else {
+					$this->conf->options['log_file']     = $log_file;
+				}
+
+
+				$cookie_jar       = self::checkAndCreateFile($cleanPost['cookie_jar']);
+
+				if (!$cookie_jar) {
+					$cookie_jar = self::checkAndCreateFile(blcConfigurationManager::get_default_log_directory() . '/' . blcConfigurationManager::get_default_cookie_basename());
+				}
+
+				if (!$cookie_jar) {
+					$this->conf->options['cookies_enabled'] = false;
+				} else {
+					$this->conf->options['cookie_jar']     = $cookie_jar;
+				}
+
+
 
 				//Make settings that affect our Cron events take effect immediately
 				$this->setup_cron_events();
@@ -1586,36 +1560,19 @@ if (!class_exists('wsBrokenLinkChecker')) {
 											</p>
 										</td>
 									</tr>
-
 									<tr valign="top">
 										<th scope="row"><?php _e('Log file location', 'broken-link-checker'); ?></th>
 										<td>
-
 											<div class="blc-logging-options">
-
 												<p>
-													<label>
-														<input type="radio" name="custom_log_file_enabled" value="" <?php checked(!$this->conf->options['custom_log_file_enabled']); ?>>
-														<?php echo _x('Default', 'log file location', 'broken-link-checker'); ?>
-													</label>
-													<br>
-													<span class="description">
-														<code>
-															<?php
-															echo self::get_default_log_directory(), '/', self::get_default_log_basename();
-															?>
-														</code>
+													<input type="text" name="log_file" id="log_file" size="90" value="<?php echo esc_attr($this->conf->options['log_file']); ?>">
+													<br /><span class="description">
+														<?php
+														_e('Leave blank for default location: ', 'broken-link-checker');
+														echo blcConfigurationManager::get_default_log_directory() . '/' . blcConfigurationManager::get_default_log_basename();
+														?>
 													</span>
 												</p>
-
-												<p>
-													<label>
-														<input type="radio" name="custom_log_file_enabled" value="1" <?php checked($this->conf->options['custom_log_file_enabled']); ?>>
-														<?php echo _x('Custom', 'log file location', 'broken-link-checker'); ?>
-													</label>
-													<br><input type="text" name="log_file" id="log_file" size="90" value="<?php echo esc_attr($this->conf->options['log_file']); ?>">
-												</p>
-
 											</div>
 										</td>
 									</tr>
@@ -1645,6 +1602,38 @@ if (!class_exists('wsBrokenLinkChecker')) {
 											</div>
 										</td>
 									</tr>
+
+									<tr valign="top">
+										<th scope="row"><?php _e('Cookies', 'broken-link-checker'); ?></th>
+										<td>
+											<p>
+												<label for='cookies_enabled'>
+													<input type="checkbox" name="cookies_enabled" id="cookies_enabled" <?php checked($this->conf->options['cookies_enabled']); ?> />
+													<?php _e('Enable Cookies', 'broken-link-checker'); ?>
+												</label>
+											</p>
+										</td>
+									</tr>
+
+
+									<tr valign="top">
+										<th scope="row"><?php _e('Cookie file location', 'broken-link-checker'); ?></th>
+										<td>
+
+											<div class="blc-cookie-options">
+												<p>
+													<input type="text" name="cookie_jar" id="cookie_jar" size="90" value="<?php echo esc_attr($this->conf->options['cookie_jar']); ?>">
+													<br /><span class="description">
+														<?php
+														_e('Leave blank for default location: ', 'broken-link-checker');
+														echo blcConfigurationManager::get_default_log_directory() . '/' . blcConfigurationManager::get_default_cookie_basename();
+														?>
+													</span>
+												</p>
+											</div>
+										</td>
+									</tr>
+
 
 									<tr valign="top">
 										<th scope="row"><?php _e('Forced recheck', 'broken-link-checker'); ?></th>
@@ -1677,6 +1666,35 @@ if (!class_exists('wsBrokenLinkChecker')) {
 		<?php
 			//The various JS for this page is stored in a separate file for the purposes readability.
 			require_once dirname($this->loader) . '/includes/admin/options-page-js.php';
+		}
+		private function checkAndCreateFile($input)
+		{
+
+			$log_file       = esc_url_raw(strval($input));
+			$file_type_data = wp_check_filetype($log_file);
+
+			if (substr($log_file, 0, 7) === 'phar://' || !isset($file_type_data['type']) || empty($file_type_data['type'])) {
+				$log_file = '';
+			}
+
+
+			if (!empty($log_file) && !file_exists($log_file)) {
+				if (!file_exists(dirname($log_file))) {
+					mkdir(dirname($log_file), 0750, true);
+				}
+				// Attempt to create the log file if not already there.
+				if (!is_file($log_file)) {
+					// Add a .htaccess to hide the log file from site visitors.
+					file_put_contents(dirname($log_file) . '/.htaccess', 'Deny from all');
+					file_put_contents($log_file, '');
+				}
+			}
+
+			//revert to default
+			if (!is_writable($log_file) || !is_file($log_file)) {
+				return false;
+			}
+			return $log_file;
 		}
 
 
@@ -2973,6 +2991,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 			//This reduces resource usage.
 			//(Disable when debugging or you won't get the FirePHP output)
 			if (
+				false &&
 				!headers_sent()
 				&& (defined('DOING_AJAX') && constant('DOING_AJAX'))
 				&& (!defined('BLC_DEBUG') || !constant('BLC_DEBUG'))
@@ -3208,6 +3227,7 @@ if (!class_exists('wsBrokenLinkChecker')) {
 					]
 				)
 			);
+			return  $wpdb->rows_affected;
 		}
 
 		/**
@@ -4539,18 +4559,6 @@ if (!class_exists('wsBrokenLinkChecker')) {
 		function load_language()
 		{
 			$this->is_textdomain_loaded = load_plugin_textdomain('broken-link-checker', false, basename(dirname($this->loader)) . '/languages');
-		}
-
-		protected static function get_default_log_directory()
-		{
-			$uploads = wp_upload_dir();
-
-			return $uploads['basedir'] . '/broken-link-checker';
-		}
-
-		protected static function get_default_log_basename()
-		{
-			return 'blc-log.txt';
 		}
 	} //class ends here
 

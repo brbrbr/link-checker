@@ -1,6 +1,6 @@
 <?php
 
-if ( ! class_exists( 'wsScreenOptions12' ) ) :
+
 
 	/**
 	 * Class for adding new panels to the "Screen Options" box.
@@ -116,7 +116,7 @@ if ( ! class_exists( 'wsScreenOptions12' ) ) :
 		 * @access private
 		 *
 		 * @param string $current
-		 * @param string $screen Screen object (undocumented).
+		 * @param object $screen Screen object (undocumented).
 		 * @return string The HTML code to append to "Screen Options"
 		 */
 		function append_screen_settings( $current, $screen ) {
@@ -261,7 +261,7 @@ if ( ! class_exists( 'wsScreenOptions12' ) ) :
 	}
 	$ws_screen_options_versions['1.3'] = 'wsScreenOptions13';
 
-endif;
+
 
 if ( ! function_exists( 'add_screen_options_panel' ) ) {
 

@@ -5,7 +5,7 @@
  * @copyright 2009
  */
 
-if ( ! class_exists( 'blcLinkInstance' ) ) {
+
 	class blcLinkInstance {
 
 		//Object state
@@ -629,5 +629,5 @@ if ( ! class_exists( 'blcLinkInstance' ) ) {
 
 		return ( false !== $rez ) && ( false !== $rez2 );
 	}
-}//class_exists
+
 

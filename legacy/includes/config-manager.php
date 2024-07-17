@@ -5,7 +5,6 @@
  * @copyright 2009
  */
 
-if ( ! class_exists( 'blcConfigurationManager' ) ) {
 
 	class blcConfigurationManager {
 
@@ -219,4 +218,4 @@ if ( ! class_exists( 'blcConfigurationManager' ) ) {
 		return $GLOBALS['blc_config_manager'];
 	}
 
-}
+

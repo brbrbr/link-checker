@@ -5,7 +5,7 @@
  * @copyright 2010
  */
 
-if (!class_exists('blcLink')) {
+
 
 	define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
 	define('BLC_LINK_STATUS_OK', 'ok');
@@ -1135,7 +1135,7 @@ if (!class_exists('blcLink')) {
 			return preg_replace('@\?[^#]*?(#|$)@', '$1', $url);
 		}
 	}
-} //class_exists
+
 
 /**
  * Remove orphaned links that have no corresponding instances.

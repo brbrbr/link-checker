@@ -7,7 +7,7 @@
  * @access public
  */
 
-if (!class_exists('blcTablePrinter')) {
+
 
 	class blcTablePrinter
 	{
@@ -952,4 +952,4 @@ if (!class_exists('blcTablePrinter')) {
 <?php
 		}
 	}
-} // class_exists.
+

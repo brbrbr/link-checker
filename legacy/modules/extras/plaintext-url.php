@@ -13,9 +13,7 @@ ModuleLazyInit: true
 ModulePriority: 800
 */
 
-if ( ! class_exists( 'blcPlaintextUrlBase' ) ) {
-	require_once 'plaintext-url-parser-base.php';
-}
+
 
 class blcPlaintextURL extends blcPlaintextUrlBase {
 

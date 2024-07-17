@@ -6,7 +6,7 @@
  */
 
 
-if ( ! class_exists( 'wsScreenMetaLinks11' ) ) :
+
 
 	//Load JSON functions for PHP < 5.2
 
@@ -242,28 +242,7 @@ if ( ! class_exists( 'wsScreenMetaLinks11' ) ) :
 			}
 		}
 
-		/**
-		 * Back-wards compatible json_encode(). Used to encode link data before
-		 * passing it to the JavaScript that actually creates the links.
-		 *
-		 * @param mixed $data
-		 * @return string
-		 */
-		function json_encode( $data ) {
-			if ( function_exists( 'json_encode' ) ) {
-				return json_encode( $data );
-			}
-			if ( class_exists( 'Services_JSON' ) ) {
-				$json = new Services_JSON();
-				return( $json->encodeUnsafe( $data ) );
-			} elseif ( class_exists( 'Moxiecode_JSON' ) ) {
-				$json = new Moxiecode_JSON();
-				return $json->encode( $data );
-			} else {
-				trigger_error( 'No JSON parser available', E_USER_ERROR );
-				return null;
-			}
-		}
+	
 
 	}
 
@@ -273,7 +252,7 @@ if ( ! class_exists( 'wsScreenMetaLinks11' ) ) :
 	}
 	$ws_screen_meta_links_versions['1.1'] = 'wsScreenMetaLinks11';
 
-endif;
+
 
 /**
  * Add a new link to the screen meta area.

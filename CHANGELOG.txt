@@ -1,0 +1,21 @@
+/**
+ * Changelog
+ *
+ * @package         Broken Link Checker
+ *
+ * @author          Bram Brambring <info@brokenlinkchecker.dev>
+ * @link            https://brokenlinkchecker.dev/wordpress/broken-link-checker
+ * @copyright       Copyright © 2023  - 2024 brambring.nl - All Rights Reserved
+ * @license         GNU General Public License version 3 or later
+ * This is the change log for the forked version of the broken-link-checker
+ */
+/**
+ * + Addition
+ * - Removal
+ * ^ Change
+ * # Fix
+ * ! Security
+ * L Language
+ * N Note
+
+2.3.0.6471

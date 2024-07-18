@@ -572,7 +572,7 @@ class blcLinkQuery
 		if ($params['count_only']) {
 			//Only get the number of matching links.
 			$q = "
-				SELECT SQL_NO_CACHE COUNT(*)
+				SELECT  COUNT(*)
 	
 					FROM
 						{$wpdb->prefix}blc_links AS links
@@ -584,7 +584,7 @@ class blcLinkQuery
 		}
 
 		//Select the required links.
-		$q = "SELECT SQL_NO_CACHE
+		$q = "SELECT 
 				 links.*
 			  FROM
 				 {$wpdb->prefix}blc_links AS links

@@ -93,7 +93,7 @@ if ( ! defined( 'BLC_DATABASE_VERSION' ) ) {
 define('BLC_DATABASE_VERSION', 20);
 }
 
-
+require_once 'autoloader.php';
 /**
  * Run plugin activation hook to setup plugin.
  *

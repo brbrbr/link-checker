@@ -7,6 +7,7 @@
  */
 
 
+use Blc\Component\Blc\Administrator\Blc\Includes\WPMutex;
 
 // To prevent conflicts, only one version of the plugin can be activated at any given time.
 if (defined('BLC_ACTIVE')) {
@@ -145,7 +146,7 @@ if (defined('BLC_ACTIVE')) {
 				if (BLC_DATABASE_VERSION !== $blc_config_manager->options['current_db_version']) {
 
 					require_once BLC_DIRECTORY_LEGACY . '/includes/admin/db-upgrade.php';
-					require_once BLC_DIRECTORY_LEGACY . '/includes/wp-mutex.php';
+				
 
 					if (WPMutex::acquire('blc_dbupdate')) {
 						blcDatabaseUpgrader::upgrade_database();

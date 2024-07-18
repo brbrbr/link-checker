@@ -8,11 +8,11 @@
  * @package broken-link-checker
  */
 
-
+use Blc\Component\Blc\Administrator\Blc\Includes\WPMutex;
 
 require_once  BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/wp-mutex.php';
+
 require_once BLC_DIRECTORY_LEGACY . '/includes/transactions-manager.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/class-updateplugin.php';
 
@@ -94,7 +94,7 @@ class wsBrokenLinkChecker
 	public function __construct()
 	{
 
-
+$this->acquire_lock();
 		static $method_called = false;
 
 		$this->conf        = blc_get_configuration();
@@ -117,7 +117,7 @@ class wsBrokenLinkChecker
 		add_action('admin_menu', array($this, 'admin_menu'));
 
 
-		$this->update = new WPMUDEV_BLC\Core\Utils\UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
+		$this->update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
 
 		$this->is_settings_tab = $this->is_settings_tab();
 

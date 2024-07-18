@@ -1,6 +1,6 @@
 <?php
 
-namespace WPMUDEV_BLC\Core\Utils;
+
 
 class UpdatePlugin
 {

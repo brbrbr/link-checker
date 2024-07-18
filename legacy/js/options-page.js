@@ -24,10 +24,15 @@ jQuery(function ($) {
 		).fail(
 			() => $('#wsblc_full_status').html(__('[ Network error ]', 'broken-link-checker'))
 		).always(
-			() => setTimeout(blcUpdateStatus, 10000)
+			//This ensure that the request do not pile up ( versus setInterval )
+			 () => setTimeout(blcUpdateStatus, 10000)
 		);
+
 	}
 	blcUpdateStatus();
+
+
+
 
 	//Refresh the avg. load display every 10 seconds
 	function blcUpdateLoad() {
@@ -38,11 +43,11 @@ jQuery(function ($) {
 			}
 		).done(
 			data => $('#wsblc_current_load').html(data)
-
 		).fail(
 			() => $('#wsblc_current_load').html(__('[ Network error ]', 'broken-link-checker'))
 		).always(
-			() => setTimeout(blcUpdateLoad, 10000)
+			//This ensure that the request do not pile up ( versus setInterval )
+			 () => setTimeout(blcUpdateLoad, 10000)
 		);
 	}
 	//Only do it if load limiting is available on this server, though.

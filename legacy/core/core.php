@@ -227,7 +227,7 @@ class wsBrokenLinkChecker
 				//(Re)starts the background worker thread
 				function blcDoWork() {
 					$.post(
-						"<?php echo esc_url(admin_url('admin-ajax.php')); ?>", {
+						ajaxurl, {
 							'action': 'blc_work',
 							'_ajax_nonce': '<?php echo esc_js($nonce); ?>'
 						}
@@ -276,7 +276,7 @@ class wsBrokenLinkChecker
 		<p id='wsblc_activity_box'><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
 		<script type='text/javascript'>
 			jQuery(function($) {
-				var blc_do_autoexpanded = <?php echo ($this->conf->options['autoexpand_widget']??1)?'true':'false';?>;
+				var blc_do_autoexpanded = <?php echo ($this->conf->options['autoexpand_widget'] ?? 1) ? 'true' : 'false'; ?>;
 
 				function blcDashboardStatus() {
 					$.ajax({
@@ -290,23 +290,26 @@ class wsBrokenLinkChecker
 						data => {
 							if (data && (typeof(data.text) != 'undefined')) {
 								$('#wsblc_activity_box').html(data.text);
-									//Expand the widget if there are broken links.
-									//Do this only once per pageload so as not to annoy the user.
-									if (blc_do_autoexpanded && (data.status.broken_links > 0)) {
-										$('#blc_dashboard_widget.postbox').removeClass('closed');
-										blc_do_autoexpanded = false;
-									}
+								//Expand the widget if there are broken links.
+								//Do this only once per pageload so as not to annoy the user.
+								if (blc_do_autoexpanded && (data.status.broken_links > 0)) {
+									$('#blc_dashboard_widget.postbox').removeClass('closed');
+									blc_do_autoexpanded = false;
+								}
 							} else {
 								$('#wsblc_activity_box').html(__('[ Network error ]', 'broken-link-checker'))
 							}
 						}
 					).fail(
 						() => $('#wsblc_activity_box').html(__('[ Network error ]', 'broken-link-checker'))
-					);;
+					).always(
+						//This ensure that the request do not pile up ( versus setInterval )
+						() => setTimeout(blcDashboardStatus, 5 * 1000)
+					);
 
 				}
 				blcDashboardStatus();
-				setInterval(blcDashboardStatus, 5 * 1000)
+
 
 			});
 		</script>

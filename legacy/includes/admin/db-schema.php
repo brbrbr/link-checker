@@ -143,6 +143,7 @@ if (!function_exists('blc_get_db_schema')) {
 		PRIMARY KEY (`instance_id`),
 		KEY `link_id` (`link_id`),
 		KEY `source_id` (`container_type`, `container_id`),
+		KEY `lpc` (`link_id`,`parser_type`,`container_type`),
 		KEY `parser_type` (`parser_type`)
 	) {$charset_collate};
 

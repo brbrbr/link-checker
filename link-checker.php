@@ -90,7 +90,7 @@ if ( ! defined( 'BLC_PLUGIN_FILE_LEGACY' ) ) {
 
 if ( ! defined( 'BLC_DATABASE_VERSION' ) ) {
 
-define('BLC_DATABASE_VERSION', 19);
+define('BLC_DATABASE_VERSION', 20);
 }
 
 

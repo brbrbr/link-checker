@@ -5,6 +5,7 @@
  * @copyright 2010
  */
 
+ use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
 
 
 /**

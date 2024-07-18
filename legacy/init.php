@@ -8,6 +8,10 @@
 
 
 use Blc\Component\Blc\Administrator\Blc\Includes\WPMutex;
+use Blc\Component\Blc\Administrator\Blc\Includes\blcFileLogger;
+use Blc\Component\Blc\Administrator\Blc\Includes\blcDummyLogger;
+use Blc\Component\Blc\Administrator\Blc\Includes\blcCachedOptionLogger;
+
 
 // To prevent conflicts, only one version of the plugin can be activated at any given time.
 if (defined('BLC_ACTIVE')) {
@@ -67,7 +71,7 @@ if (defined('BLC_ACTIVE')) {
 					Logging
 	 */
 
-	require_once  BLC_DIRECTORY_LEGACY . '/includes/logger.php';
+
 
 	$blc_config_manager = blc_get_configuration();
 	global $blclog;
@@ -158,7 +162,6 @@ if (defined('BLC_ACTIVE')) {
 				require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
 				require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 				require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
-				require_once BLC_DIRECTORY_LEGACY . '/includes/utility-class.php';
 				// Load the module subsystem
 				require_once BLC_DIRECTORY_LEGACY . '/includes/modules.php';
 

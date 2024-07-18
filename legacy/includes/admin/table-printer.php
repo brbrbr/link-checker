@@ -7,6 +7,7 @@
  * @access public
  */
 
+ use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
 
 
 class blcTablePrinter

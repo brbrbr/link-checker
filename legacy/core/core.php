@@ -11,7 +11,8 @@
 use Blc\Component\Blc\Administrator\Blc\Includes\WPMutex;
 use Blc\Component\Blc\Administrator\Blc\Includes\UpdatePlugin;
 use Blc\Component\Blc\Administrator\Blc\Includes\TransactionManager;
-
+use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Component\Blc\Administrator\Blc\Includes\blcCachedOptionLogger;
 
 require_once  BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';

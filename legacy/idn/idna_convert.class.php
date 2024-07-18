@@ -882,7 +882,7 @@ class idna_convert {
 	/**
 	 * Convert UCS-4 string into UTF-8 string
 	 * See _utf8_to_ucs4() for details
-	 * @param string  $input
+	 * @param array<string>  $input
 	 * @return string
 	 */
 	private function _ucs4_to_utf8( $input ) {

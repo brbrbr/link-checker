@@ -2,6 +2,7 @@
 
 
 use Blc\Component\Blc\Administrator\Blc\Includes\TransactionManager;
+use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
 /**
  * The base class for link container managers.
  *

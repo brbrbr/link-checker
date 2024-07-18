@@ -5,15 +5,12 @@
  * @copyright 2010
  */
 
- namespace Blc\Component\Blc\Administrator\Blc\Includes;
+namespace Blc\Component\Blc\Administrator\Blc\Includes;
 
 //Include the internationalized domain name converter (requires PHP 5)
 
 require_once BLC_DIRECTORY_LEGACY . '/idn/idna_convert.class.php';
 require_once BLC_DIRECTORY_LEGACY . '/idn/transcode_wrapper.php';
-
-
-
 
 
 class blcUtility

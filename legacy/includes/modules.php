@@ -4,11 +4,11 @@
  * Load all files pertaining to BLC's module subsystem
  */
 
- require_once 'module-manager.php';
- require_once 'module-base.php';
+require_once 'module-manager.php';
+require_once 'module-base.php';
 
- require_once 'containers.php';
- require_once 'checkers.php';
+require_once 'containers.php';
+require_once 'checkers.php';
 require_once 'parsers.php';
 
 $blc_module_manager = blcModuleManager::getInstance(
@@ -34,4 +34,4 @@ $blc_module_manager = blcModuleManager::getInstance(
 require_once 'any-post.php';
 
 //Let other plugins register virtual modules.
-do_action( 'blc_register_modules', $blc_module_manager );
+do_action('blc_register_modules', $blc_module_manager);

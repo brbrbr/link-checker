@@ -12,6 +12,8 @@
  * ModulePriority: 1000
 */
 
+use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+
 class blcHTMLLink extends blcParser {
 	var $supported_formats = array( 'html' );
 

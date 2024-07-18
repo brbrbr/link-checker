@@ -1,11 +1,15 @@
 <?php
 
+use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Component\Blc\Administrator\Blc\Includes\blcCachedOptionLogger;
+
+
 if (get_option('blc_activation_enabled')) {
 	return;
 }
 require_once BLC_DIRECTORY_LEGACY . '/includes/config-manager.php';
 
-require_once BLC_DIRECTORY_LEGACY . '/includes/logger.php';
+
 
 $blc_config_manager = blc_get_configuration();
 
@@ -13,7 +17,7 @@ $blc_config_manager = blc_get_configuration();
 global  $wpdb,$blclog ;
 $queryCnt = $wpdb->num_queries;
 
-require_once BLC_DIRECTORY_LEGACY . '/includes/utility-class.php';
+
 
 //Completing the installation/upgrade is required for the plugin to work, so make sure
 //the script doesn't get aborted by (for example) the browser timing out.
@@ -48,7 +52,7 @@ $blclog->info('Installation/update begins.');
 require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
-//require_once BLC_DIRECTORY_LEGACY . '/includes/utility-class.php';
+
 
 //Load the module subsystem
 require_once BLC_DIRECTORY_LEGACY . '/includes/modules.php';

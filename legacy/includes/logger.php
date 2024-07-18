@@ -1,6 +1,6 @@
 <?php
 
-
+namespace Blc\Component\Blc\Administrator\Blc\Includes;
 
 define('BLC_LEVEL_DEBUG', 0);
 define('BLC_LEVEL_INFO', 1);

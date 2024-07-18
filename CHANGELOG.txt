@@ -18,6 +18,8 @@
  * L Language
  * N Note
 
+2.3.0.xxxx
+ ^ Changed order of columns in link overview. Makes more sence to have the anchor next to the source
 2.3.0.6489
  - Removed the Link Suggestions. These are just links to archive.org. You can do better.
  - Removed the 'Check external links' advertisement from the settings menu.

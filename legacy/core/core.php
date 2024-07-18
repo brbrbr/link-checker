@@ -8,19 +8,7 @@
  * @package broken-link-checker
  */
 
-if (!function_exists('microtime_float')) {
-	/**
-	 * Calcualate microtime_float
-	 *
-	 * @since 1.0.0
-	 */
-	function microtime_float()
-	{
-		list($usec, $sec) = explode(' ', microtime());
 
-		return ((float) $usec + (float) $sec);
-	}
-}
 
 require_once  BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
@@ -500,7 +488,6 @@ class wsBrokenLinkChecker
 	}
 	public function admin_menu()
 	{
-
 
 		if (current_user_can('manage_options')) {
 			add_filter('plugin_action_links', array($this, 'plugin_action_links'), 10, 2);
@@ -1982,7 +1969,7 @@ class wsBrokenLinkChecker
 			echo '<div id="message" class="' . $msg_class . ' fade"><p>' . $message . '</p></div>';
 		}
 
-		$start_time = microtime_float();
+		$start_time =microtime(true);
 
 		//Load custom filters, if any
 		$blc_link_query->load_custom_filters();
@@ -2049,7 +2036,7 @@ class wsBrokenLinkChecker
 					$this->conf->options['table_compact']
 				);
 			}
-			printf('<!-- Total elapsed : %.4f seconds -->', microtime_float() - $start_time);
+			printf('<!-- Total elapsed : %.4f seconds -->', microtime(true) - $start_time);
 
 			//Load assorted JS event handlers and other shinies
 			require_once dirname($this->loader) . '/includes/admin/links-page-js.php';
@@ -2786,12 +2773,12 @@ class wsBrokenLinkChecker
 
 	function start_timer()
 	{
-		$this->execution_start_time = microtime_float();
+		$this->execution_start_time =microtime(true);
 	}
 
 	function execution_time()
 	{
-		return microtime_float() - $this->execution_start_time;
+		return microtime(true) - $this->execution_start_time;
 	}
 
 	/**
@@ -3174,7 +3161,7 @@ class wsBrokenLinkChecker
 			$q = "SELECT DISTINCT links.*\n";
 		}
 		$q .= "FROM {$wpdb->prefix}blc_links AS links
-				INNER JOIN {$wpdb->prefix}blc_instances AS instances USING(link_id)
+				INNER JOIN {$wpdb->prefix}blc_instances AS instances USING (link_id)
 				WHERE
 					(
 						( last_check_attempt < %s )

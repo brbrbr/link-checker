@@ -315,9 +315,9 @@ class blcCurlHttp extends blcHttpCheckerBase
 		curl_setopt_array($ch, apply_filters('broken-link-checker-curl-options', $options));
 
 		// Execute the request
-		$start_time                = microtime_float();
+		$start_time                =microtime(true);
 		$content                   = curl_exec($ch);
-		$measured_request_duration = microtime_float() - $start_time;
+		$measured_request_duration = microtime(true) - $start_time;
 		$blclog->debug(sprintf('HTTP request took %.3f seconds', $measured_request_duration));
 
 		$info = curl_getinfo($ch);

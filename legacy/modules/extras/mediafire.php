@@ -59,9 +59,9 @@ class blcMediaFireChecker extends blcChecker {
 
 		//Since MediaFire doesn't have an API, we just send a HEAD request
 		//and try do divine the file state from the response headers.
-		$start                      = microtime_float();
+		$start                      =microtime(true)
 		$rez                        = $this->head( $url );
-		$result['request_duration'] = microtime_float() - $start;
+		$result['request_duration'] = microtime(true) - $start;
 
 		if ( is_wp_error( $rez ) ) {
 

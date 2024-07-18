@@ -18,4 +18,6 @@
  * L Language
  * N Note
 
-2.3.0.6471
+2.3.0.6484
+ ^ Optimized link query with EXISTS
+ ^ replaced microtime_float with native microtime(true);

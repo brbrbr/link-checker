@@ -101,9 +101,9 @@ class blcRapidShareChecker extends blcChecker {
 		$conf = blc_get_configuration();
 		$args = array( 'timeout' => $conf->options['timeout'] );
 
-		$start                      = microtime_float();
+		$start                      =microtime(true)
 		$response                   = wp_remote_get( $api_url, $args );
-		$result['request_duration'] = microtime_float() - $start;
+		$result['request_duration'] = microtime(true) - $start;
 
 		$file_status      = 0;
 		$file_status_text = '';

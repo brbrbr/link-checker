@@ -173,7 +173,6 @@
 			'notification_email_address'       => '', // If set, send email notifications to this address instead of the admin.
 			'notification_schedule'            => apply_filters('blc_notification_schedule_filter', 'daily'), // How often (at most) notifications will be sent. Possible values : 'daily', 'weekly'. There is no option for this so we've added a fitler for it.
 			'last_notification_sent'           => 0, // When the last email notification was sent (Unix timestamp)
-			'suggestions_enabled'              => true, // Whether to suggest alternative URLs for broken links.
 			'warnings_enabled'                 => true, // Try to automatically detect temporary problems and false positives, and report them as "Warnings" instead of broken links.
 			'server_load_limit'                => null, // Stop parsing stuff & checking links if the 1-minute load average goes over this value. Only works on Linux servers. 0 = no limit.
 			'enable_load_limit'                => true, // Enable/disable load monitoring.

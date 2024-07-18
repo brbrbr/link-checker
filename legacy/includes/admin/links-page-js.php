@@ -386,13 +386,7 @@
 				}
 			}
 
-			//Populate the list of URL replacement suggestions.
-			if (canEditUrl && blc_suggestions_enabled && (master.hasClass('link-status-error') || master.hasClass('link-status-warning'))) {
-				editRow.find('.blc-url-replacement-suggestions').show();
-				var suggestionList = editRow.find('.blc-suggestion-list');
-				findReplacementSuggestions(linkUrl, suggestionList);
-			}
-
+	
 			editRow.find('.blc-update-link-button').prop('disabled', !(canEditUrl || canEditText));
 
 			//Make the editor span the entire width of the table.
@@ -417,55 +411,7 @@
 			editRow.remove();
 		}
 
-		/**
-		 * Find possible replacements for a broken link and display them in a list.
-		 *
-		 * @param {String} url The current link URL.
-		 * @param suggestionList jQuery object that represents a list element.
-		 */
-		function findReplacementSuggestions(url, suggestionList) {
-			var searchingText = '<?php echo esc_js(_x('Searching...', 'link suggestions', 'broken-link-checker')); ?>';
-			var noSuggestionsText = '<?php echo esc_js(_x('No suggestions available.', 'link suggestions', 'broken-link-checker')); ?>';
-			var iaSuggestionName = '<?php echo esc_js(_x('Archived page from %s (via the Wayback Machine)', 'link suggestions', 'broken-link-checker')); ?>';
 
-			suggestionList.empty().append('<li>' + searchingText + '</li>');
-
-			var suggestionTemplate = $('#blc-suggestion-template').find('li').first();
-
-			//Check the Wayback Machine for an archived version of the page.
-			$.getJSON(
-				'https://archive.org/wayback/available?callback=?', {
-					url: url
-				},
-
-				function(data) {
-					suggestionList.empty();
-
-					//Check if there are any results.
-					if (!data || !data.archived_snapshots || !data.archived_snapshots.closest || !data.archived_snapshots.closest.available) {
-						suggestionList.append('<li>' + noSuggestionsText + '</li>');
-						return;
-					}
-
-					var snapshot = data.archived_snapshots.closest;
-
-					//Convert the timestamp from YYYYMMDDHHMMSS to ISO 8601 date format.
-					var readableTimestamp = snapshot.timestamp.substr(0, 4) +
-						'-' + snapshot.timestamp.substr(4, 2) +
-						'-' + snapshot.timestamp.substr(6, 2);
-					var name = sprintf(iaSuggestionName, readableTimestamp);
-
-					//Enforce HTTPS by default
-					snapshot.url = (snapshot.url).replace(new RegExp("^http:", "m"), "https:");
-
-					//Display the suggestion.
-					var item = suggestionTemplate.clone();
-					item.find('.blc-suggestion-name a').text(name).attr('href', snapshot.url);
-					item.find('.blc-suggestion-url').text(snapshot.url);
-					suggestionList.append(item);
-				}
-			);
-		}
 
 		/**
 		 * Call our PHP backend and tell it to edit all occurrences of particular link.

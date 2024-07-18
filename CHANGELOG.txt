@@ -18,7 +18,9 @@
  * L Language
  * N Note
 
-2.3.0.6484
+2.3.0.6489
+ - Removed the Link Suggestions. These are just links to archive.org. You can do better.
+ - Removed the 'Check external links' advertisement from the settings menu.
  ^ Reworked the status display. Uses one single script (and request) for all updates of full statusses and the bubbles. Added option to show/hide the bubbles to the settings
- ^ Optimized link query with EXISTS
+ ^ Optimized link queries (EXISTS instead of JOIN (+GROUP BY), added table index to a frequently used column combination and some smaller tweaks). That should improve query time and therefor website performance.
  ^ replaced microtime_float with native microtime(true);

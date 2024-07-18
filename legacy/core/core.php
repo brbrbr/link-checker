@@ -648,7 +648,7 @@ class wsBrokenLinkChecker
 
 			$this->conf->options['nofollow_broken_links'] = !empty($_POST['nofollow_broken_links']);
 
-			$this->conf->options['suggestions_enabled'] = !empty($_POST['suggestions_enabled']);
+		
 			$this->conf->options['show_link_count_bubble'] = !empty($_POST['show_link_count_bubble']);
 			$this->conf->options['show_widget_count_bubble'] = !empty($_POST['show_widget_count_bubble']);
 
@@ -1059,31 +1059,6 @@ class wsBrokenLinkChecker
 								</tr>
 
 								<tr valign="top">
-									<th scope="row">
-										<?php _ex('Control external links', 'settings page', 'broken-link-checker'); ?>
-									</th>
-									<td>
-										<p>
-											<?php
-											if (defined('TEST_WPEL_PLUGIN_FILE')) {
-												printf(
-													__('Configure <a target="_blank" href="%s">External Links</a> settings.', 'broken-link-checker'),
-													admin_url('admin.php?page=wpel-settings-page')
-												);
-											} else {
-												printf(
-													__('Install the free <a href="%s" class="thickbox open-plugin-details-modal">External Links plugin</a> to control if external links open in a new tab, and their nofollow, noopener and UGC options.', 'broken-link-checker'),
-													'plugin-install.php?fix-install-button=1&tab=plugin-information&plugin=wp-external-links&TB_iframe=true&width=772&height=691'
-												);
-												echo '<br>';
-												esc_html_e("It's used on over 80,000 sites just like yours.", 'broken-link-checker');
-											}
-											?>
-										</p>
-									</td>
-								</tr>
-
-								<tr valign="top">
 									<th scope="row"><?php _e('Link tweaks', 'broken-link-checker'); ?></th>
 									<td>
 										<p style="margin-top: 0; margin-bottom: 0.5em;">
@@ -1186,16 +1161,6 @@ class wsBrokenLinkChecker
 											);
 											?>
 										</p>
-									</td>
-								</tr>
-
-								<tr valign="top">
-									<th scope="row"><?php echo _x('Suggestions', 'settings page', 'broken-link-checker'); ?></th>
-									<td>
-										<label>
-											<input type="checkbox" name="suggestions_enabled" id="suggestions_enabled" <?php checked($this->conf->options['suggestions_enabled']); ?> />
-											<?php _e('Suggest alternatives to broken links', 'broken-link-checker'); ?>
-										</label>
 									</td>
 								</tr>
 
@@ -1997,7 +1962,6 @@ class wsBrokenLinkChecker
 			var blc_current_filter = '<?php echo $filter_id; ?>';
 			var blc_is_broken_filter = <?php echo $current_filter['is_broken_filter'] ? 'true' : 'false'; ?>;
 			var blc_current_base_filter = '<?php echo esc_js($current_filter['base_filter']); ?>';
-			var blc_suggestions_enabled = <?php echo $this->conf->options['suggestions_enabled'] ? 'true' : 'false'; ?>;
 		</script>
 
 		<div class="wrap">

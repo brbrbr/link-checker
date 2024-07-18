@@ -4,7 +4,7 @@
  *
  * @link              https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * @since             1.0.0
- * @package           broken-link-checker
+ * @package           link-checker
  *
  * @wordpress-plugin
  * Plugin Name:       Broken Link Checker - Fork
@@ -15,7 +15,7 @@
  * Requires PHP:      8.1
  * Author:            Bram Brambring / WPMU DEV
  * Author URI:        https://brambring.nl/
- * Update URI:        https://downloads.brokenlinkchecker.dev/broken-link-checker.json
+ * Update URI:        https://downloads.brokenlinkchecker.dev/link-checker.json
  * Text Domain:       broken-link-checker
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html

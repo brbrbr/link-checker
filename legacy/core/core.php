@@ -145,7 +145,6 @@ class wsBrokenLinkChecker
 
 		// AJAXy hooks.
 		add_action('wp_ajax_blc_full_status', array($this, 'ajax_full_status'));
-		add_action('wp_ajax_blc_dashboard_status', array($this, 'ajax_dashboard_status'));
 		add_action('wp_ajax_blc_work', array($this, 'ajax_work'));
 		add_action('wp_ajax_blc_discard', array($this, 'ajax_discard'));
 		add_action('wp_ajax_blc_edit', array($this, 'ajax_edit'));
@@ -277,35 +276,37 @@ class wsBrokenLinkChecker
 		<p id='wsblc_activity_box'><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
 		<script type='text/javascript'>
 			jQuery(function($) {
-				var blc_was_autoexpanded = false;
+				var blc_do_autoexpanded = <?php echo ($this->conf->options['autoexpand_widget']??1)?'true':'false';?>;
 
 				function blcDashboardStatus() {
-					$.getJSON(
-						"<?php echo esc_url(admin_url('admin-ajax.php')); ?>", {
-							'action': 'blc_dashboard_status',
-							'random': Math.random()
+					$.ajax({
+						dataType: "json",
+						url: ajaxurl,
+						cache: false,
+						data: {
+							'action': 'blc_full_status',
 						},
-						function(data) {
+					}).done(
+						data => {
 							if (data && (typeof(data.text) != 'undefined')) {
 								$('#wsblc_activity_box').html(data.text);
-								<?php if ($this->conf->options['autoexpand_widget']) { ?>
 									//Expand the widget if there are broken links.
 									//Do this only once per pageload so as not to annoy the user.
-									if (!blc_was_autoexpanded && (data.status.broken_links > 0)) {
+									if (blc_do_autoexpanded && (data.status.broken_links > 0)) {
 										$('#blc_dashboard_widget.postbox').removeClass('closed');
-										blc_was_autoexpanded = true;
+										blc_do_autoexpanded = false;
 									}
-								<?php } ?>
 							} else {
-								$('#wsblc_activity_box').html('<?php esc_html_e('[ Network error ]', 'broken-link-checker'); ?>');
+								$('#wsblc_activity_box').html(__('[ Network error ]', 'broken-link-checker'))
 							}
-
-							setTimeout(blcDashboardStatus, 120 * 1000); //...update every two minutes
 						}
-					);
-				}
+					).fail(
+						() => $('#wsblc_activity_box').html(__('[ Network error ]', 'broken-link-checker'))
+					);;
 
-				blcDashboardStatus(); //Call it the first time
+				}
+				blcDashboardStatus();
+				setInterval(blcDashboardStatus, 5 * 1000)
 
 			});
 		</script>
@@ -504,6 +505,7 @@ class wsBrokenLinkChecker
 
 		$menu_title = __('Broken Links', 'broken-link-checker');
 		if ($this->conf->options['show_link_count_bubble']) {
+			//ALTER TABLE `{prefix}_blc_instances` ADD INDEX `lpc` (`link_id`, `parser_type`, `container_type`);
 			// To make it easier to notice when broken links appear, display the current number of
 			// broken links in a little bubble notification in the "Broken Links" menu.
 			// (Similar to how the number of plugin updates and unmoderated comments is displayed).
@@ -3313,16 +3315,7 @@ class wsBrokenLinkChecker
 		return $text;
 	}
 
-	/**
-	 * @return void
-	 * @uses wsBrokenLinkChecker::ajax_full_status()
-	 *
-	 */
-	function ajax_dashboard_status()
-	{
-		//Just display the full status.
-		$this->ajax_full_status();
-	}
+
 
 	/**
 	 * Output the current average server load (over the last one-minute period).

@@ -76,15 +76,6 @@ if ( ! defined( 'WPMUDEV_BLC_SCIPTS_VERSION' ) ) {
 	define( 'WPMUDEV_BLC_SCIPTS_VERSION', WPMUDEV_BLC_VERSION );
 }
 
-// SUI version number used in BLC_SHARED_UI_VERSION and enqueues.
-if ( ! defined( 'BLC_SHARED_UI_VERSION_NUMBER' ) ) {
-	define( 'BLC_SHARED_UI_VERSION_NUMBER', '2-12-24' );
-}
-
-// SUI version used in admin body class.
-if ( ! defined( 'BLC_SHARED_UI_VERSION' ) ) {
-	define( 'BLC_SHARED_UI_VERSION', 'sui-' . BLC_SHARED_UI_VERSION_NUMBER );
-}
 
 // Path to the plugin's legacy directory.
 if ( ! defined( 'BLC_DIRECTORY_LEGACY' ) ) {

@@ -16,8 +16,6 @@ class blcLinkQuery
 
 	var $valid_url_params = array();
 
-
-
 	function __construct()
 	{
 		//Init. the available native filters.
@@ -291,14 +289,11 @@ class blcLinkQuery
 	 */
 	function compile_search_params($params)
 	{
-		global $wpdb;
-		/** @var wpdb $wpdb */
-
-		//Track whether we'll need to left-join the instance table to run the query.
-		$join_instances = false;
+		
 
 		//Generate the individual clauses of the WHERE expression and store them in an array.
-		$pieces = array();
+		$pieces = [];
+		$exists = [];
 
 		//Convert parser and container type lists to arrays of valid values
 		$s_parser_type = array();
@@ -320,7 +315,7 @@ class blcLinkQuery
 		//Don't include links with instances that reference invalid (not currently loaded)
 		//containers and parsers (unless specifically told to also include invalid links).
 		if (empty($params['include_invalid'])) {
-			$join_instances = true;
+		
 
 			$module_manager    = blcModuleManager::getInstance();
 			$loaded_containers = array_keys($module_manager->get_active_by_category('container'));
@@ -343,14 +338,8 @@ class blcLinkQuery
 		if (!empty($s_parser_type)) {
 			$s_parser_type = array_map('trim', array_unique($s_parser_type));
 			$s_parser_type = array_map('esc_sql', $s_parser_type);
+			$exists[] = "instances.parser_type IN ('" . implode("', '", $s_parser_type) . "')";
 
-			if (count($s_parser_type) == 1) {
-				$pieces[] = sprintf("instances.parser_type = '%s'", reset($s_parser_type));
-			} else {
-				$pieces[] = "instances.parser_type IN ('" . implode("', '", $s_parser_type) . "')";
-			}
-
-			$join_instances = true;
 		}
 
 		//Container type should match the container_type column in the instance table.
@@ -358,20 +347,13 @@ class blcLinkQuery
 			//Sanitize for use in SQL
 			$s_container_type = array_map('trim', array_unique($s_container_type));
 			$s_container_type = array_map('esc_sql', $s_container_type);
-
-			if (count($s_container_type) == 1) {
-				$pieces[] = sprintf("instances.container_type = '%s'", reset($s_container_type));
-			} else {
-				$pieces[] = "instances.container_type IN ('" . implode("', '", $s_container_type) . "')";
-			}
-
-			$join_instances = true;
+			$exists[] = "instances.container_type IN ('" . implode("', '", $s_container_type) . "')";
+	
 		}
 
 		//A part of the WHERE expression can be specified explicitly
 		if (!empty($params['where_expr'])) {
 			$pieces[]       = $params['where_expr'];
-			$join_instances = $join_instances || (stripos($params['where_expr'], 'instances') !== false);
 		}
 
 		//List of allowed link ids (either an array or comma-separated)
@@ -398,9 +380,7 @@ class blcLinkQuery
 		if (!empty($params['s_link_text'])) {
 			$s_link_text = esc_sql($this->esc_like($params['s_link_text']));
 			$s_link_text = str_replace('*', '%', $s_link_text);
-
-			$pieces[]       = '(instances.link_text LIKE "%' . $s_link_text . '%")';
-			$join_instances = true;
+			$exists[]       = '(instances.link_text LIKE "%' . $s_link_text . '%")';
 		}
 
 		//URL - try to match both the initial URL and the final URL.
@@ -409,7 +389,6 @@ class blcLinkQuery
 		if (!empty($params['s_link_url'])) {
 			$s_link_url = esc_sql($this->esc_like($params['s_link_url']));
 			$s_link_url = str_replace('*', '%', $s_link_url);
-
 			$pieces[] = '(links.url LIKE "%' . $s_link_url . '%") OR ' .
 				'(links.final_url LIKE "%' . $s_link_url . '%")';
 		}
@@ -418,16 +397,14 @@ class blcLinkQuery
 		if (!empty($params['s_container_id'])) {
 			$s_container_id = intval($params['s_container_id']);
 			if (0 !== $s_container_id) {
-				$pieces[]       = "instances.container_id = $s_container_id";
-				$join_instances = true;
+				$exists[]       = "instances.container_id = $s_container_id";
 			}
 		}
 
 		//Link type can match either the the parser_type or the container_type.
 		if (!empty($params['s_link_type'])) {
 			$s_link_type    = esc_sql($params['s_link_type']);
-			$pieces[]       = "instances.parser_type = '$s_link_type' OR instances.container_type='$s_link_type'";
-			$join_instances = true;
+			$exists[]       = "instances.parser_type = '$s_link_type' OR instances.container_type='$s_link_type'";
 		}
 
 		//HTTP code - the user can provide a list of HTTP response codes and code ranges.
@@ -516,14 +493,12 @@ class blcLinkQuery
 		if (!empty($params['s_filter']) && isset($this->native_filters[$params['s_filter']])) {
 			$the_filter     = $this->native_filters[$params['s_filter']];
 			$extra_criteria = $this->compile_search_params($the_filter['params']);
-
 			$pieces         = array_merge($extra_criteria['where_exprs'], $pieces);
-			$join_instances = $join_instances || $extra_criteria['join_instances'];
 		}
 
 		return array(
 			'where_exprs'    => $pieces,
-			'join_instances' => $join_instances,
+			'exists'    => $exists,
 			'order_exprs'    => $order_exprs,
 		);
 	}
@@ -579,10 +554,13 @@ class blcLinkQuery
 		}
 
 		//Join the blc_instances table if it's required to perform the search.
-		$joins = '';
-		if ($criteria['join_instances']) {
-			$joins = "JOIN {$wpdb->prefix}blc_instances AS instances ON links.link_id = instances.link_id";
-		}
+		
+		if (\count($criteria['exists']) > 0 || stripos($where_expr, 'instances') !== false) {
+			$existsWhere = $criteria['exists'];
+			$existsWhere[]='links.link_id = instances.link_id';
+			$exists = "SELECT * FROM {$wpdb->prefix}blc_instances as instances WHERE (".join(' AND ', $existsWhere).")";
+			$where_expr  .= " AND EXISTS ( $exists ) ";
+		} 
 
 		//Optional sorting
 		if (!empty($criteria['order_exprs'])) {
@@ -594,35 +572,24 @@ class blcLinkQuery
 		if ($params['count_only']) {
 			//Only get the number of matching links.
 			$q = "
-				SELECT COUNT(*)
-				FROM (
-					SELECT 0
-
+				SELECT SQL_NO_CACHE COUNT(*)
+	
 					FROM
 						{$wpdb->prefix}blc_links AS links
-						$joins
-
 					WHERE
 						$where_expr
-
-				   GROUP BY links.link_id) AS foo";
+				  ";
 
 			return $wpdb->get_var($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 		}
 
 		//Select the required links.
-		$q = "SELECT
+		$q = "SELECT SQL_NO_CACHE
 				 links.*
-
 			  FROM
 				 {$wpdb->prefix}blc_links AS links
-				 $joins
-
 			  WHERE
 				 $where_expr
-
-			   GROUP BY links.link_id
-
 			   {$order_clause}"; //Note: would be a lot faster without GROUP BY
 
 		//Add the LIMIT clause

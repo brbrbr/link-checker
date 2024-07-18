@@ -734,13 +734,17 @@ class blcLinkQuery
 	 */
 	function print_filter_heading($current_filter)
 	{
+	
+			$brokenClass = $current_filter['is_broken_filter']?" filter-broken-link-count":'';
+		
 		echo '<h2>';
 		//Output a header matching the current filter
 		if ($current_filter['count'] > 0) {
-			echo $current_filter['heading'] . " (<span class='current-link-count'>{$current_filter['count']}</span>)";
+			echo $current_filter['heading'] ;
 		} else {
-			echo $current_filter['heading_zero'] . "<span class='current-link-count'></span>";
+			echo $current_filter['heading_zero'] ;
 		}
+		echo " (<span class='current-link-count  $brokenClass'>{$current_filter['count']}</span>)";
 		echo '</h2>';
 	}
 

@@ -4,35 +4,6 @@ jQuery(function ($) {
 	const { __, _x, _n, _nx } = wp.i18n;
 	$('#blc-tabs').tabs();
 
-	//Refresh the "Status" box every 10 seconds
-	function blcUpdateStatus() {
-		$.getJSON(
-			ajaxurl,
-			{
-				'action': 'blc_full_status',
-				'random': Math.random()
-			},
-
-		).done(
-			data => {
-				if (data && (typeof (data['text']) != 'undefined')) {
-					$('#wsblc_full_status').html(data.text);
-				} else {
-					$('#wsblc_full_status').html(__('[ Network error ]', 'broken-link-checker'));
-				}
-			}
-		).fail(
-			() => $('#wsblc_full_status').html(__('[ Network error ]', 'broken-link-checker'))
-		).always(
-			//This ensure that the request do not pile up ( versus setInterval )
-			 () => setTimeout(blcUpdateStatus, 10000)
-		);
-
-	}
-	blcUpdateStatus();
-
-
-
 
 	//Refresh the avg. load display every 10 seconds
 	function blcUpdateLoad() {

@@ -28,13 +28,9 @@ th.column-status {
 	width: 12em;
 }
 
-th.column-new-link-text {
 
-}
 
-th.column-used-in {
 
-}
 
 th.column-source {
 	width: 33%;
@@ -60,18 +56,7 @@ th.column-instance-count {
 	width: 10em;
 }
 
-/* Cells */
 
-td.column-new-url,
-td.column-used-in
-{
-	/*
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	-o-text-overflow: ellipsis;
-	*/
-}
 
 td.column-new-url .row-actions,
 td.column-url .row-actions
@@ -106,9 +91,7 @@ table.mini-status {
 	background-color: #E2E2E2;
 }
 
-.blc-permanently-broken {
 
-}
 
 .blc-permanently-broken-hl {
 	background-image: url("../images/red_highlight.png");

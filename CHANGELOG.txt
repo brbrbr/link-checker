@@ -19,5 +19,6 @@
  * N Note
 
 2.3.0.6484
+ ^ Reworked the status display. Uses one single script (and request) for all updates of full statusses and the bubbles. Added option to show/hide the bubbles to the settings
  ^ Optimized link query with EXISTS
  ^ replaced microtime_float with native microtime(true);

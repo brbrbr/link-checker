@@ -1,4 +1,5 @@
 <script type='text/javascript'>
+
 	function alterLinkCounter(factor, filterId) {
 		var counter;
 		if (filterId) {
@@ -13,14 +14,14 @@
 
 		if (blc_is_broken_filter) {
 			//Update the broken link count displayed beside the "Broken Links" menu
-			var menuBubble = jQuery('span.blc-menu-bubble');
+			var menuBubble = jQuery('span.blc-broken-count');
 			if (menuBubble.length > 0) {
 				cnt = parseInt(menuBubble.eq(0).html());
 				cnt = cnt + factor;
 				if (cnt > 0) {
 					menuBubble.html(cnt);
 				} else {
-					menuBubble.parent().hide();
+					menuBubble.hide();
 				}
 			}
 		}

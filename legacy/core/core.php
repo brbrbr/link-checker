@@ -260,47 +260,12 @@ class wsBrokenLinkChecker
 	 */
 	public function dashboard_widget()
 	{
+	if ($this->conf->options['show_widget_count_bubble'] ) {
+		$this->addStatusAssets();
+	}
 	?>
-		<p id='wsblc_activity_box'><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
-		<script type='text/javascript'>
-			jQuery(function($) {
-				var blc_do_autoexpanded = <?php echo ($this->conf->options['autoexpand_widget'] ?? 1) ? 'true' : 'false'; ?>;
+		<p id="wsblc_activity_box" class="blc_full_status"><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
 
-				function blcDashboardStatus() {
-					$.ajax({
-						dataType: "json",
-						url: ajaxurl,
-						cache: false,
-						data: {
-							'action': 'blc_full_status',
-						},
-					}).done(
-						data => {
-							if (data && (typeof(data.text) != 'undefined')) {
-								$('#wsblc_activity_box').html(data.text);
-								//Expand the widget if there are broken links.
-								//Do this only once per pageload so as not to annoy the user.
-								if (blc_do_autoexpanded && (data.status.broken_links > 0)) {
-									$('#blc_dashboard_widget.postbox').removeClass('closed');
-									blc_do_autoexpanded = false;
-								}
-							} else {
-								$('#wsblc_activity_box').html(__('[ Network error ]', 'broken-link-checker'))
-							}
-						}
-					).fail(
-						() => $('#wsblc_activity_box').html(__('[ Network error ]', 'broken-link-checker'))
-					).always(
-						//This ensure that the request do not pile up ( versus setInterval )
-						() => setTimeout(blcDashboardStatus, 5 * 1000)
-					);
-
-				}
-				blcDashboardStatus();
-
-
-			});
-		</script>
 	<?php
 	}
 
@@ -320,19 +285,19 @@ class wsBrokenLinkChecker
 			if (wp_verify_nonce($nonce, 'blc_update_widget') && isset($_SERVER['REQUEST_METHOD']) && 'POST' === $_SERVER['REQUEST_METHOD'] && isset($_POST['widget_id']) && 'blc_dashboard_widget' === $_POST['widget_id']) {
 
 				// It appears $form_inputs isn't used in the current WP version, so lets just use $_POST.
-				$this->conf->options['autoexpand_widget'] = !empty($_POST['blc-autoexpand']);
+				$this->conf->options['show_widget_count_bubble'] = !empty($_POST['blc-showcounter']);
 				$this->conf->save_options();
 			}
 		endif;
 
 	?>
-		<p><label for="blc-autoexpand">
-				<input id="blc-autoexpand" name="blc-autoexpand" type="checkbox" value="1" <?php
-																							if ($this->conf->options['autoexpand_widget']) {
+		<p><label for="blc-showcounter">
+				<input id="blc-showcounter" name="blc-showcounter" type="checkbox" value="1" <?php
+																							if ($this->conf->options['show_widget_count_bubble']) {
 																								echo 'checked="checked"';
 																							}
 																							?> />
-				<?php esc_html_e('Automatically expand the widget if broken links have been detected', 'broken-link-checker'); ?>
+				<?php esc_html_e('Show a badge with the number of broken links in the title', 'broken-link-checker'); ?>
 			</label></p>
 	<?php
 
@@ -495,19 +460,8 @@ class wsBrokenLinkChecker
 
 		$menu_title = __('Broken Links', 'broken-link-checker');
 		if ($this->conf->options['show_link_count_bubble']) {
-			//ALTER TABLE `{prefix}_blc_instances` ADD INDEX `lpc` (`link_id`, `parser_type`, `container_type`);
-			// To make it easier to notice when broken links appear, display the current number of
-			// broken links in a little bubble notification in the "Broken Links" menu.
-			// (Similar to how the number of plugin updates and unmoderated comments is displayed).
-			$blc_link_query = blcLinkQuery::getInstance();
-			$broken_links   = $blc_link_query->get_filter_links('broken', array('count_only' => true));
-			if ($broken_links > 0) {
-				// TODO: Appropriating existing CSS classes for my own purposes is hacky. Fix eventually.
-				$menu_title .= sprintf(
-					' <span class="update-plugins"><span class="update-count blc-menu-bubble">%d</span></span>',
-					$broken_links
-				);
-			}
+			$this->addStatusAssets();
+			$menu_title .= ' <span class="blc-broken-count"></span>';
 		}
 
 		$links_page_hook      = add_menu_page(
@@ -525,6 +479,12 @@ class wsBrokenLinkChecker
 
 		add_action('admin_print_scripts-' . $links_page_hook, array($this, 'enqueue_settings_scripts'));
 		add_action('admin_print_scripts-' . $links_page_hook, array($this, 'enqueue_link_page_scripts'));
+	}
+
+	private function addStatusAssets()
+	{
+		wp_enqueue_style('blc-status', plugins_url('css/status.css', BLC_PLUGIN_FILE_LEGACY), [], '20141113');
+		wp_enqueue_script('blc-status', plugins_url('js/status.js', BLC_PLUGIN_FILE_LEGACY), [], '20141113');
 	}
 
 	/**
@@ -689,7 +649,11 @@ class wsBrokenLinkChecker
 			$this->conf->options['nofollow_broken_links'] = !empty($_POST['nofollow_broken_links']);
 
 			$this->conf->options['suggestions_enabled'] = !empty($_POST['suggestions_enabled']);
+			$this->conf->options['show_link_count_bubble'] = !empty($_POST['show_link_count_bubble']);
+			$this->conf->options['show_widget_count_bubble'] = !empty($_POST['show_widget_count_bubble']);
 
+
+		
 			$this->conf->options['exclusion_list'] = array_filter(
 				preg_split(
 					'/[\s\r\n]+/', //split on newlines and whitespace
@@ -977,8 +941,8 @@ class wsBrokenLinkChecker
 									</th>
 									<td>
 
-										<div id='wsblc_full_status'>
-											<br /><br /><br />
+										<div id='wsblc_full_status' class="blc_full_status">
+											
 										</div>
 
 										<table id="blc-debug-info">
@@ -1047,6 +1011,38 @@ class wsBrokenLinkChecker
 										</p>
 									</td>
 								</tr>
+
+								<tr valign="top">
+									<th scope="row"><?php _e('Count bubbles', 'broken-link-checker'); ?></th>
+									<td>
+										<p style="margin-top: 0;">
+											<label for='show_link_count_bubble'>
+												<input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php
+																																		if ($this->conf->options['show_link_count_bubble']) {
+																																			echo ' checked="checked"';
+																																		}
+																																		?> />
+												<?php _e('Show a bubble with number of found broken links in the menu bar', 'broken-link-checker'); ?>
+											</label><br />
+										</p>
+
+										<p>
+											<label for='show_widget_count_bubble'>
+												<input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php
+																																						if ($this->conf->options['show_widget_count_bubble']) {
+																																							echo ' checked="checked"';
+																																						}
+																																						?> />
+												<?php _e('Show a bubble with number of found broken links in the dashboard widget', 'broken-link-checker'); ?>
+											</label><br />
+										</p>
+									</td>
+								</tr>
+
+							
+
+
+
 
 								<tr valign="top">
 									<th scope="row"><?php echo __('Notification e-mail address', 'broken-link-checker'); ?></th>
@@ -1969,7 +1965,7 @@ class wsBrokenLinkChecker
 			echo '<div id="message" class="' . $msg_class . ' fade"><p>' . $message . '</p></div>';
 		}
 
-		$start_time =microtime(true);
+		$start_time = microtime(true);
 
 		//Load custom filters, if any
 		$blc_link_query->load_custom_filters();
@@ -2773,7 +2769,7 @@ class wsBrokenLinkChecker
 
 	function start_timer()
 	{
-		$this->execution_start_time =microtime(true);
+		$this->execution_start_time = microtime(true);
 	}
 
 	function execution_time()
@@ -3848,9 +3844,14 @@ class wsBrokenLinkChecker
 	{
 		$show_widget = current_user_can($this->conf->get('dashboard_widget_capability', 'edit_others_posts'));
 		if (function_exists('wp_add_dashboard_widget') && $show_widget) {
+            $title=__('Broken Link Checker', 'broken-link-checker');
+			if ($this->conf->options['show_widget_count_bubble'] ) {
+				$title .=  ' <span class="blc-broken-count"></span>';
+			}
+		
 			wp_add_dashboard_widget(
 				'blc_dashboard_widget',
-				__('Broken Link Checker', 'broken-link-checker'),
+				 $title,
 				array($this, 'dashboard_widget'),
 				array($this, 'dashboard_widget_control')
 			);

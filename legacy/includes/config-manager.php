@@ -180,9 +180,9 @@
 			'custom_fields'                    => array(), // List of custom fields that can contain URLs and should be checked.
 			'acf_fields'                       => array(), // List of custom fields that can contain URLs and should be checked.
 			'enabled_post_statuses'            => array('publish'), // Only check posts that match one of these statuses
-			'autoexpand_widget'                => true, // Autoexpand the Dashboard widget if broken links are detected
 			'dashboard_widget_capability'      => 'edit_others_posts', // Only display the widget to users who have this capability
 			'show_link_count_bubble'           => true, // Display a notification bubble in the menu when broken links are found
+			'show_widget_count_bubble'                => true, // Show a bubble  with broken links in the title of the dashboard widget
 			'table_layout'                     => 'flexible', // The layout of the link table. Possible values : 'classic', 'flexible'
 			'table_compact'                    => true, // Compact table mode on/off
 			'table_visible_columns'            => array('new-url', 'status', 'used-in', 'new-link-text'),

@@ -1,5 +1,7 @@
 <?php
 
+
+use Blc\Component\Blc\Administrator\Blc\Includes\TransactionManager;
 /**
  * The base class for link container managers.
  *

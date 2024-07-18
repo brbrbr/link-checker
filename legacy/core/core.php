@@ -9,12 +9,15 @@
  */
 
 use Blc\Component\Blc\Administrator\Blc\Includes\WPMutex;
+use Blc\Component\Blc\Administrator\Blc\Includes\UpdatePlugin;
+use Blc\Component\Blc\Administrator\Blc\Includes\TransactionManager;
+
 
 require_once  BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
 
-require_once BLC_DIRECTORY_LEGACY . '/includes/transactions-manager.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/class-updateplugin.php';
+
+
 
 
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
@@ -94,7 +97,7 @@ class wsBrokenLinkChecker
 	public function __construct()
 	{
 
-$this->acquire_lock();
+		$this->acquire_lock();
 		static $method_called = false;
 
 		$this->conf        = blc_get_configuration();
@@ -260,9 +263,9 @@ $this->acquire_lock();
 	 */
 	public function dashboard_widget()
 	{
-	if ($this->conf->options['show_widget_count_bubble'] ) {
-		$this->addStatusAssets();
-	}
+		if ($this->conf->options['show_widget_count_bubble']) {
+			$this->addStatusAssets();
+		}
 	?>
 		<p id="wsblc_activity_box" class="blc_full_status"><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
 
@@ -293,10 +296,10 @@ $this->acquire_lock();
 	?>
 		<p><label for="blc-showcounter">
 				<input id="blc-showcounter" name="blc-showcounter" type="checkbox" value="1" <?php
-																							if ($this->conf->options['show_widget_count_bubble']) {
-																								echo 'checked="checked"';
-																							}
-																							?> />
+																								if ($this->conf->options['show_widget_count_bubble']) {
+																									echo 'checked="checked"';
+																								}
+																								?> />
 				<?php esc_html_e('Show a badge with the number of broken links in the title', 'broken-link-checker'); ?>
 			</label></p>
 	<?php
@@ -648,12 +651,12 @@ $this->acquire_lock();
 
 			$this->conf->options['nofollow_broken_links'] = !empty($_POST['nofollow_broken_links']);
 
-		
+
 			$this->conf->options['show_link_count_bubble'] = !empty($_POST['show_link_count_bubble']);
 			$this->conf->options['show_widget_count_bubble'] = !empty($_POST['show_widget_count_bubble']);
 
 
-		
+
 			$this->conf->options['exclusion_list'] = array_filter(
 				preg_split(
 					'/[\s\r\n]+/', //split on newlines and whitespace
@@ -942,7 +945,7 @@ $this->acquire_lock();
 									<td>
 
 										<div id='wsblc_full_status' class="blc_full_status">
-											
+
 										</div>
 
 										<table id="blc-debug-info">
@@ -1018,10 +1021,10 @@ $this->acquire_lock();
 										<p style="margin-top: 0;">
 											<label for='show_link_count_bubble'>
 												<input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php
-																																		if ($this->conf->options['show_link_count_bubble']) {
-																																			echo ' checked="checked"';
-																																		}
-																																		?> />
+																																	if ($this->conf->options['show_link_count_bubble']) {
+																																		echo ' checked="checked"';
+																																	}
+																																	?> />
 												<?php _e('Show a bubble with number of found broken links in the menu bar', 'broken-link-checker'); ?>
 											</label><br />
 										</p>
@@ -1029,17 +1032,17 @@ $this->acquire_lock();
 										<p>
 											<label for='show_widget_count_bubble'>
 												<input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php
-																																						if ($this->conf->options['show_widget_count_bubble']) {
-																																							echo ' checked="checked"';
-																																						}
-																																						?> />
+																																		if ($this->conf->options['show_widget_count_bubble']) {
+																																			echo ' checked="checked"';
+																																		}
+																																		?> />
 												<?php _e('Show a bubble with number of found broken links in the dashboard widget', 'broken-link-checker'); ?>
 											</label><br />
 										</p>
 									</td>
 								</tr>
 
-							
+
 
 
 
@@ -2781,21 +2784,14 @@ $this->acquire_lock();
 		/*****************************************
 		 * Preparation
 		 ******************************************/
-		// Check for safe mode
-		if (blcUtility::is_safe_mode()) {
-			// Do it the safe mode way - obey the existing max_execution_time setting
-			$t = ini_get('max_execution_time');
-			if ($t && ($t < $max_execution_time)) {
-				$max_execution_time = $t - 1;
-			}
+
+		if ($this->is_host_wp_engine() || $this->is_host_flywheel()) {
+			@set_time_limit($max_execution_time);
 		} else {
-			if ($this->is_host_wp_engine() || $this->is_host_flywheel()) {
-				@set_time_limit($max_execution_time);
-			} else {
-				// Do it the regular way
-				@set_time_limit($max_execution_time * 2); //x2 should be plenty, running any longer would mean a glitch.
-			}
+			// Do it the regular way
+			@set_time_limit($max_execution_time * 2); //x2 should be plenty, running any longer would mean a glitch.
 		}
+
 
 		//Don't stop the script when the connection is closed
 		ignore_user_abort(true);
@@ -3808,14 +3804,14 @@ $this->acquire_lock();
 	{
 		$show_widget = current_user_can($this->conf->get('dashboard_widget_capability', 'edit_others_posts'));
 		if (function_exists('wp_add_dashboard_widget') && $show_widget) {
-            $title=__('Broken Link Checker', 'broken-link-checker');
-			if ($this->conf->options['show_widget_count_bubble'] ) {
+			$title = __('Broken Link Checker', 'broken-link-checker');
+			if ($this->conf->options['show_widget_count_bubble']) {
 				$title .=  ' <span class="blc-broken-count"></span>';
 			}
-		
+
 			wp_add_dashboard_widget(
 				'blc_dashboard_widget',
-				 $title,
+				$title,
 				array($this, 'dashboard_widget'),
 				array($this, 'dashboard_widget_control')
 			);
@@ -3872,20 +3868,6 @@ $this->acquire_lock();
 		$debug[__('CURL version', 'broken-link-checker')] = $data;
 
 
-
-		//Safe_mode status
-		if (blcUtility::is_safe_mode()) {
-			$debug['Safe mode'] = array(
-				'state'   => 'warning',
-				'value'   => __('On', 'broken-link-checker'),
-				'message' => __('Redirects may be detected as broken links when safe_mode is on.', 'broken-link-checker'),
-			);
-		} else {
-			$debug['Safe mode'] = array(
-				'state' => 'ok',
-				'value' => __('Off', 'broken-link-checker'),
-			);
-		}
 
 		//Open_basedir status
 		if (blcUtility::is_open_basedir()) {

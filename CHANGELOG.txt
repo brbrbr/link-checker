@@ -19,6 +19,7 @@
  * N Note
 
 2.3.0.xxxx
+ - Removed safe mode checks
  ^ Started namespaces and use instead of all the includes
  ^ Changed order of columns in link overview. Makes more sence to have the anchor next to the source
 2.3.0.6489

@@ -263,7 +263,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 
 
 		// Redirects don't work when safe mode or open_basedir is enabled.
-		if (!blcUtility::is_safe_mode() && !blcUtility::is_open_basedir()) {
+		if ( !blcUtility::is_open_basedir()) {
 			$options[CURLOPT_FOLLOWLOCATION] = true;
 		} else {
 			$log .= "[Warning] Could't follow the redirect URL (if any) because safemode or open base dir enabled\n";

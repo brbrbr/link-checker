@@ -1,5 +1,7 @@
 <?php
 
+namespace Blc\Component\Blc\Administrator\Blc\Includes;
+
 class TransactionManager {
 
 	private $isTransactionStarted = false; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase

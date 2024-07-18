@@ -5,26 +5,7 @@
  * @copyright 2010
  */
 
-if (!function_exists('sys_get_temp_dir')) {
-	function sys_get_temp_dir()
-	{
-		if (!empty($_ENV['TMP'])) {
-			return realpath($_ENV['TMP']);
-		}
-		if (!empty($_ENV['TMPDIR'])) {
-			return realpath($_ENV['TMPDIR']);
-		}
-		if (!empty($_ENV['TEMP'])) {
-			return realpath($_ENV['TEMP']);
-		}
-		$tempfile = tempnam(uniqid(rand(), true), '');
-		if (@file_exists($tempfile)) {
-			unlink($tempfile);
-			return realpath(dirname($tempfile));
-		}
-		return '';
-	}
-}
+ namespace Blc\Component\Blc\Administrator\Blc\Includes;
 
 //Include the internationalized domain name converter (requires PHP 5)
 
@@ -37,41 +18,7 @@ require_once BLC_DIRECTORY_LEGACY . '/idn/transcode_wrapper.php';
 
 class blcUtility
 {
-	/**
-	 * Checks if PHP is running in safe mode
-	 * blcUtility::is_safe_mode()
-	 *
-	 * @return bool
-	 */
-	static function is_safe_mode()
-	{
-		// Check php.ini safe_mode only if PHP version is lower than 5.3.0, else set to false.
-		if (version_compare(phpversion(), '5.3.0', '<')) {
-			$safe_mode = ini_get('safe_mode');
-		} else {
-			$safe_mode = false;
-		}
 
-		// Null, 0, '', '0' and so on count as false.
-		if (!$safe_mode) {
-			return false;
-		}
-		// Test for some textual true/false variations.
-		switch (strtolower($safe_mode)) {
-			case 'on':
-			case 'true':
-			case 'yes':
-				return true;
-
-			case 'off':
-			case 'false':
-			case 'no':
-				return false;
-
-			default: // Let PHP handle anything else.
-				return (bool) (int) $safe_mode;
-		}
-	}
 
 	public static function is_host_wp_engine()
 	{
@@ -480,4 +427,4 @@ class blcUtility
 		$hash           = intval(hexdec($hash));
 		return  $min + (($max - $min) * ($hash / (pow(2, $bytes_to_use * 8) - 1)));
 	}
-} //class
+} 

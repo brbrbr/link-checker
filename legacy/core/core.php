@@ -61,12 +61,7 @@ class wsBrokenLinkChecker
 	 */
 	public $my_basename = '';
 	private $loader = '';
-	/**
-	 * DB version.
-	 *
-	 * @var string
-	 */
-	public $db_version; // The required version of the plugin's DB schema.
+
 
 	/**
 	 * Execution start time.
@@ -113,8 +108,6 @@ class wsBrokenLinkChecker
 
 
 		static $method_called = false;
-
-		$this->db_version = BLC_DATABASE_VERSION;
 
 		$this->conf        = blc_get_configuration();
 

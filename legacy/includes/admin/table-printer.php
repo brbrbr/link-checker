@@ -26,12 +26,12 @@ class blcTablePrinter
     var $columns;
     var $layouts;
 
-    private $conf;
+    private $plugin_config;
 
     function __construct($core)
     {
         $this->core = $core;
-        $this->conf = blc_get_configuration();
+        $this->plugin_config = ConfigurationManager::getInstance();
         // Initialize layout and column definitions,
         $this->setup_columns();
         $this->setup_layouts();
@@ -79,7 +79,7 @@ class blcTablePrinter
             $table_classes[] = 'compact';
         }
 
-        if ($this->conf->options['table_color_code_status']) {
+        if ($this->plugin_config->options['table_color_code_status']) {
             $table_classes[] = 'color-code-link-status';
         }
         $table_classes[] = 'base-filter-' . esc_html($current_filter['base_filter']);
@@ -414,9 +414,9 @@ class blcTablePrinter
         if ($link->broken) {
             // Add a highlight to broken links that appear to be permanently broken.
             $days_broken = intval(( time() - $link->first_failure ) / ( 3600 * 24 ));
-            if ($days_broken >= $this->conf->options['failure_duration_threshold']) {
+            if ($days_broken >= $this->plugin_config->options['failure_duration_threshold']) {
                 $rowclass .= ' blc-permanently-broken';
-                if ($this->conf->options['highlight_permanent_failures']) {
+                if ($this->plugin_config->options['highlight_permanent_failures']) {
                     $rowclass .= ' blc-permanently-broken-hl';
                 }
             }
@@ -762,7 +762,7 @@ class blcTablePrinter
 
         // Only show the enabled actions.
 
-        foreach ($this->conf->get('show_link_actions', $actions) as $name => $enabled) {
+        foreach ($this->plugin_config->get('show_link_actions', $actions) as $name => $enabled) {
             if (! $enabled) {
                 unset($actions[ $name ]);
             }

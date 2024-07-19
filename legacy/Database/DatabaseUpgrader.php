@@ -1,18 +1,124 @@
 <?php
 
-if (! function_exists('wpmudev_blc_local_get_charset_collate')) {
-    function wpmudev_blc_local_get_charset_collate()
+namespace Blc\Database;
+
+class DatabaseUpgrader
+{
+    /**
+     * Create and/or upgrade the plugin's database tables.
+     *
+     * @return bool
+     */
+    public static function upgrade_database()
+    {
+        global $blclog;
+
+        $conf    = blc_get_configuration();
+        $current = $conf->options['current_db_version'];
+
+        if (( 0 != $current ) && ( $current < 17 )) {
+            // The 4th DB version makes a lot of backwards-incompatible changes to the main
+            // BLC tables, so instead of upgrading we just throw them away and recreate.
+            if (! self::drop_tables()) {
+                return false;
+            }
+            $current = 0;
+        }
+
+        // Create/update the plugin's tables
+        if (! self::make_schema_current()) {
+            return false;
+        }
+
+        $conf->options['current_db_version'] = BLC_DATABASE_VERSION;
+        $conf->save_options();
+        $blclog->info('Database successfully upgraded.');
+
+        return true;
+    }
+
+    /**
+     * Create or update the plugin's DB tables.
+     *
+     * @return bool
+     */
+    static function make_schema_current()
+    {
+        global $blclog;
+
+        $start = microtime(true);
+
+      
+
+        list($dummy, $query_log) = TableDelta::delta(self::blc_get_db_schema());
+
+        $have_errors = false;
+        foreach ($query_log as $item) {
+            if ($item['success']) {
+                $blclog->info(' [OK] ' . $item['query'] . sprintf(' (%.3f seconds)', $item['query_time']));
+            } else {
+                $blclog->error(' [  ] ' . $item['query']);
+                $blclog->error(' Database error : ' . $item['error_message']);
+                $have_errors = true;
+            }
+        }
+        $blclog->info(sprintf('Schema update took %.3f seconds', microtime(true) - $start));
+
+        $blclog->info('Database schema updated.');
+        return ! $have_errors;
+    }
+
+    /**
+     * Drop the plugin's tables.
+     *
+     * @return bool
+     */
+    static function drop_tables()
+    {
+        global $wpdb, $blclog;
+        /** @var wpdb $wpdb */
+
+        $blclog->info('Deleting the plugin\'s database tables');
+        $tables = array(
+            $wpdb->prefix . 'blc_linkdata',
+            $wpdb->prefix . 'blc_postdata',
+            $wpdb->prefix . 'blc_instances',
+            $wpdb->prefix . 'blc_synch',
+            $wpdb->prefix . 'blc_links',
+        );
+
+        $q   = 'DROP TABLE IF EXISTS ' . implode(', ', $tables);
+        $rez = $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+        if (false === $rez) {
+            $error = sprintf(
+                __('Failed to delete old DB tables. Database error : %s', 'broken-link-checker'),
+                $wpdb->last_error
+            );
+
+            $blclog->error($error);
+            /*
+            //FIXME: In very rare cases, DROP TABLE IF EXISTS throws an error when the table(s) don't exist.
+            return false;
+            //*/
+        }
+        $blclog->info('Done.');
+
+        return true;
+    }
+    
+
+
+    static function wpmudev_blc_local_get_charset_collate()
     {
         global $wpdb;
 
         // Let's make sure that new tables collate will match with the one set in posts table (and specifically post_status, since upon synch there's a join with that column).
         // Reason for this is to avoid getting the `Illegal mix of collations` error.
         // Root of this issue is that older WP versions (prior to 4.6) had different default collation ( utf8mb4_unicode_ci ) and versions from 4.6 and after use `utf8mb4_unicode_520_ci`.
-        // For reference :
-        // v4.5: https://github.com/WordPress/WordPress/blob/4.5-branch/wp-includes/wp-db.php#L761
-        // v4.6: https://github.com/WordPress/WordPress/blob/4.6-branch/wp-includes/wp-db.php#L798
-        $collate         = get_table_col_collation($wpdb->posts, 'post_type');
-        $charset         = get_table_col_charset($wpdb->posts, 'post_type');
+
+        $collate         = self::get_table_col_collation($wpdb->posts, 'post_type');
+        $charset         = self::get_table_col_charset($wpdb->posts, 'post_type');
         $charset_collate = '';
 
         if (! empty($collate) && ! empty($charset)) {
@@ -45,7 +151,7 @@ if (! function_exists('wpmudev_blc_local_get_charset_collate')) {
      * @param string $column The table's column name
      * @return null|string
      */
-    function get_table_col_collation(string $table = '', string $column = '')
+    static function get_table_col_collation(string $table = '', string $column = '')
     {
         if (empty($table) || empty($column)) {
             return null;
@@ -92,13 +198,13 @@ if (! function_exists('wpmudev_blc_local_get_charset_collate')) {
      * @param string $column The table's column name
      * @return null|string
      */
-    function get_table_col_charset(string $table = '', string $column = '')
+    static function get_table_col_charset(string $table = '', string $column = '')
     {
         if (empty($table) || empty($column)) {
             return null;
         }
 
-        $collation = get_table_col_collation($table, $column);
+        $collation = self::get_table_col_collation($table, $column);
 
         if (empty($collation)) {
             return null;
@@ -108,15 +214,15 @@ if (! function_exists('wpmudev_blc_local_get_charset_collate')) {
 
         return $charset;
     }
-}
 
-if (! function_exists('blc_get_db_schema')) {
 
-    function blc_get_db_schema()
+
+
+    static function blc_get_db_schema()
     {
         global $wpdb;
 
-        $charset_collate = wpmudev_blc_local_get_charset_collate();
+        $charset_collate = self::wpmudev_blc_local_get_charset_collate();
 
         $blc_db_schema = <<<EOM
 
@@ -198,4 +304,8 @@ EOM;
 
         return $blc_db_schema;
     }
+
+
+
 }
+

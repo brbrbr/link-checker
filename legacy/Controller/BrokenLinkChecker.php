@@ -28,7 +28,7 @@ require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 /**
  * Broken Link Checker core
  */
-class wsBrokenLinkChecker
+class BrokenLinkChecker
 {
     /**
      * Plugin configuration.

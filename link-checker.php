@@ -94,6 +94,8 @@ define('BLC_DATABASE_VERSION', 20);
 }
 
 require_once 'autoloader.php';
+
+$autoloaded = new Autoloader();
 /**
  * Run plugin activation hook to setup plugin.
  *

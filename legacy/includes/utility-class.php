@@ -7,7 +7,7 @@
 
 namespace Blc\Component\Blc\Administrator\Blc\Includes;
 
-//Include the internationalized domain name converter (requires PHP 5)
+// Include the internationalized domain name converter (requires PHP 5)
 
 require_once BLC_DIRECTORY_LEGACY . '/idn/idna_convert.class.php';
 require_once BLC_DIRECTORY_LEGACY . '/idn/transcode_wrapper.php';
@@ -15,116 +15,114 @@ require_once BLC_DIRECTORY_LEGACY . '/idn/transcode_wrapper.php';
 
 class blcUtility
 {
+    public static function is_host_wp_engine()
+    {
+        return ( function_exists('is_wpe') && is_wpe() ) || ( defined('IS_WPE') && IS_WPE );
+    }
 
+    public static function is_host_flywheel()
+    {
+        $host_name = 'flywheel';
 
-	public static function is_host_wp_engine()
-	{
-		return (function_exists('is_wpe') && is_wpe()) || (defined('IS_WPE') && IS_WPE);
-	}
+        return ! empty($_SERVER['SERVER_SOFTWARE']) &&
+            substr(strtolower($_SERVER['SERVER_SOFTWARE']), 0, strlen($host_name)) === strtolower($host_name);
+    }
 
-	public static function is_host_flywheel()
-	{
-		$host_name = 'flywheel';
+    /**
+     * blcUtility::is_open_basedir()
+     * Checks if open_basedir is enabled
+     *
+     * @return bool
+     */
+    static function is_open_basedir()
+    {
+        $open_basedir = ini_get('open_basedir');
+        return $open_basedir && ( strtolower($open_basedir) != 'none' );
+    }
 
-		return !empty($_SERVER['SERVER_SOFTWARE']) &&
-			substr(strtolower($_SERVER['SERVER_SOFTWARE']), 0, strlen($host_name)) === strtolower($host_name);
-	}
+    /**
+     * Truncate a string on a specified boundary character.
+     *
+     * @param string  $text The text to truncate.
+     * @param integer $max_characters Return no more than $max_characters
+     * @param string  $break Break on this character. Defaults to space.
+     * @param string  $pad Pad the truncated string with this string. Defaults to an HTML ellipsis.
+     * @return string
+     */
+    static function truncate($text, $max_characters = 0, $break = ' ', $pad = '&hellip;')
+    {
+        if (strlen($text) <= $max_characters) {
+            return $text;
+        }
 
-	/**
-	 * blcUtility::is_open_basedir()
-	 * Checks if open_basedir is enabled
-	 *
-	 * @return bool
-	 */
-	static function is_open_basedir()
-	{
-		$open_basedir = ini_get('open_basedir');
-		return $open_basedir && (strtolower($open_basedir) != 'none');
-	}
+        $text      = substr($text, 0, $max_characters);
+        $break_pos = strrpos($text, $break);
+        if (false !== $break_pos) {
+            $text = substr($text, 0, $break_pos);
+        }
 
-	/**
-	 * Truncate a string on a specified boundary character.
-	 *
-	 * @param string $text The text to truncate.
-	 * @param integer $max_characters Return no more than $max_characters
-	 * @param string $break Break on this character. Defaults to space.
-	 * @param string $pad Pad the truncated string with this string. Defaults to an HTML ellipsis.
-	 * @return string
-	 */
-	static function truncate($text, $max_characters = 0, $break = ' ', $pad = '&hellip;')
-	{
-		if (strlen($text) <= $max_characters) {
-			return $text;
-		}
+        return $text . $pad;
+    }
 
-		$text      = substr($text, 0, $max_characters);
-		$break_pos = strrpos($text, $break);
-		if (false !== $break_pos) {
-			$text = substr($text, 0, $break_pos);
-		}
+    /**
+     * extract_tags()
+     * Extract specific HTML tags and their attributes from a string.
+     *
+     * You can either specify one tag, an array of tag names, or a regular expression that matches the tag name(s).
+     * If multiple tags are specified you must also set the $selfclosing parameter and it must be the same for
+     * all specified tags (so you can't extract both normal and self-closing tags in one go).
+     *
+     * The function returns a numerically indexed array of extracted tags. Each entry is an associative array
+     * with these keys :
+     *   tag_name    - the name of the extracted tag, e.g. "a" or "img".
+     *   offset      - the numberic offset of the first character of the tag within the HTML source.
+     *   contents    - the inner HTML of the tag. This is always empty for self-closing tags.
+     *   attributes  - a name -> value array of the tag's attributes, or an empty array if the tag has none.
+     *   full_tag    - the entire matched tag, e.g. '<a href="http://example.com">example.com</a>'. This key
+     *                 will only be present if you set $return_the_entire_tag to true.
+     *
+     * @param string       $html The HTML code to search for tags.
+     * @param string|array $tag The tag(s) to extract.
+     * @param bool         $selfclosing  Whether the tag is self-closing or not. Setting it to null will force the script to try and make an educated guess.
+     * @param bool         $return_the_entire_tag Return the entire matched tag in 'full_tag' key of the results array.
+     * @param string       $charset The character set of the HTML code. Defaults to ISO-8859-1.
+     *
+     * @return array An array of extracted tags, or an empty array if no matching tags were found.
+     */
+    static function extract_tags($html, $tag, $selfclosing = null, $return_the_entire_tag = false, $charset = 'ISO-8859-1')
+    {
 
-		return $text . $pad;
-	}
+        if (is_array($tag)) {
+            $tag = implode('|', $tag);
+        }
 
-	/**
-	 * extract_tags()
-	 * Extract specific HTML tags and their attributes from a string.
-	 *
-	 * You can either specify one tag, an array of tag names, or a regular expression that matches the tag name(s).
-	 * If multiple tags are specified you must also set the $selfclosing parameter and it must be the same for
-	 * all specified tags (so you can't extract both normal and self-closing tags in one go).
-	 *
-	 * The function returns a numerically indexed array of extracted tags. Each entry is an associative array
-	 * with these keys :
-	 *   tag_name    - the name of the extracted tag, e.g. "a" or "img".
-	 *   offset      - the numberic offset of the first character of the tag within the HTML source.
-	 *   contents    - the inner HTML of the tag. This is always empty for self-closing tags.
-	 *   attributes  - a name -> value array of the tag's attributes, or an empty array if the tag has none.
-	 *   full_tag    - the entire matched tag, e.g. '<a href="http://example.com">example.com</a>'. This key
-	 *                 will only be present if you set $return_the_entire_tag to true.
-	 *
-	 * @param string $html The HTML code to search for tags.
-	 * @param string|array $tag The tag(s) to extract.
-	 * @param bool $selfclosing  Whether the tag is self-closing or not. Setting it to null will force the script to try and make an educated guess.
-	 * @param bool $return_the_entire_tag Return the entire matched tag in 'full_tag' key of the results array.
-	 * @param string $charset The character set of the HTML code. Defaults to ISO-8859-1.
-	 *
-	 * @return array An array of extracted tags, or an empty array if no matching tags were found.
-	 */
-	static function extract_tags($html, $tag, $selfclosing = null, $return_the_entire_tag = false, $charset = 'ISO-8859-1')
-	{
+        // If the user didn't specify if $tag is a self-closing tag we try to auto-detect it
+        // by checking against a list of known self-closing tags.
+        $selfclosing_tags = array( 'area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta', 'col', 'param' );
+        if (is_null($selfclosing)) {
+            $selfclosing = in_array($tag, $selfclosing_tags);
+        }
 
-		if (is_array($tag)) {
-			$tag = implode('|', $tag);
-		}
-
-		//If the user didn't specify if $tag is a self-closing tag we try to auto-detect it
-		//by checking against a list of known self-closing tags.
-		$selfclosing_tags = array('area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta', 'col', 'param');
-		if (is_null($selfclosing)) {
-			$selfclosing = in_array($tag, $selfclosing_tags);
-		}
-
-		//The regexp is different for normal and self-closing tags because I can't figure out
-		//how to make a sufficiently robust unified one.
-		if ($selfclosing) {
-			$tag_pattern =
-				'@<(?P<tag>' . $tag . ')			# <tag
+        // The regexp is different for normal and self-closing tags because I can't figure out
+        // how to make a sufficiently robust unified one.
+        if ($selfclosing) {
+            $tag_pattern =
+                '@<(?P<tag>' . $tag . ')			# <tag
 					(?P<attributes>\s[^>]+)?			# attributes, if any
 					\s*/?>								# /> or just >, being lenient here
 					@xsi';
-		} else {
-			$tag_pattern =
-				'@<(?P<tag>' . $tag . ')			# <tag
+        } else {
+            $tag_pattern =
+                '@<(?P<tag>' . $tag . ')			# <tag
 					(?P<attributes>\s[^>]+)?	 		# attributes, if any
 					\s*>						 		# >
 					(?P<contents>.*?)			 		# tag contents
 					</(?P=tag)>					 		# the closing </tag>
 					@xsi';
-		}
+        }
 
-		$attribute_pattern =
-			'@
+        $attribute_pattern =
+            '@
 				(?P<name>\w+)											# attribute name
 				\s*=\s*
 				(
@@ -134,294 +132,290 @@ class blcUtility
 				)
 				@xsi';
 
-		//Find all tags
-		if (!preg_match_all($tag_pattern, $html, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
-			//Return an empty array if we didn't find anything
-			return array();
-		}
+        // Find all tags
+        if (! preg_match_all($tag_pattern, $html, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+            // Return an empty array if we didn't find anything
+            return array();
+        }
 
-		$tags = array();
-		foreach ($matches as $match) {
+        $tags = array();
+        foreach ($matches as $match) {
+            // Parse tag attributes, if any.
+            $attributes = array();
+            if (! empty($match['attributes'][0])) {
+                if (preg_match_all($attribute_pattern, $match['attributes'][0], $attribute_data, PREG_SET_ORDER)) {
+                    // Turn the attribute data into a name->value array
+                    foreach ($attribute_data as $attr) {
+                        if (! empty($attr['value_quoted'])) {
+                            $value = $attr['value_quoted'];
+                        } elseif (! empty($attr['value_unquoted'])) {
+                            $value = $attr['value_unquoted'];
+                        } else {
+                            $value = '';
+                        }
 
-			// Parse tag attributes, if any.
-			$attributes = array();
-			if (!empty($match['attributes'][0])) {
+                        // Passing the value through html_entity_decode is handy when you want
+                        // to extract link URLs or something like that. You might want to remove
+                        // or modify this call if it doesn't fit your situation.
+                        $value = html_entity_decode($value, ENT_QUOTES, $charset);
 
-				if (preg_match_all($attribute_pattern, $match['attributes'][0], $attribute_data, PREG_SET_ORDER)) {
-					//Turn the attribute data into a name->value array
-					foreach ($attribute_data as $attr) {
-						if (!empty($attr['value_quoted'])) {
-							$value = $attr['value_quoted'];
-						} elseif (!empty($attr['value_unquoted'])) {
-							$value = $attr['value_unquoted'];
-						} else {
-							$value = '';
-						}
+                        $attributes[ $attr['name'] ] = $value;
+                    }
+                }
+            }
 
-						// Passing the value through html_entity_decode is handy when you want
-						// to extract link URLs or something like that. You might want to remove
-						// or modify this call if it doesn't fit your situation.
-						$value = html_entity_decode($value, ENT_QUOTES, $charset);
+            $tag = array(
+                'tag_name'   => $match['tag'][0],
+                'offset'     => $match[0][1],
+                'contents'   => ! empty($match['contents']) ? $match['contents'][0] : '', // Empty for self-closing tags.
+                'attributes' => $attributes,
+            );
+            if ($return_the_entire_tag) {
+                $tag['full_tag'] = $match[0][0];
+            }
 
-						$attributes[$attr['name']] = $value;
-					}
-				}
-			}
+            $tags[] = $tag;
+        }
 
-			$tag = array(
-				'tag_name'   => $match['tag'][0],
-				'offset'     => $match[0][1],
-				'contents'   => !empty($match['contents']) ? $match['contents'][0] : '', // Empty for self-closing tags.
-				'attributes' => $attributes,
-			);
-			if ($return_the_entire_tag) {
-				$tag['full_tag'] = $match[0][0];
-			}
+        return $tags;
+    }
 
-			$tags[] = $tag;
-		}
+    /**
+     * Get the value of a cookie.
+     *
+     * @param string $cookie_name The name of the cookie to return.
+     * @param string $default_value Optional. If the cookie is not set, this value will be returned instead. Defaults to an empty string.
+     * @return mixed Either the value of the requested cookie, or $default_value.
+     */
+    static function get_cookie($cookie_name, $default_value = '')
+    {
+        if (isset($_COOKIE[ $cookie_name ])) {
+            return $_COOKIE[ $cookie_name ];
+        } else {
+            return $default_value;
+        }
+    }
 
-		return $tags;
-	}
+    /**
+     * Format a time delta using a fuzzy format, e.g. '2 minutes ago', '2 days', etc.
+     *
+     * @param int    $delta Time period in seconds.
+     * @param string $type Optional. The output template to use.
+     * @return string
+     */
+    static function fuzzy_delta($delta, $template = 'default')
+    {
 
-	/**
-	 * Get the value of a cookie.
-	 *
-	 * @param string $cookie_name The name of the cookie to return.
-	 * @param string $default_value Optional. If the cookie is not set, this value will be returned instead. Defaults to an empty string.
-	 * @return mixed Either the value of the requested cookie, or $default_value.
-	 */
-	static function get_cookie($cookie_name, $default_value = '')
-	{
-		if (isset($_COOKIE[$cookie_name])) {
-			return $_COOKIE[$cookie_name];
-		} else {
-			return $default_value;
-		}
-	}
+        $templates = array(
+            'seconds' => array(
+                'default' => _n_noop('%d second', '%d seconds'),
+                'ago'     => _n_noop('%d second ago', '%d seconds ago'),
+            ),
+            'minutes' => array(
+                'default' => _n_noop('%d minute', '%d minutes'),
+                'ago'     => _n_noop('%d minute ago', '%d minutes ago'),
+            ),
+            'hours'   => array(
+                'default' => _n_noop('%d hour', '%d hours'),
+                'ago'     => _n_noop('%d hour ago', '%d hours ago'),
+            ),
+            'days'    => array(
+                'default' => _n_noop('%d day', '%d days'),
+                'ago'     => _n_noop('%d day ago', '%d days ago'),
+            ),
+            'months'  => array(
+                'default' => _n_noop('%d month', '%d months'),
+                'ago'     => _n_noop('%d month ago', '%d months ago'),
+            ),
+        );
 
-	/**
-	 * Format a time delta using a fuzzy format, e.g. '2 minutes ago', '2 days', etc.
-	 *
-	 * @param int $delta Time period in seconds.
-	 * @param string $type Optional. The output template to use.
-	 * @return string
-	 */
-	static function fuzzy_delta($delta, $template = 'default')
-	{
+        if ($delta < 1) {
+            $delta = 1;
+        }
 
-		$templates = array(
-			'seconds' => array(
-				'default' => _n_noop('%d second', '%d seconds'),
-				'ago'     => _n_noop('%d second ago', '%d seconds ago'),
-			),
-			'minutes' => array(
-				'default' => _n_noop('%d minute', '%d minutes'),
-				'ago'     => _n_noop('%d minute ago', '%d minutes ago'),
-			),
-			'hours'   => array(
-				'default' => _n_noop('%d hour', '%d hours'),
-				'ago'     => _n_noop('%d hour ago', '%d hours ago'),
-			),
-			'days'    => array(
-				'default' => _n_noop('%d day', '%d days'),
-				'ago'     => _n_noop('%d day ago', '%d days ago'),
-			),
-			'months'  => array(
-				'default' => _n_noop('%d month', '%d months'),
-				'ago'     => _n_noop('%d month ago', '%d months ago'),
-			),
-		);
+        if ($delta < MINUTE_IN_SECONDS) {
+            $units = 'seconds';
+        } elseif ($delta < HOUR_IN_SECONDS) {
+            $delta = intval($delta / MINUTE_IN_SECONDS);
+            $units = 'minutes';
+        } elseif ($delta < DAY_IN_SECONDS) {
+            $delta = intval($delta / HOUR_IN_SECONDS);
+            $units = 'hours';
+        } elseif ($delta < MONTH_IN_SECONDS) {
+            $delta = intval($delta / DAY_IN_SECONDS);
+            $units = 'days';
+        } else {
+            $delta = intval($delta / MONTH_IN_SECONDS);
+            $units = 'months';
+        }
 
-		if ($delta < 1) {
-			$delta = 1;
-		}
+        return sprintf(
+            _n(
+                $templates[ $units ][ $template ][0], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle
+                $templates[ $units ][ $template ][1], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralPlural
+                $delta,
+                'broken-link-checker'
+            ),
+            $delta
+        );
+    }
 
-		if ($delta < MINUTE_IN_SECONDS) {
-			$units = 'seconds';
-		} elseif ($delta < HOUR_IN_SECONDS) {
-			$delta = intval($delta / MINUTE_IN_SECONDS);
-			$units = 'minutes';
-		} elseif ($delta < DAY_IN_SECONDS) {
-			$delta = intval($delta / HOUR_IN_SECONDS);
-			$units = 'hours';
-		} elseif ($delta < MONTH_IN_SECONDS) {
-			$delta = intval($delta / DAY_IN_SECONDS);
-			$units = 'days';
-		} else {
-			$delta = intval($delta / MONTH_IN_SECONDS);
-			$units = 'months';
-		}
+    /**
+     * Optimize the plugin's tables
+     *
+     * @return void
+     */
+    static function optimize_database()
+    {
+        global $wpdb;
+        /** @var wpdb $wpdb */
 
-		return sprintf(
-			_n(
-				$templates[$units][$template][0], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle
-				$templates[$units][$template][1], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralPlural
-				$delta,
-				'broken-link-checker'
-			),
-			$delta
-		);
-	}
+        $wpdb->query("OPTIMIZE TABLE {$wpdb->prefix}blc_links, {$wpdb->prefix}blc_instances, {$wpdb->prefix}blc_synch");
+    }
 
-	/**
-	 * Optimize the plugin's tables
-	 *
-	 * @return void
-	 */
-	static function optimize_database()
-	{
-		global $wpdb;
-		/** @var wpdb $wpdb */
+    /**
+     * Delete synch. records, instances and links that refer to missing or invalid items.
+     *
+     * @return void
+     */
+    static function blc_cleanup_database()
+    {
+        global $blclog;
 
-		$wpdb->query("OPTIMIZE TABLE {$wpdb->prefix}blc_links, {$wpdb->prefix}blc_instances, {$wpdb->prefix}blc_synch");
-	}
+        // Delete synch. records for container types that don't exist
+        $blclog->info('... Deleting invalid container records');
+        blcContainerHelper::cleanup_containers();
 
-	/**
-	 * Delete synch. records, instances and links that refer to missing or invalid items.
-	 *
-	 * @return void
-	 */
-	static	function blc_cleanup_database()
-	{
-		global $blclog;
+        // Delete invalid instances
+        $blclog->info('... Deleting invalid link instances');
+        blc_cleanup_instances();
 
-		// Delete synch. records for container types that don't exist
-		$blclog->info('... Deleting invalid container records');
-		blcContainerHelper::cleanup_containers();
+        // Delete orphaned links
+        $blclog->info('... Deleting orphaned links');
+        blc_cleanup_links();
+    }
 
-		// Delete invalid instances
-		$blclog->info('... Deleting invalid link instances');
-		blc_cleanup_instances();
+    /**
+     * Notify the link checker that there are unsynched items
+     * that might contain links (e.g. a new or edited post).
+     *
+     * @return void
+     */
+    static function blc_got_unsynched_items()
+    {
+        $conf = blc_get_configuration();
+        $conf->need_resynch = true;
+        $conf->save_options();
+    }
 
-		// Delete orphaned links
-		$blclog->info('... Deleting orphaned links');
-		blc_cleanup_links();
-	}
+    /**
+     * Get the server's load averages.
+     *
+     * Returns an array with three samples - the 1 minute avg, the 5 minute avg, and the 15 minute avg.
+     *
+     * @param integer $cache How long the load averages may be cached, in seconds. Set to 0 to get maximally up-to-date data.
+     * @return array|null Array, or NULL if retrieving load data is impossible (e.g. when running on a Windows box).
+     */
+    static function get_server_load($cache = 5)
+    {
+        static $cached_load = null;
+        static $cached_when = 0;
 
-	/**
-	 * Notify the link checker that there are unsynched items
-	 * that might contain links (e.g. a new or edited post).
-	 *
-	 * @return void
-	 */
-	static function blc_got_unsynched_items()
-	{
-		$conf = blc_get_configuration();
+        if (! empty($cache) && ( ( time() - $cached_when ) <= $cache )) {
+            return $cached_load;
+        }
 
+        $load = null;
 
-		$conf->options['need_resynch'] = true;
-		$conf->save_options();
-	}
+        if (function_exists('sys_getloadavg')) {
+            $load = sys_getloadavg();
+        } else {
+            $loadavg_file = '/proc/loadavg';
+            if (@is_readable($loadavg_file)) {
+                $load = explode(' ', file_get_contents($loadavg_file));
+                $load = array_map('floatval', $load);
+            }
+        }
 
-	/**
-	 * Get the server's load averages.
-	 *
-	 * Returns an array with three samples - the 1 minute avg, the 5 minute avg, and the 15 minute avg.
-	 *
-	 * @param integer $cache How long the load averages may be cached, in seconds. Set to 0 to get maximally up-to-date data.
-	 * @return array|null Array, or NULL if retrieving load data is impossible (e.g. when running on a Windows box).
-	 */
-	static function get_server_load($cache = 5)
-	{
-		static $cached_load = null;
-		static $cached_when = 0;
+        $cached_load = $load;
+        $cached_when = time();
+        return $load;
+    }
 
-		if (!empty($cache) && ((time() - $cached_when) <= $cache)) {
-			return $cached_load;
-		}
+    /**
+     * Convert an internationalized domain name or URL to ASCII-compatible encoding.
+     *
+     * @param string $url Either a domain name or a complete URL.
+     * @param string $charset The character encoding of the $url parameter. Defaults to the encoding set in Settings -> Reading.
+     * @return string
+     */
+    static function idn_to_ascii($url, $charset = '')
+    {
+        $idn = self::get_idna_converter();
+        if (null != $idn) {
+            if (empty($charset)) {
+                $charset = get_bloginfo('charset');
+            }
 
-		$load = null;
+            // Encode only the host.
+            if (preg_match('@(\w+:/*)?([^/:]+)(.*$)?@s', $url, $matches)) {
+                $host = $matches[2];
+                if (( strtoupper($charset) != 'UTF-8' ) && ( strtoupper($charset) != 'UTF8' )) {
+                    $host = encode_utf8($host, $charset, true);
+                }
+                $host = $idn->encode($host);
+                $url  = $matches[1] . $host . $matches[3];
+            }
+        }
 
-		if (function_exists('sys_getloadavg')) {
-			$load = sys_getloadavg();
-		} else {
-			$loadavg_file = '/proc/loadavg';
-			if (@is_readable($loadavg_file)) {
-				$load = explode(' ', file_get_contents($loadavg_file));
-				$load = array_map('floatval', $load);
-			}
-		}
+        return $url;
+    }
 
-		$cached_load = $load;
-		$cached_when = time();
-		return $load;
-	}
+    /**
+     * Convert an internationalized domain name (or URL) from ASCII-compatible encoding to UTF8.
+     *
+     * @param string $url
+     * @return string
+     */
+    static function idn_to_utf8($url)
+    {
+        $idn = self::get_idna_converter();
+        if (null !== $idn) {
+            $url = $idn->decode($url);
+        }
 
-	/**
-	 * Convert an internationalized domain name or URL to ASCII-compatible encoding.
-	 *
-	 * @param string $url Either a domain name or a complete URL.
-	 * @param string $charset The character encoding of the $url parameter. Defaults to the encoding set in Settings -> Reading.
-	 * @return string
-	 */
-	static function idn_to_ascii($url, $charset = '')
-	{
-		$idn = blcUtility::get_idna_converter();
-		if (null != $idn) {
-			if (empty($charset)) {
-				$charset = get_bloginfo('charset');
-			}
+        return $url;
+    }
 
-			// Encode only the host.
-			if (preg_match('@(\w+:/*)?([^/:]+)(.*$)?@s', $url, $matches)) {
-				$host = $matches[2];
-				if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
-					$host = encode_utf8($host, $charset, true);
-				}
-				$host = $idn->encode($host);
-				$url  = $matches[1] . $host . $matches[3];
-			}
-		}
+    /**
+     * Get an instance of idna_converter
+     *
+     * @return idna_convert|null Either an instance of IDNA converter, or NULL if the converter class is not available
+     */
+    static function get_idna_converter()
+    {
+        static $idn = null;
+        if (( null === $idn ) && class_exists('idna_convert')) {
+            $idn = new \idna_convert();
+        }
+        return $idn;
+    }
 
-		return $url;
-	}
-
-	/**
-	 * Convert an internationalized domain name (or URL) from ASCII-compatible encoding to UTF8.
-	 *
-	 * @param string $url
-	 * @return string
-	 */
-	static function idn_to_utf8($url)
-	{
-		$idn = blcUtility::get_idna_converter();
-		if (null !== $idn) {
-			$url = $idn->decode($url);
-		}
-
-		return $url;
-	}
-
-	/**
-	 * Get an instance of idna_converter
-	 *
-	 * @return idna_convert|null Either an instance of IDNA converter, or NULL if the converter class is not available
-	 */
-	static function get_idna_converter()
-	{
-		static $idn = null;
-		if ((null === $idn) && class_exists('idna_convert')) {
-			$idn = new idna_convert();
-		}
-		return $idn;
-	}
-
-	/**
-	 * Generate a numeric hash from a string. The result will be constrained to the specified interval.
-	 *
-	 * @static
-	 * @param string $input
-	 * @param int $min
-	 * @param int $max
-	 * @return float
-	 */
-	public static function constrained_hash($input, $min = 0, $max = 1)
-	{
-		$bytes_to_use   = 3;
-		$md5_char_count = 32;
-		$hash           = substr(md5($input), $md5_char_count - $bytes_to_use * 2);
-		$hash           = intval(hexdec($hash));
-		return  $min + (($max - $min) * ($hash / (pow(2, $bytes_to_use * 8) - 1)));
-	}
-} 
+    /**
+     * Generate a numeric hash from a string. The result will be constrained to the specified interval.
+     *
+     * @static
+     * @param string $input
+     * @param int    $min
+     * @param int    $max
+     * @return float
+     */
+    public static function constrained_hash($input, $min = 0, $max = 1)
+    {
+        $bytes_to_use   = 3;
+        $md5_char_count = 32;
+        $hash           = substr(md5($input), $md5_char_count - $bytes_to_use * 2);
+        $hash           = intval(hexdec($hash));
+        return $min + ( ( $max - $min ) * ( $hash / ( pow(2, $bytes_to_use * 8) - 1 ) ) );
+    }
+}

@@ -1,125 +1,124 @@
 <?php
 
-if (!function_exists('wpmudev_blc_local_get_charset_collate')) {
-	function wpmudev_blc_local_get_charset_collate()
-	{
-		global $wpdb;
+if (! function_exists('wpmudev_blc_local_get_charset_collate')) {
+    function wpmudev_blc_local_get_charset_collate()
+    {
+        global $wpdb;
 
-		// Let's make sure that new tables collate will match with the one set in posts table (and specifically post_status, since upon synch there's a join with that column).
-		// Reason for this is to avoid getting the `Illegal mix of collations` error.
-		// Root of this issue is that older WP versions (prior to 4.6) had different default collation ( utf8mb4_unicode_ci ) and versions from 4.6 and after use `utf8mb4_unicode_520_ci`.
-		// For reference :
-		// v4.5: https://github.com/WordPress/WordPress/blob/4.5-branch/wp-includes/wp-db.php#L761
-		// v4.6: https://github.com/WordPress/WordPress/blob/4.6-branch/wp-includes/wp-db.php#L798
-		$collate         = get_table_col_collation($wpdb->posts, 'post_type');
-		$charset         = get_table_col_charset($wpdb->posts, 'post_type');
-		$charset_collate = '';
+        // Let's make sure that new tables collate will match with the one set in posts table (and specifically post_status, since upon synch there's a join with that column).
+        // Reason for this is to avoid getting the `Illegal mix of collations` error.
+        // Root of this issue is that older WP versions (prior to 4.6) had different default collation ( utf8mb4_unicode_ci ) and versions from 4.6 and after use `utf8mb4_unicode_520_ci`.
+        // For reference :
+        // v4.5: https://github.com/WordPress/WordPress/blob/4.5-branch/wp-includes/wp-db.php#L761
+        // v4.6: https://github.com/WordPress/WordPress/blob/4.6-branch/wp-includes/wp-db.php#L798
+        $collate         = get_table_col_collation($wpdb->posts, 'post_type');
+        $charset         = get_table_col_charset($wpdb->posts, 'post_type');
+        $charset_collate = '';
 
-		if (!empty($collate) && !empty($charset)) {
-			$charset_collate = "DEFAULT CHARACTER SET {$charset} COLLATE {$collate}";
-		} else {
-			if (!empty($wpdb->charset)) {
+        if (! empty($collate) && ! empty($charset)) {
+            $charset_collate = "DEFAULT CHARACTER SET {$charset} COLLATE {$collate}";
+        } else {
+            if (! empty($wpdb->charset)) {
+                // Some German installs use "utf-8" (invalid) instead of "utf8" (valid). None of
+                // the charset ids supported by MySQL contain dashes, so we can safely strip them.
+                // See http://dev.mysql.com/doc/refman/5.0/en/charset-charsets.html
+                $charset = str_replace('-', '', $wpdb->charset);
 
-				//Some German installs use "utf-8" (invalid) instead of "utf8" (valid). None of
-				//the charset ids supported by MySQL contain dashes, so we can safely strip them.
-				//See http://dev.mysql.com/doc/refman/5.0/en/charset-charsets.html
-				$charset = str_replace('-', '', $wpdb->charset);
+                // set charset
+                $charset_collate = "DEFAULT CHARACTER SET {$charset}";
+            }
 
-				//set charset
-				$charset_collate = "DEFAULT CHARACTER SET {$charset}";
-			}
+            if (! empty($wpdb->collate)) {
+                $charset_collate .= " COLLATE {$wpdb->collate}";
+            }
+        }
 
-			if (!empty($wpdb->collate)) {
-				$charset_collate .= " COLLATE {$wpdb->collate}";
-			}
-		}
+        return $charset_collate;
+    }
 
-		return $charset_collate;
-	}
+    /**
+     * Get collation of a table's column.
+     *
+     * @since 2.2.2
+     *
+     * @param string $table The table name
+     * @param string $column The table's column name
+     * @return null|string
+     */
+    function get_table_col_collation(string $table = '', string $column = '')
+    {
+        if (empty($table) || empty($column)) {
+            return null;
+        }
 
-	/**
-	 * Get collation of a table's column.
-	 *
-	 * @since 2.2.2
-	 *
-	 * @param string $table The table name
-	 * @param string $column The table's column name
-	 * @return null|string
-	 */
-	function get_table_col_collation(string $table = '', string $column = '')
-	{
-		if (empty($table) || empty($column)) {
-			return null;
-		}
+        $table_parts = explode('.', $table);
+        $table       = ! empty($table_parts[1]) ? $table_parts[1] : $table;
+        $col_key     = strtolower("{$table}_{$column}");
 
-		$table_parts = explode('.', $table);
-		$table       = !empty($table_parts[1]) ? $table_parts[1] : $table;
-		$col_key     = strtolower("{$table}_{$column}");
+        static $tables_collates = array();
 
-		static $tables_collates = array();
+        if (! isset($tables_collates[ $col_key ])) {
+            global $wpdb;
 
-		if (!isset($tables_collates[$col_key])) {
-			global $wpdb;
+            $tables_collates[ $col_key ] = null;
+            $table_status                = null;
 
-			$tables_collates[$col_key] = null;
-			$table_status                = null;
+            // Alternatively in order to check only for wp core tables $wpdb->tables() could be used.
+            $tables_like_table = $wpdb->get_results($wpdb->prepare('SHOW TABLES LIKE %s', $table));
 
-			// Alternatively in order to check only for wp core tables $wpdb->tables() could be used.
-			$tables_like_table = $wpdb->get_results($wpdb->prepare('SHOW TABLES LIKE %s', $table));
+            if (! empty($tables_like_table)) {
+                $table_status = $wpdb->get_row(
+                    $wpdb->prepare(
+                        "SHOW FULL COLUMNS FROM {$table} WHERE field = '%s'",
+                        $column
+                    )
+                );
+            }
 
-			if (!empty($tables_like_table)) {
-				$table_status = $wpdb->get_row(
-					$wpdb->prepare(
-						"SHOW FULL COLUMNS FROM {$table} WHERE field = '%s'",
-						$column
-					)
-				);
-			}
+            if (! empty($table_status) && ! empty($table_status->Collation)) {
+                $tables_collates[ $col_key ] = $table_status->Collation;
+            }
+        }
 
-			if (!empty($table_status) && !empty($table_status->Collation)) {
-				$tables_collates[$col_key] = $table_status->Collation;
-			}
-		}
+        return $tables_collates[ $col_key ];
+    }
 
-		return $tables_collates[$col_key];
-	}
+    /**
+     * Get charset of a table's column.
+     *
+     * @since 2.2.2
+     *
+     * @param string $table The table name
+     * @param string $column The table's column name
+     * @return null|string
+     */
+    function get_table_col_charset(string $table = '', string $column = '')
+    {
+        if (empty($table) || empty($column)) {
+            return null;
+        }
 
-	/**
-	 * Get charset of a table's column.
-	 *
-	 * @since 2.2.2
-	 *
-	 * @param string $table The table name
-	 * @param string $column The table's column name
-	 * @return null|string
-	 */
-	function get_table_col_charset(string $table = '', string $column = '')
-	{
-		if (empty($table) || empty($column)) {
-			return null;
-		}
+        $collation = get_table_col_collation($table, $column);
 
-		$collation = get_table_col_collation($table, $column);
+        if (empty($collation)) {
+            return null;
+        }
 
-		if (empty($collation)) {
-			return null;
-		}
+        list($charset) = explode('_', $collation);
 
-		list($charset) = explode('_', $collation);
-
-		return $charset;
-	}
+        return $charset;
+    }
 }
 
-if (!function_exists('blc_get_db_schema')) {
+if (! function_exists('blc_get_db_schema')) {
 
-	function blc_get_db_schema()
-	{
-		global $wpdb;
+    function blc_get_db_schema()
+    {
+        global $wpdb;
 
-		$charset_collate = wpmudev_blc_local_get_charset_collate();
+        $charset_collate = wpmudev_blc_local_get_charset_collate();
 
-		$blc_db_schema = <<<EOM
+        $blc_db_schema = <<<EOM
 
 	CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}blc_filters` (
 		`id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -197,6 +196,6 @@ if (!function_exists('blc_get_db_schema')) {
 
 EOM;
 
-		return $blc_db_schema;
-	}
+        return $blc_db_schema;
+    }
 }

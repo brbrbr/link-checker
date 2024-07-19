@@ -1,4 +1,5 @@
 <?php
+
 /*
 Plugin Name: Plaintext URLs
 Description: Parse plaintext URLs as links
@@ -15,6 +16,6 @@ ModulePriority: 800
 
 
 
-class blcPlaintextURL extends blcPlaintextUrlBase {
-
+class blcPlaintextURL extends blcPlaintextUrlBase
+{
 }

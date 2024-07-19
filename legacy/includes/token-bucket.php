@@ -3,122 +3,130 @@
 /**
  * This class implements a variant of the popular token bucket algorithm.
  */
-class blcTokenBucketList {
-	const MICROSECONDS_PER_SECOND = 1000000;
+class blcTokenBucketList
+{
+    const MICROSECONDS_PER_SECOND = 1000000;
 
-	/** @var float How many tokens each bucket can hold. */
-	private $capacity;
+    /** @var float How many tokens each bucket can hold. */
+    private $capacity;
 
-	/** @var  float How long it takes to completely fill a bucket (in seconds). */
-	private $fillTime; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+    /** @var  float How long it takes to completely fill a bucket (in seconds). */
+    private $fillTime; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 
-	/** @var float Minimum interval between taking tokens from a bucket (in seconds).  */
-	private $minTakeInterval; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+    /** @var float Minimum interval between taking tokens from a bucket (in seconds).  */
+    private $minTakeInterval; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 
-	/** @var int How many buckets we can manage, in total. */
-	private $maxBuckets = 200; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+    /** @var int How many buckets we can manage, in total. */
+    private $maxBuckets = 200; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 
-	private $buckets = array();
+    private $buckets = array();
 
-	public function __construct( $capacity, $fillTime, $minInterval = 0 ) {
-		$this->capacity        = $capacity;
-		$this->fillTime        = $fillTime;
-		$this->minTakeInterval = $minInterval;
-	}
+    public function __construct($capacity, $fillTime, $minInterval = 0)
+    {
+        $this->capacity        = $capacity;
+        $this->fillTime        = $fillTime;
+        $this->minTakeInterval = $minInterval;
+    }
 
-	/**
-	 * Take one token from a bucket.
-	 * This method will block until a token becomes available.
-	 *
-	 * @param string $bucketName
-	 */
+    /**
+     * Take one token from a bucket.
+     * This method will block until a token becomes available.
+     *
+     * @param string $bucketName
+     */
 	 //phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-	public function takeToken( $bucketName ) {
-		$this->createIfNotExists( $bucketName );
-		$this->waitForToken( $bucketName );
+    public function takeToken($bucketName)
+    {
+        $this->createIfNotExists($bucketName);
+        $this->waitForToken($bucketName);
 
-		$this->buckets[ $bucketName ]['tokens']--;
-		$this->buckets[ $bucketName ]['lastTokenTakenAt'] = microtime( true );
-	}
+        --$this->buckets[ $bucketName ]['tokens'];
+        $this->buckets[ $bucketName ]['lastTokenTakenAt'] = microtime(true);
+    }
 
-	/**
-	 * Wait until at a token is available.
-	 *
-	 * @param string $name Bucket name.
-	 */
+    /**
+     * Wait until at a token is available.
+     *
+     * @param string $name Bucket name.
+     */
 	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-	private function waitForToken( $name ) {
-		$now                = microtime( true );
-		$timeSinceLastToken = $now - $this->buckets[ $name ]['lastTokenTakenAt'];
-		$intervalWait       = max( $this->minTakeInterval - $timeSinceLastToken, 0 );
-		$requiredTokens     = max( 1 - $this->buckets[ $name ]['tokens'], 0 );
-		$refillWait         = $requiredTokens / $this->getFillRate();
-		$totalWait          = round( max( $intervalWait, $refillWait ) * self::MICROSECONDS_PER_SECOND, 0 );
+    private function waitForToken($name)
+    {
+        $now                = microtime(true);
+        $timeSinceLastToken = $now - $this->buckets[ $name ]['lastTokenTakenAt'];
+        $intervalWait       = max($this->minTakeInterval - $timeSinceLastToken, 0);
+        $requiredTokens     = max(1 - $this->buckets[ $name ]['tokens'], 0);
+        $refillWait         = $requiredTokens / $this->getFillRate();
+        $totalWait          = round(max($intervalWait, $refillWait) * self::MICROSECONDS_PER_SECOND, 0);
 
-		if ( $totalWait > 0 ) {
-			usleep( intval( $totalWait ) );
-		}
+        if ($totalWait > 0) {
+            usleep(intval($totalWait));
+        }
 
-		$this->refillBucket( $name );
-		return;
-	}
+        $this->refillBucket($name);
+        return;
+    }
 
-	/**
-	 * Create a bucket if it doesn't exist yet.
-	 *
-	 * @param $name
-	 */
+    /**
+     * Create a bucket if it doesn't exist yet.
+     *
+     * @param $name
+     */
 	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-	private function createIfNotExists( $name ) {
-		if ( ! isset( $this->buckets[ $name ] ) ) {
-			$this->buckets[ $name ] = array(
-				'tokens'           => $this->capacity,
-				'lastRefill'       => microtime( true ),
-				'lastTokenTakenAt' => 0,
-			);
-		}
-		//Make sure we don't exceed $maxBuckets.
-		$this->cleanup();
-	}
+    private function createIfNotExists($name)
+    {
+        if (! isset($this->buckets[ $name ])) {
+            $this->buckets[ $name ] = array(
+                'tokens'           => $this->capacity,
+                'lastRefill'       => microtime(true),
+                'lastTokenTakenAt' => 0,
+            );
+        }
+        // Make sure we don't exceed $maxBuckets.
+        $this->cleanup();
+    }
 
-	/**
-	 * Calculate how quickly each bucket should be refilled.
-	 *
-	 * @return float Fill rate in tokens per second.
-	 */
+    /**
+     * Calculate how quickly each bucket should be refilled.
+     *
+     * @return float Fill rate in tokens per second.
+     */
 	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-	private function getFillRate() {
-		return $this->capacity / $this->fillTime;
-	}
+    private function getFillRate()
+    {
+        return $this->capacity / $this->fillTime;
+    }
 
-	/**
-	 * Refill a bucket with fresh tokens.
-	 *
-	 * @param $name
-	 */
+    /**
+     * Refill a bucket with fresh tokens.
+     *
+     * @param $name
+     */
 	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-	private function refillBucket( $name ) {
-		$now = microtime( true );
+    private function refillBucket($name)
+    {
+        $now = microtime(true);
 
-		$timeSinceRefill                   = $now - $this->buckets[ $name ]['lastRefill'];
-		$this->buckets[ $name ]['tokens'] += $timeSinceRefill * $this->getFillRate();
+        $timeSinceRefill                   = $now - $this->buckets[ $name ]['lastRefill'];
+        $this->buckets[ $name ]['tokens'] += $timeSinceRefill * $this->getFillRate();
 
-		if ( $this->buckets[ $name ]['tokens'] > $this->capacity ) {
-			$this->buckets[ $name ]['tokens'] = $this->capacity;
-		}
+        if ($this->buckets[ $name ]['tokens'] > $this->capacity) {
+            $this->buckets[ $name ]['tokens'] = $this->capacity;
+        }
 
-		$this->buckets[ $name ]['lastRefill'] = $now;
-	}
+        $this->buckets[ $name ]['lastRefill'] = $now;
+    }
 
-	/**
-	 * Keep the number of active buckets within the $this->maxBuckets limit.
-	 */
-	private function cleanup() {
-		if ( $this->maxBuckets > 0 ) {
-			//Very simplistic implementation - just discard the oldest buckets.
-			while ( count( $this->buckets ) > $this->maxBuckets ) {
-				array_shift( $this->buckets );
-			}
-		}
-	}
+    /**
+     * Keep the number of active buckets within the $this->maxBuckets limit.
+     */
+    private function cleanup()
+    {
+        if ($this->maxBuckets > 0) {
+            // Very simplistic implementation - just discard the oldest buckets.
+            while (count($this->buckets) > $this->maxBuckets) {
+                array_shift($this->buckets);
+            }
+        }
+    }
 }

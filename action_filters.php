@@ -1,8 +1,7 @@
 <?php
 
-
-/** 
-* By default only one instance of the broken link checker runs per database server. 
+/**
+* By default only one instance of the broken link checker runs per database server.
 * this to avoid to many outgoing http requests.
 * with this filter the behaviour can be changed'.
 * currently there are two names
@@ -11,8 +10,9 @@
 * be friendly to your neighbours and leave it on server
 */
 
-add_filter('broken-link-checker-acquire-lock-name','broken_link_checker_acquire_lock_name_example',accepted_args : 1);
-function broken_link_checker_acquire_lock_name_example($name) {
+add_filter('broken-link-checker-acquire-lock-name', 'broken_link_checker_acquire_lock_name_example', accepted_args : 1);
+function broken_link_checker_acquire_lock_name_example($name)
+{
     return $name; //default server (database) wide
     //the crc32 is to ensure the $name is not to long
     return $name . crc32(DB_NAME); //per database ( multisite)
@@ -24,7 +24,7 @@ function broken_link_checker_acquire_lock_name_example($name) {
 /**
  * Options passed to curl_setopt_array
  * if you  manipulate  them wrong you will break the checker :)
- * 
+ *
  */
 apply_filters('broken-link-checker-curl-options', $options);
 
@@ -44,7 +44,7 @@ apply_filters('blc-parser-html-link-content', $content);
  * How often (at most) notifications will be sent. Possible values : 'daily', 'weekly'. There is no option for this so we've added a fitler for it.
  */
 apply_filters('blc_notification_schedule_filter', 'daily');
-apply_filters('blc-module-settings-' . $module_id, '',    $current_settings);
+apply_filters('blc-module-settings-' . $module_id, '', $current_settings);
 apply_filters('wpmudev_blc_max_execution_time', $this->conf->options['max_execution_time']);
 apply_filters('blc_allow_send_email_notification', $this->conf->options['send_email_notifications']);
 apply_filters('blc_allow_send_author_email_notification', $this->conf->options['send_authors_email_notifications']);

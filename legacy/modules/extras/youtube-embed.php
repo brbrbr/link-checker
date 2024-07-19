@@ -1,4 +1,5 @@
 <?php
+
 /*
 Plugin Name: Embedded YouTube videos (old embed code)
 Description: Parse embedded videos from YouTube
@@ -15,23 +16,25 @@ ModulePriority: 110
 
 require_once 'embed-parser-base.php';
 
-class blcYouTubeEmbed extends blcEmbedParserBase {
+class blcYouTubeEmbed extends blcEmbedParserBase
+{
+    function init()
+    {
+        parent::init();
+        $this->short_title       = __('YouTube Video', 'broken-link-checker');
+        $this->long_title        = __('Embedded YouTube video', 'broken-link-checker');
+        $this->url_search_string = 'youtube.com/v/';
+    }
 
-	function init() {
-		parent::init();
-		$this->short_title       = __( 'YouTube Video', 'broken-link-checker' );
-		$this->long_title        = __( 'Embedded YouTube video', 'broken-link-checker' );
-		$this->url_search_string = 'youtube.com/v/';
-	}
+    function link_url_from_src($src)
+    {
+        // Extract video ID from the SRC. The ID is always 11 characters.
+        $parts    = explode('/', $src);
+        $video_id = substr(end($parts), 0, 11);
 
-	function link_url_from_src( $src ) {
-		//Extract video ID from the SRC. The ID is always 11 characters.
-		$parts    = explode( '/', $src );
-		$video_id = substr( end( $parts ), 0, 11 );
+        // Reconstruct the video permalink based on the ID
+        $url = 'http://www.youtube.com/watch?v=' . $video_id;
 
-		//Reconstruct the video permalink based on the ID
-		$url = 'http://www.youtube.com/watch?v=' . $video_id;
-
-		return $url;
-	}
+        return $url;
+    }
 }

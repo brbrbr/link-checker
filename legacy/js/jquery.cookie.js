@@ -5,7 +5,6 @@
  * Dual licensed under the MIT and GPL licenses:
  * http://www.opensource.org/licenses/mit-license.php
  * http://www.gnu.org/licenses/gpl.html
- *
  */
 
 /**
@@ -53,11 +52,11 @@
  * @cat Plugins/Cookie
  * @author Klaus Hartl/klaus.hartl@stilbuero.de
  */
-jQuery.cookie = function(name, value, options) {
+jQuery.cookie = function (name, value, options) {
     if (typeof value != 'undefined') { // name and value given, set cookie
         options = options || {};
         if (value === null) {
-            value = '';
+            value           = '';
             options.expires = -1;
         }
         var expires = '';
@@ -74,9 +73,9 @@ jQuery.cookie = function(name, value, options) {
         // CAUTION: Needed to parenthesize options.path and options.domain
         // in the following expressions, otherwise they evaluate to undefined
         // in the packed version for some reason...
-        var path = options.path ? '; path=' + (options.path) : '';
-        var domain = options.domain ? '; domain=' + (options.domain) : '';
-        var secure = options.secure ? '; secure' : '';
+        var path        = options.path ? '; path=' + (options.path) : '';
+        var domain      = options.domain ? '; domain=' + (options.domain) : '';
+        var secure      = options.secure ? '; secure' : '';
         document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
     } else { // only name given, get cookie
         var cookieValue = null;

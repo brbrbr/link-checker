@@ -1,7 +1,8 @@
 <?php
 
-use Blc\Includes\TransactionManager;
+use Blc\Database\TransactionManager;
 use Blc\Includes\blcUtility;
+use Blc\Abstract\Module;
 
 /**
  * The base class for link container managers.
@@ -11,7 +12,7 @@ use Blc\Includes\blcUtility;
  * @package Broken Link Checker
  * @access public
  */
-class blcContainerManager extends blcModule
+class blcContainerManager extends Module
 {
     var $container_type       = '';
     var $fields               = array();

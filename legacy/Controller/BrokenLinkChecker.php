@@ -9,9 +9,9 @@ namespace Blc\Controller;
  * @package broken-link-checker
  */
 
-use Blc\Includes\WPMutex;
+use Blc\Database\WPMutex;
 use Blc\Utils\UpdatePlugin;
-use Blc\Includes\TransactionManager;
+use Blc\Database\TransactionManager;
 use Blc\Includes\blcUtility;
 use Blc\Utils\ConfigurationManager;
 

@@ -6,7 +6,7 @@
  * When Local is active we don't need to load on Cloud admin menu page.
  */
 
-use Blc\Includes\WPMutex;
+use Blc\Database\WPMutex;
 use Blc\Includes\blcFileLogger;
 use Blc\Includes\blcDummyLogger;
 use Blc\Includes\blcCachedOptionLogger;
@@ -86,7 +86,6 @@ if (defined('BLC_ACTIVE')) {
  */
 
 require_once BLC_DIRECTORY_LEGACY . '/includes/module-manager.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/module-base.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/parsers.php';

@@ -1,4 +1,5 @@
 <?php
+namespace Blc\Abstract;
 
 use Blc\Utils\ConfigurationManager;
 
@@ -14,7 +15,7 @@ use Blc\Utils\ConfigurationManager;
  * @author Janis Elsts
  * @access public
  */
-class blcModule
+abstract class Module
 {
     var $module_id;      // The ID of this module. Usually a lowercase string.
     var $cached_header;  // An associative array containing the header data of the module file.

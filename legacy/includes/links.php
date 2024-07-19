@@ -5,10 +5,10 @@
  * @copyright 2010
  */
 
-use Blc\Includes\TransactionManager;
+use Blc\Database\TransactionManager;
 use Blc\Includes\blcUtility;
 use Blc\Controller\BrokenLinkChecker;
-
+use Blc\Utils\ConfigurationManager;
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
 define('BLC_LINK_STATUS_OK', 'ok');
 define('BLC_LINK_STATUS_INFO', 'info');

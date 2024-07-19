@@ -1,4 +1,5 @@
 <?php
+use Blc\Abstract\Module;
 
 /**
  * Base class for link checking algorithms.
@@ -8,7 +9,7 @@
  * @package Broken Link Checker
  * @access public
  */
-class blcChecker extends blcModule
+class blcChecker extends Module
 {
     /**
      * Priority determines the order in which the plugin will try all registered checkers

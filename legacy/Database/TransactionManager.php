@@ -1,6 +1,6 @@
 <?php
 
-namespace Blc\Includes;
+namespace Blc\Database;
 
 class TransactionManager
 {

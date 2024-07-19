@@ -1,5 +1,6 @@
 <?php
 
+use Blc\Abstract\Module;
 /**
  * A base class for parsers.
  *
@@ -22,7 +23,7 @@
  * @package Broken Link Checker
  * @access public
  */
-class blcParser extends blcModule
+class blcParser extends Module
 {
     var $parser_type;
     var $supported_formats    = array();

@@ -1,4 +1,5 @@
-# broken-link-checker
+# Link Checker for WordPress
+
 Broken Link Checker for wordpress
 
 This is a clone/fork of the famous broken link checker for wordpress of WPMUDEV

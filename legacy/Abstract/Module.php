@@ -31,12 +31,12 @@ abstract class Module
      * @param blcModuleManager        $module_manager
      * @return void
      */
-    function __construct($module_id, $cached_header, ConfigurationManager $plugin_conf, &$module_manager)
+    function __construct($module_id, $cached_header, ConfigurationManager $plugin_conf, $module_manager)
     {
         $this->module_id      = $module_id;
         $this->cached_header  = $cached_header;
-        $this->plugin_conf    = &$plugin_conf;
-        $this->module_manager = &$module_manager;
+        $this->plugin_conf    = $plugin_conf;
+        $this->module_manager = $module_manager;
 
         $this->init();
     }

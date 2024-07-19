@@ -384,7 +384,7 @@ class BrokenLinkChecker
      */
     public function deactivation()
     {
-        global $wpdb, $blclog;
+        global  $blclog;
         // Remove our Cron events.
         wp_clear_scheduled_hook('blc_cron_check_links');
         wp_clear_scheduled_hook('blc_cron_email_notifications');

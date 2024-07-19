@@ -24,16 +24,18 @@ class linkCheckerAutoload
 {
 	private $classMap = [];
 	private $classFile = 'classmap.php';
-
+	private $baseNameSpace = "Blc\\Component\\Blc\\Administrator\\Blc\\";
+	private $plugin_path;
+	private $legacy_dir;
 	public function __construct()
 	{
-		$plugin_path    = plugin_dir_path(__FILE__);
+		$this->plugin_path    = plugin_dir_path(__FILE__);
+		$this->legacy_dir = wp_normalize_path(path_join($this->plugin_path, 'legacy'));
+		$this->classFile =  wp_normalize_path(path_join($this->plugin_path, $this->classFile));
 
-		$this->classFile =  wp_normalize_path(path_join($plugin_path, $this->classFile));
-	 
 
-		if (!is_file($this->classFile) || (defined('WP_DEBUG') && WP_DEBUG )) {
-			$this->link_checker_build_namespace_map();		
+		if (!is_file($this->classFile) || (defined('WP_DEBUG') && WP_DEBUG)) {
+			$this->link_checker_build_namespace_map();
 		}
 
 		$this->classMap =  require $this->classFile;
@@ -41,7 +43,7 @@ class linkCheckerAutoload
 		/**
 		 * Register autoloader callback.
 		 */
-		
+
 		spl_autoload_register([$this, 'link_checker_autoloader']);
 	}
 
@@ -66,34 +68,51 @@ class linkCheckerAutoload
 		if (!str_starts_with($className, 'Blc')) {
 			return;
 		}
-	
-		if (isset($this->classMap[$className])) {
-			$classfile = $this->classMap[$className];
-			$plugin_path    = plugin_dir_path(__FILE__);
-			$filepath       = wp_normalize_path(path_join($plugin_path, $classfile));
 
+		$shortNameSpace = str_replace($this->baseNameSpace, '', $className);
+		$parts = explode('\\', $shortNameSpace); //should be without leading \\
+	
+		if (\count($parts) > 0) {
+			$filepath = path_join($this->legacy_dir, join(DIRECTORY_SEPARATOR, $parts)) . '.php';
 			if (file_exists($filepath)) {
 				include_once $filepath;
+				return;
+			}
+		}
+
+		if (isset($this->classMap[$className])) {
+			$classfile = $this->classMap[$className];
+			$filepath       = path_join($this->legacy_dir, $classfile);
+			if (file_exists($filepath)) {
+				include_once $filepath;
+				return;
 			}
 		}
 	}
 	function link_checker_build_namespace_map()
 	{
-		$classMap = [];
-		$plugin_path    = plugin_dir_path(__FILE__);
-		$it = new RecursiveDirectoryIterator($plugin_path);
+		$it = new RecursiveDirectoryIterator($this->legacy_dir);
 		foreach (new RecursiveIteratorIterator($it) as $file) {
 			$ext = pathinfo($file, PATHINFO_EXTENSION);
-
 			if ($ext == 'php') {
 				$in = file_get_contents($file);
 				if (preg_match('#^namespace (.*);#m', $in, $m)) {
-					$shortFile = str_replace($plugin_path, '', $file);
+					$shortFile = ltrim(str_replace($this->legacy_dir, '', $file), '/');
 					$namespace = $m[1];
 					if (preg_match_all('#^class ([^\s]+)#m', $in, $n)) {
-
+						$shortNameSpace = str_replace($this->baseNameSpace, '', $namespace);
+						$parts = explode('\\', $shortNameSpace);
+						$path = path_join($this->legacy_dir, join(DIRECTORY_SEPARATOR, $parts));
+						if (file_exists($path)) {
+							$matchClassName = basename(array_pop($file), 'php');
+						} else {
+							$matchClassName = '';
+						}
 
 						foreach ($n[1] as $className) {
+							if ($matchClassName == $className) {
+								continue;
+							}
 							$fullClass = "$namespace\\$className";
 							$fullClass = str_replace('\\', '\\\\', $fullClass);
 							$classMap[$fullClass] = $shortFile;

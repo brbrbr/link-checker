@@ -9,6 +9,7 @@ use Blc\Database\TransactionManager;
 use Blc\Includes\blcUtility;
 use Blc\Controller\BrokenLinkChecker;
 use Blc\Utils\ConfigurationManager;
+
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
 define('BLC_LINK_STATUS_OK', 'ok');
 define('BLC_LINK_STATUS_INFO', 'info');
@@ -204,7 +205,7 @@ class blcLink
      */
     function valid()
     {
-        return ! empty($this->url) && ( ! empty($this->link_id) || $this->is_new );
+        return !empty($this->url) && (!empty($this->link_id) || $this->is_new);
     }
 
     /**
@@ -215,7 +216,7 @@ class blcLink
      */
     function check($save_results = true)
     {
-        if (! $this->valid()) {
+        if (!$this->valid()) {
             return false;
         }
 
@@ -306,6 +307,9 @@ class blcLink
 
         // Update the object's fields with the new results
         $this->set_values($results);
+        if ($this->final_url && $this->url != $this->final_url) {
+            $this->final_url = blcUtility::idn_to_utf8($this->final_url);
+        }
 
         // Update timestamps & state-dependent fields
         $this->status_changed($results['broken'], $new_result_hash);
@@ -328,13 +332,13 @@ class blcLink
      */
     private function decide_warning_state($check_results)
     {
-        if (! $check_results['broken'] && ! $check_results['warning']) {
+        if (!$check_results['broken'] && !$check_results['warning']) {
             // Nothing to do, this is a working link.
             return $check_results;
         }
 
         $plugin_config = ConfigurationManager::getInstance();
-        if (! $plugin_config->get('warnings_enabled', true)) {
+        if (!$plugin_config->get('warnings_enabled', true)) {
             // The user wants all failures to be reported as "broken", regardless of severity.
             if ($check_results['warning']) {
                 $check_results['broken']  = true;
@@ -345,7 +349,7 @@ class blcLink
 
         $warning_reason   = null;
         $failure_count    = $this->check_count;
-        $failure_duration = ( 0 != $this->first_failure ) ? ( time() - $this->first_failure ) : 0;
+        $failure_duration = (0 != $this->first_failure) ? (time() - $this->first_failure) : 0;
         // These could be configurable, but lets put that off until someone actually asks for it.
         $duration_threshold = 24 * 3600;
         $count_threshold    = 3;
@@ -383,7 +387,7 @@ class blcLink
         if (in_array($http_code, $temporary_http_errors)) {
             $maybe_temporary_error = true;
 
-            if (in_array($http_code, array( 502, 503, 504, 509 ))) {
+            if (in_array($http_code, array(502, 503, 504, 509))) {
                 $warning_reason = sprintf(
                     'HTTP error %d usually means that the site is down due to high server load or a configuration problem. '
                         . 'This error is often temporary and will go away after while.',
@@ -402,14 +406,14 @@ class blcLink
         // A "403 Forbidden" error on an internal link usually means something on the site is blocking automated
         // requests. Possible culprits include hotlink protection rules in .htaccess, badly configured IDS, and so on.
         $is_internal_link = $this->is_internal_to_domain();
-        if ($is_internal_link && ( 403 === $http_code )) {
+        if ($is_internal_link && (403 === $http_code)) {
             $suspected_false_positive = true;
             $warning_reason           = 'This might be a false positive. Make sure the link is not password-protected, '
                 . 'and that your server is not set up to block automated requests.';
         }
 
         // Some hosting providers turn off loopback connections. This causes all internal links to be reported as broken.
-        if ($is_internal_link && in_array($error_code, array( 'connection_failed', 'couldnt_resolve_host' ))) {
+        if ($is_internal_link && in_array($error_code, array('connection_failed', 'couldnt_resolve_host'))) {
             $suspected_false_positive = true;
             $warning_reason           = 'This is probably a false positive. ';
             if ('connection_failed' === $error_code) {
@@ -425,21 +429,21 @@ class blcLink
 
         // Temporary problems and suspected false positives start out as warnings. False positives stay that way
         // indefinitely because they are usually caused by bugs and server configuration issues, not temporary downtime.
-        if (( $maybe_temporary_error && ( $failure_count < $count_threshold ) ) || $suspected_false_positive) {
+        if (($maybe_temporary_error && ($failure_count < $count_threshold)) || $suspected_false_positive) {
             $check_results['warning'] = true;
             $check_results['broken']  = false;
         }
 
         // Upgrade temporary warnings to "broken" after X consecutive failures or Y hours, whichever comes first.
-        $threshold_reached = ( $failure_count >= $count_threshold ) || ( $failure_duration >= $duration_threshold );
+        $threshold_reached = ($failure_count >= $count_threshold) || ($failure_duration >= $duration_threshold);
         if ($check_results['warning']) {
-            if (( $maybe_temporary_error && $threshold_reached ) && ! $suspected_false_positive) {
+            if (($maybe_temporary_error && $threshold_reached) && !$suspected_false_positive) {
                 $check_results['warning'] = false;
                 $check_results['broken']  = true;
             }
         }
 
-        if (! empty($warning_reason) && $check_results['warning']) {
+        if (!empty($warning_reason) && $check_results['warning']) {
             $formatted_reason = "\n==========\n"
                 . 'Severity: Warning' . "\n"
                 . 'Reason: ' . trim($warning_reason)
@@ -475,7 +479,7 @@ class blcLink
             $this->dismissed = false;
         }
 
-        if ($this->false_positive && ! empty($new_result_hash)) {
+        if ($this->false_positive && !empty($new_result_hash)) {
             // If the link has been marked as a (probable) false positive,
             // mark it as broken *only* if the new result is different from
             // the one that caused the user to mark it as a false positive.
@@ -529,7 +533,7 @@ class blcLink
         global $wpdb, $blclog;
         /** @var wpdb $wpdb */
 
-        if (! $this->valid()) {
+        if (!$this->valid()) {
             return false;
         }
 
@@ -541,7 +545,7 @@ class blcLink
         // Make a list of fields to be saved and their values in DB format
         $values = array();
         foreach ($this->field_format as $field => $format) {
-            $values[ $field ] = $this->$field;
+            $values[$field] = $this->$field;
         }
         $values = $this->to_db_format($values);
 
@@ -559,7 +563,7 @@ class blcLink
             );
             $existing_id = $wpdb->get_var($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-            if (! empty($existing_id)) {
+            if (!empty($existing_id)) {
                 // Dammit.
                 $this->link_id = $existing_id;
                 $this->is_new  = false;
@@ -618,7 +622,7 @@ class blcLink
                 // FB::log($this->link_id, "Link updated");
                 $blclog->debug(__CLASS__ . ':' . __FUNCTION__ . ' Link updated.');
             } else {
-                $blclog->error(__CLASS__ . ':' . __FUNCTION__ . ' Error updating link', array( $this->url, $wpdb->last_error ));
+                $blclog->error(__CLASS__ . ':' . __FUNCTION__ . ' Error updating link', array($this->url, $wpdb->last_error));
                 // FB::error($wpdb->last_error, "Error updating link {$this->url}");
             }
 
@@ -644,11 +648,11 @@ class blcLink
 
         foreach ($values as $name => $value) {
             // Skip fields that don't exist in the blc_links table.
-            if (! isset($this->field_format[ $name ])) {
+            if (!isset($this->field_format[$name])) {
                 continue;
             }
 
-            $format = $this->field_format[ $name ];
+            $format = $this->field_format[$name];
 
             // Convert native values to a format comprehensible to the DB
             switch ($format) {
@@ -674,7 +678,7 @@ class blcLink
             // Escapize
             $value = $wpdb->prepare($format, $value); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
-            $dbvalues[ $name ] = $value;
+            $dbvalues[$name] = $value;
         }
 
         return $dbvalues;
@@ -691,11 +695,11 @@ class blcLink
 
         foreach ($values as $name => $value) {
             // Don't process fields that don't exist in the blc_links table.
-            if (! isset($this->field_format[ $name ])) {
+            if (!isset($this->field_format[$name])) {
                 continue;
             }
 
-            $format = $this->field_format[ $name ];
+            $format = $this->field_format[$name];
 
             // Convert values in DB format to native datatypes.
             switch ($format) {
@@ -720,7 +724,7 @@ class blcLink
                     break;
             }
 
-            $values[ $name ] = $value;
+            $values[$name] = $value;
         }
 
         return $values;
@@ -746,7 +750,7 @@ class blcLink
      */
     function edit($new_url, $new_text = null)
     {
-        if (! $this->valid()) {
+        if (!$this->valid()) {
             return new WP_Error(
                 'link_invalid',
                 __('Link is not valid', 'broken-link-checker')
@@ -820,13 +824,13 @@ class blcLink
 
         // If all instances were edited successfully we can delete the old link record.
         // UNLESS this link is equal to the new link (which should never happen, but whatever).
-        if (( 0 == $cnt_error ) && ( $cnt_okay > 0 ) && ( $this->link_id != $new_link->link_id )) {
+        if ((0 == $cnt_error) && ($cnt_okay > 0) && ($this->link_id != $new_link->link_id)) {
             $this->forget(false);
         }
 
         // On the other hand, if no instances could be edited and the $new_link was really new,
         // then delete it.
-        if (( 0 == $cnt_okay ) && $was_new) {
+        if ((0 == $cnt_okay) && $was_new) {
             $new_link->forget(false);
             $new_link = $this;
         }
@@ -850,14 +854,14 @@ class blcLink
      */
     function deredirect()
     {
-        if (! $this->valid()) {
+        if (!$this->valid()) {
             return new WP_Error(
                 'link_invalid',
                 __('Link is not valid', 'broken-link-checker')
             );
         }
 
-        if (( $this->redirect_count <= 0 ) || empty($this->final_url)) {
+        if (($this->redirect_count <= 0) || empty($this->final_url)) {
             return new WP_Error(
                 'not_redirect',
                 __('This link is not a redirect', 'broken-link-checker')
@@ -867,7 +871,7 @@ class blcLink
         // Preserve the existing #anchor if the redirect doesn't include one.
         $new_url = $this->final_url;
         $anchor  = @parse_url($this->url, PHP_URL_FRAGMENT);
-        if (! empty($anchor) && ( strrpos($new_url, '#') === false )) {
+        if (!empty($anchor) && (strrpos($new_url, '#') === false)) {
             $new_url .= '#' . $anchor;
         }
 
@@ -885,7 +889,7 @@ class blcLink
      */
     function unlink()
     {
-        if (! $this->valid()) {
+        if (!$this->valid()) {
             return new WP_Error(
                 'link_invalid',
                 __('Link is not valid', 'broken-link-checker')
@@ -943,11 +947,11 @@ class blcLink
         }
 
         // If all instances were unlinked successfully we can delete the link record.
-        if (( 0 == $cnt_error ) && ( $cnt_okay > 0 )) {
+        if ((0 == $cnt_error) && ($cnt_okay > 0)) {
             // FB::log('Instances removed, deleting the link.');
             $link_deleted = $this->forget() !== false;
 
-            if (! $link_deleted) {
+            if (!$link_deleted) {
                 array_push(
                     $errors,
                     new WP_Error(
@@ -979,11 +983,11 @@ class blcLink
     {
         global $wpdb;
         /** @var wpdb $wpdb */
-        if (! $this->valid()) {
+        if (!$this->valid()) {
             return false;
         }
 
-        if (! empty($this->link_id)) {
+        if (!empty($this->link_id)) {
             // FB::info($this, 'Deleting link from DB');
 
             if ($remove_instances) {
@@ -1010,14 +1014,14 @@ class blcLink
      */
     function get_instances($ignore_cache = false, $purpose = '')
     {
-        if (! $this->valid() || empty($this->link_id)) {
+        if (!$this->valid() || empty($this->link_id)) {
             return false;
         }
 
         if ($ignore_cache || is_null($this->_instances)) {
-            $instances = blc_get_instances(array( $this->link_id ), $purpose);
-            if (! empty($instances)) {
-                $this->_instances = $instances[ $this->link_id ];
+            $instances = blc_get_instances(array($this->link_id), $purpose);
+            if (!empty($instances)) {
+                $this->_instances = $instances[$this->link_id];
             }
         }
 
@@ -1035,32 +1039,32 @@ class blcLink
         $text = _x('Unknown', 'link status', 'broken-link-checker');
 
         // Status text
-        if (isset($this->status_text) && ! empty($this->status_text) && ! empty($this->status_code)) {
+        if (isset($this->status_text) && !empty($this->status_text) && !empty($this->status_code)) {
             // Lucky, the checker module has already set it for us.
             $text = $this->status_text;
             $code = $this->status_code;
         } elseif ($this->broken || $this->warning) {
-                $code = BLC_LINK_STATUS_WARNING;
-                $text = __('Unknown Error', 'broken-link-checker');
+            $code = BLC_LINK_STATUS_WARNING;
+            $text = __('Unknown Error', 'broken-link-checker');
 
             if ($this->timeout) {
                 $text = __('Timeout', 'broken-link-checker');
                 $code = BLC_LINK_STATUS_WARNING;
             } elseif ($this->http_code) {
                 // Only 404 (Not Found) and 410 (Gone) are treated as broken-for-sure.
-                if (in_array($this->http_code, array( 404, 410 ))) {
+                if (in_array($this->http_code, array(404, 410))) {
                     $code = BLC_LINK_STATUS_ERROR;
                 } else {
                     $code = BLC_LINK_STATUS_WARNING;
                 }
 
                 if (array_key_exists(intval($this->http_code), $this->http_status_codes)) {
-                    $text = $this->http_status_codes[ intval($this->http_code) ];
+                    $text = $this->http_status_codes[intval($this->http_code)];
                 }
             }
-        } elseif (! $this->last_check) {
-                $text = __('Not checked', 'broken-link-checker');
-                $code = BLC_LINK_STATUS_UNKNOWN;
+        } elseif (!$this->last_check) {
+            $text = __('Not checked', 'broken-link-checker');
+            $code = BLC_LINK_STATUS_UNKNOWN;
         } elseif ($this->false_positive) {
             $text = __('False positive', 'broken-link-checker');
             $code = BLC_LINK_STATUS_UNKNOWN;
@@ -1081,6 +1085,9 @@ class blcLink
     {
         return blcUtility::idn_to_ascii($this->url);
     }
+
+
+
 
     /**
      * Check if this link points to a page on the same domain as the current site.
@@ -1106,7 +1113,7 @@ class blcLink
         $site_host = preg_replace('@^www\.@', '', $site_host, 1);
 
         // Check if $host ends with $site_host. This means blah.example.com will match example.com.
-        return ( substr($host, -strlen($site_host)) === $site_host );
+        return (substr($host, -strlen($site_host)) === $site_host);
     }
 
     /**
@@ -1141,8 +1148,8 @@ function blc_cleanup_links($link_id = null)
 				{$wpdb->prefix}blc_instances.link_id IS NULL";
 
     if (null !== $link_id) {
-        if (! is_array($link_id)) {
-            $link_id = array( intval($link_id) );
+        if (!is_array($link_id)) {
+            $link_id = array(intval($link_id));
         }
         $q .= " AND {$wpdb->prefix}blc_links.link_id IN (" . implode(', ', $link_id) . ')';
     }

@@ -11,22 +11,25 @@ use Blc\Utils\ConfigurationManager;
 
 // Include the internationalized domain name converter (requires PHP 5)
 
+//worpdress has its own idn converter. //use WpOrg\Requests\IdnaEncoder;
+//however only one direction
+
 require_once BLC_DIRECTORY_LEGACY . '/idn/idna_convert.class.php';
-require_once BLC_DIRECTORY_LEGACY . '/idn/transcode_wrapper.php';
+
 
 
 class blcUtility
 {
     public static function is_host_wp_engine()
     {
-        return ( function_exists('is_wpe') && is_wpe() ) || ( defined('IS_WPE') && IS_WPE );
+        return (function_exists('is_wpe') && is_wpe()) || (defined('IS_WPE') && IS_WPE);
     }
 
     public static function is_host_flywheel()
     {
         $host_name = 'flywheel';
 
-        return ! empty($_SERVER['SERVER_SOFTWARE']) &&
+        return !empty($_SERVER['SERVER_SOFTWARE']) &&
             substr(strtolower($_SERVER['SERVER_SOFTWARE']), 0, strlen($host_name)) === strtolower($host_name);
     }
 
@@ -39,7 +42,7 @@ class blcUtility
     static function is_open_basedir()
     {
         $open_basedir = ini_get('open_basedir');
-        return $open_basedir && ( strtolower($open_basedir) != 'none' );
+        return $open_basedir && (strtolower($open_basedir) != 'none');
     }
 
     /**
@@ -100,7 +103,7 @@ class blcUtility
 
         // If the user didn't specify if $tag is a self-closing tag we try to auto-detect it
         // by checking against a list of known self-closing tags.
-        $selfclosing_tags = array( 'area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta', 'col', 'param' );
+        $selfclosing_tags = array('area', 'base', 'basefont', 'br', 'hr', 'input', 'img', 'link', 'meta', 'col', 'param');
         if (is_null($selfclosing)) {
             $selfclosing = in_array($tag, $selfclosing_tags);
         }
@@ -135,7 +138,7 @@ class blcUtility
 				@xsi';
 
         // Find all tags
-        if (! preg_match_all($tag_pattern, $html, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
+        if (!preg_match_all($tag_pattern, $html, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE)) {
             // Return an empty array if we didn't find anything
             return array();
         }
@@ -144,13 +147,13 @@ class blcUtility
         foreach ($matches as $match) {
             // Parse tag attributes, if any.
             $attributes = array();
-            if (! empty($match['attributes'][0])) {
+            if (!empty($match['attributes'][0])) {
                 if (preg_match_all($attribute_pattern, $match['attributes'][0], $attribute_data, PREG_SET_ORDER)) {
                     // Turn the attribute data into a name->value array
                     foreach ($attribute_data as $attr) {
-                        if (! empty($attr['value_quoted'])) {
+                        if (!empty($attr['value_quoted'])) {
                             $value = $attr['value_quoted'];
-                        } elseif (! empty($attr['value_unquoted'])) {
+                        } elseif (!empty($attr['value_unquoted'])) {
                             $value = $attr['value_unquoted'];
                         } else {
                             $value = '';
@@ -161,7 +164,7 @@ class blcUtility
                         // or modify this call if it doesn't fit your situation.
                         $value = html_entity_decode($value, ENT_QUOTES, $charset);
 
-                        $attributes[ $attr['name'] ] = $value;
+                        $attributes[$attr['name']] = $value;
                     }
                 }
             }
@@ -169,7 +172,7 @@ class blcUtility
             $tag = array(
                 'tag_name'   => $match['tag'][0],
                 'offset'     => $match[0][1],
-                'contents'   => ! empty($match['contents']) ? $match['contents'][0] : '', // Empty for self-closing tags.
+                'contents'   => !empty($match['contents']) ? $match['contents'][0] : '', // Empty for self-closing tags.
                 'attributes' => $attributes,
             );
             if ($return_the_entire_tag) {
@@ -191,8 +194,8 @@ class blcUtility
      */
     static function get_cookie($cookie_name, $default_value = '')
     {
-        if (isset($_COOKIE[ $cookie_name ])) {
-            return $_COOKIE[ $cookie_name ];
+        if (isset($_COOKIE[$cookie_name])) {
+            return $_COOKIE[$cookie_name];
         } else {
             return $default_value;
         }
@@ -253,8 +256,8 @@ class blcUtility
 
         return sprintf(
             _n(
-                $templates[ $units ][ $template ][0], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle
-                $templates[ $units ][ $template ][1], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralPlural
+                $templates[$units][$template][0], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle
+                $templates[$units][$template][1], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralPlural
                 $delta,
                 'broken-link-checker'
             ),
@@ -323,7 +326,7 @@ class blcUtility
         static $cached_load = null;
         static $cached_when = 0;
 
-        if (! empty($cache) && ( ( time() - $cached_when ) <= $cache )) {
+        if (!empty($cache) && ((time() - $cached_when) <= $cache)) {
             return $cached_load;
         }
 
@@ -358,19 +361,30 @@ class blcUtility
             if (empty($charset)) {
                 $charset = get_bloginfo('charset');
             }
-
+            $parsed  = parse_url($url);
             // Encode only the host.
-            if (preg_match('@(\w+:/*)?([^/:]+)(.*$)?@s', $url, $matches)) {
-                $host = $matches[2];
-                if (( strtoupper($charset) != 'UTF-8' ) && ( strtoupper($charset) != 'UTF8' )) {
-                    $host = encode_utf8($host, $charset, true);
-                }
-                $host = $idn->encode($host);
-                $url  = $matches[1] . $host . $matches[3];
+            $host = $parsed['host'];
+            if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
+                $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
             }
+            $host = $idn->encode($host);
+
+            $parsed['host'] =  $host;
+            $url  = self::parsedToUrl($parsed);
         }
 
         return $url;
+    }
+    static function parsedToUrl($parsed)
+    {
+      
+        return (empty($parsed['scheme']) ? '' : $parsed['scheme'] . (strtolower($parsed['scheme']) == 'mailto' ? ':' : '://'))
+            . (empty($parsed['user']) ? '' : $parsed['user'] . (empty($parsed['pass']) ? '' : ':' . $parsed['pass']) . '@')
+            . $parsed['host']
+            . (empty($parsed['port']) ? '' : ':' . $parsed['port'])
+            . (empty($parsed['path']) ? '' : $parsed['path'])
+            . (empty($parsed['query']) ? '' : '?' . $parsed['query'])
+            . (empty($parsed['fragment']) ? '' : '#' . $parsed['fragment']);
     }
 
     /**
@@ -383,7 +397,12 @@ class blcUtility
     {
         $idn = self::get_idna_converter();
         if (null !== $idn) {
-            $url = $idn->decode($url);
+            $parsed  = parse_url($url);
+            // Encode only the host.
+            $host = $parsed['host'];
+            $host = $idn->hostToUTF8($host);
+            $parsed['host'] =  $host;
+            $url  = self::parsedToUrl($parsed);
         }
 
         return $url;
@@ -397,7 +416,7 @@ class blcUtility
     static function get_idna_converter()
     {
         static $idn = null;
-        if (( null === $idn ) && class_exists('idna_convert')) {
+        if ((null === $idn) && class_exists('idna_convert')) {
             $idn = new \idna_convert();
         }
         return $idn;
@@ -418,6 +437,6 @@ class blcUtility
         $md5_char_count = 32;
         $hash           = substr(md5($input), $md5_char_count - $bytes_to_use * 2);
         $hash           = intval(hexdec($hash));
-        return $min + ( ( $max - $min ) * ( $hash / ( pow(2, $bytes_to_use * 8) - 1 ) ) );
+        return $min + (($max - $min) * ($hash / (pow(2, $bytes_to_use * 8) - 1)));
     }
 }

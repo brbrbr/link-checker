@@ -237,7 +237,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             CURLOPT_CONNECTTIMEOUT => $conf['timeout'],
             // Register a callback function which will process the HTTP header(s).
             // It can be called multiple times if the remote server performs a redirect.
-        // CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
+         CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
 
             // Add a semi-plausible referer header to avoid tripping up some bot traps
             CURLOPT_REFERER        => home_url(),

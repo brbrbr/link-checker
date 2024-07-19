@@ -15,7 +15,7 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^http://(?:www\.)?mediafire\.com/(?:(?:download\.php)?\?|download/)([0-9a-zA-Z]{11,20})(?:$|[^0-9a-zA-Z])@
 */
-
+use Blc\Utils\ConfigurationManager;
 /**
  * MediaFire link checker.
  *
@@ -153,9 +153,9 @@ class blcMediaFireChecker extends blcChecker
      */
     function head($url)
     {
-        $conf = blc_get_configuration();
+        $plugin_config = ConfigurationManager::getInstance();
         $args = array(
-            'timeout'      => $conf->options['timeout'],
+            'timeout'      => $plugin_config->options['timeout'],
             'redirection'  => 0,
             '_redirection' => 0, // Internal flag that turns off redirect handling. See WP_Http::handle_redirects()
         );

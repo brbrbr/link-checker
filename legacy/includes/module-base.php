@@ -1,6 +1,6 @@
 <?php
 
-use Blc\Component\Blc\Administrator\Blc\Utils\ConfigurationManager;
+use Blc\Utils\ConfigurationManager;
 
 /**
  * @author Janis Elsts

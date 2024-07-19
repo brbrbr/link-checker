@@ -5,8 +5,9 @@
  * @copyright 2010
  */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\TransactionManager;
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\TransactionManager;
+use Blc\Includes\blcUtility;
+use Blc\Controller\BrokenLinkChecker;
 
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
 define('BLC_LINK_STATUS_OK', 'ok');
@@ -49,7 +50,7 @@ class blcLink
     var $status_code = '';
 
     var $log    = '';
-    var $parked = wsBrokenLinkChecker::BLC_PARKED_UNCHECKED;
+    var $parked = BrokenLinkChecker::BLC_PARKED_UNCHECKED;
 
 
     // A list of DB fields and their storage formats
@@ -268,7 +269,7 @@ class blcLink
             'result_hash'      => '',
             'status_text'      => '',
             'status_code'      => '',
-            'parked'           => wsBrokenLinkChecker::BLC_PARKED_UNCHECKED,
+            'parked'           => BrokenLinkChecker::BLC_PARKED_UNCHECKED,
         );
 
         $checker = blcCheckerHelper::get_checker_for($this->get_ascii_url());
@@ -332,8 +333,8 @@ class blcLink
             return $check_results;
         }
 
-        $configuration = blc_get_configuration();
-        if (! $configuration->get('warnings_enabled', true)) {
+        $plugin_config = ConfigurationManager::getInstance();
+        if (! $plugin_config->get('warnings_enabled', true)) {
             // The user wants all failures to be reported as "broken", regardless of severity.
             if ($check_results['warning']) {
                 $check_results['broken']  = true;

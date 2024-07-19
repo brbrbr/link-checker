@@ -13,7 +13,8 @@
  * ModulePriority: 1000
  */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\blcUtility;
+use Blc\Utils\ConfigurationManager;
 
 class blcHTMLLink extends blcParser
 {
@@ -225,8 +226,8 @@ class blcHTMLLink extends blcParser
             return $link['#raw'];
         }
 
-        $config = blc_get_configuration();
-        if ($config->options['mark_removed_links']) {
+        $plugin_config = ConfigurationManager::getInstance();
+        if ($plugin_config->options['mark_removed_links']) {
             // Leave only the anchor text + the removed_link CSS class
             return sprintf(
                 '<span class="removed_link" title="%s">%s</span>',

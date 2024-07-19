@@ -14,7 +14,7 @@ ModuleClassName: blcHttpChecker
 ModulePriority: -1
 */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\blcUtility;
 
 require_once BLC_DIRECTORY_LEGACY . '/includes/token-bucket.php';
 

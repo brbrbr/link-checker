@@ -1,7 +1,7 @@
 <?php
 
-use Blc\Component\Blc\Administrator\Blc\Includes\TransactionManager;
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\TransactionManager;
+use Blc\Includes\blcUtility;
 
 /**
  * The base class for link container managers.

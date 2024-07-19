@@ -1,5 +1,7 @@
 <?php
 
+use Blc\Utils\ConfigurationManager;
+
 /**
  * Class for querying, sorting and filtering links.
  * Used as a singleton.
@@ -84,8 +86,8 @@ class blcLinkQuery
         );
 
         // The user can turn off warnings. In that case, all errors will show up in the "broken" filter instead.
-        $conf = blc_get_configuration();
-        if (! $conf->get('warnings_enabled')) {
+        $plugin_config = ConfigurationManager::getInstance();
+        if (! $plugin_config->get('warnings_enabled')) {
             unset($this->native_filters['warnings']);
         }
 

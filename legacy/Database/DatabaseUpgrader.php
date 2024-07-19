@@ -2,6 +2,8 @@
 
 namespace Blc\Database;
 
+use Blc\Utils\ConfigurationManager;
+
 class DatabaseUpgrader
 {
     /**
@@ -13,8 +15,8 @@ class DatabaseUpgrader
     {
         global $blclog;
 
-        $conf    = blc_get_configuration();
-        $current = $conf->options['current_db_version'];
+        $plugin_config    = ConfigurationManager::getInstance();
+        $current = $plugin_config->options['current_db_version'];
 
         if (( 0 != $current ) && ( $current < 17 )) {
             // The 4th DB version makes a lot of backwards-incompatible changes to the main
@@ -30,8 +32,8 @@ class DatabaseUpgrader
             return false;
         }
 
-        $conf->options['current_db_version'] = BLC_DATABASE_VERSION;
-        $conf->save_options();
+        $plugin_config->options['current_db_version'] = BLC_DATABASE_VERSION;
+        $plugin_config->save_options();
         $blclog->info('Database successfully upgraded.');
 
         return true;

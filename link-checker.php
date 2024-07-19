@@ -9,11 +9,11 @@
  * @wordpress-plugin
  * Plugin Name:       Broken Link Checker - Fork
  * Plugin URI:        https://brokenlinkchecker.dev/wordpress/broken-link-checker
- * Description:       This is a Fork of the broken link checkerm with only the legacy version. Checks your blog for broken links and notifies you on the dashboard if any are found.
+ * Description:       This is a Fork of the broken link checker maintained by  WPMU DEV with only the legacy version. Checks your blog for broken links and notifies you on the dashboard if any are found.
  * Version:           2.3.0.6337
  * Requires at least: 6.2
  * Requires PHP:      8.1
- * Author:            Bram Brambring / WPMU DEV
+ * Author:            Bram Brambring
  * Author URI:        https://brambring.nl/
  * Update URI:        https://downloads.brokenlinkchecker.dev/link-checker.json
  * Text Domain:       broken-link-checker
@@ -36,7 +36,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Broken Link Checker. If not, see https://www.gnu.org/licenses/gpl-2.0.html.
 */
-namespace Blc\Component\Blc\Administrator\Blc;
+namespace Blc;
 
 
 // If this file is called directly, abort.
@@ -130,17 +130,11 @@ $autoloaded = new Autoloader();
 	register_activation_hook(
 		__FILE__,
 		function() {
-		
 			require_once BLC_DIRECTORY_LEGACY . '/includes/activation.php';
 		}
 	);
 
-	register_deactivation_hook(
-		__FILE__,
-		function() {
-			
-		}
-	);
+
 
 
 // Load the legacy plugin.

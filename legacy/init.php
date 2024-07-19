@@ -6,11 +6,13 @@
  * When Local is active we don't need to load on Cloud admin menu page.
  */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\WPMutex;
-use Blc\Component\Blc\Administrator\Blc\Includes\blcFileLogger;
-use Blc\Component\Blc\Administrator\Blc\Includes\blcDummyLogger;
-use Blc\Component\Blc\Administrator\Blc\Includes\blcCachedOptionLogger;
-use Blc\Component\Blc\Administrator\Blc\Utils\ConfigurationManager;
+use Blc\Includes\WPMutex;
+use Blc\Includes\blcFileLogger;
+use Blc\Includes\blcDummyLogger;
+use Blc\Includes\blcCachedOptionLogger;
+use Blc\Utils\ConfigurationManager;
+use Blc\Controller\BrokenLinkChecker;
+use Blc\Database\DatabaseUpgrader;
 
 // To prevent conflicts, only one version of the plugin can be activated at any given time.
 if (defined('BLC_ACTIVE')) {
@@ -21,7 +23,7 @@ if (defined('BLC_ACTIVE')) {
 } else {
     define('BLC_ACTIVE', true);
 
-    ConfigurationManager::getInstance(
+    $plugin_config = ConfigurationManager::getInstance(
         // Save the plugin's configuration into this DB option
         'wsblc_options',
         // Initialize default settings
@@ -76,16 +78,47 @@ if (defined('BLC_ACTIVE')) {
             'blc_post_modified'                => '',
         )
     );
-    
+
+
+
     /**
-     * Get the configuration object used by Broken Link Checker.
-     *
-     * @return ConfigurationManager
-     */
-    function blc_get_configuration()
-    {
-        return ConfigurationManager::getInstance();
-    }
+ * Load all files pertaining to BLC's module subsystem
+ */
+
+require_once BLC_DIRECTORY_LEGACY . '/includes/module-manager.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/module-base.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/parsers.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
+
+$blc_module_manager = blcModuleManager::getInstance(
+    array(
+        // List of modules active by default
+        'http',             // Link checker for the HTTP(s) protocol
+        'link',             // HTML link parser
+        'image',            // HTML image parser
+        'metadata',         // Metadata (custom field) parser
+        'url_field',        // URL field parser
+        'comment',          // Comment container
+        'custom_field',     // Post metadata container (aka custom fields)
+        'acf_field',        // Post acf container (aka advanced custom fields)
+        'acf',              // acf parser
+        'post',             // Post content container
+        'page',             // Page content container
+        'youtube-checker',  // Video checker using the YouTube API
+        'youtube-iframe',   // Embedded YouTube video container
+        'dummy',            // Dummy container used as a fallback
+    )
+);
+
+
+
+// Let other plugins register virtual modules.
+do_action('blc_register_modules', $blc_module_manager);
 
     /***********************************************
                     Debugging stuff
@@ -118,16 +151,14 @@ if (defined('BLC_ACTIVE')) {
                     Logging
      */
 
-
-
-    $blc_config_manager = blc_get_configuration();
     global $blclog;
-    if ($blc_config_manager->get('logging_enabled', false) && is_writable($blc_config_manager->get('log_file'))) {
-        $blclog = new blcFileLogger($blc_config_manager->get('log_file'));
+
+
+    if ($plugin_config->get('logging_enabled', false) && is_writable($plugin_config->get('log_file'))) {
+        $blclog = new blcFileLogger($plugin_config->get('log_file'));
     } else {
         $blclog = new blcDummyLogger();
     }
-
 
 
 
@@ -146,29 +177,26 @@ if (defined('BLC_ACTIVE')) {
      */
     function blc_cron_schedules($schedules)
     {
+        $schedules['10min'] ??= array(
+            'interval' => 600,
+            'display'  => __('Every 10 minutes'),
+        );
 
-        if (! isset($schedules['10min'])) {
-            $schedules['10min'] = array(
-                'interval' => 600,
-                'display'  => __('Every 10 minutes'),
-            );
-        }
 
-        if (! isset($schedules['weekly'])) {
-            $schedules['weekly'] = array(
-                'interval' => 604800, // 7 days
-                'display'  => __('Once Weekly'),
-            );
-        }
-        if (! isset($schedules['bimonthly'])) {
-            $schedules['bimonthly'] = array(
-                'interval' => 15 * 24 * 2600, // 15 days
-                'display'  => __('Twice a Month'),
-            );
-        }
+        $schedules['weekly'] ??= array(
+            'interval' => 604800, // 7 days
+            'display'  => __('Once Weekly'),
+        );
+
+
+        $schedules['bimonthly'] ??= array(
+            'interval' => 15 * 24 * 2600, // 15 days
+            'display'  => __('Twice a Month'),
+        );
 
         return $schedules;
     }
+
     add_filter('cron_schedules', 'blc_cron_schedules');
 
     /***********************************************
@@ -178,11 +206,13 @@ if (defined('BLC_ACTIVE')) {
 
 
     // Load the plugin if installed successfully
-    if ($blc_config_manager->installation_complete) {
+    if ($plugin_config->installation_complete) {
         function blc_init()
         {
-            global $blc_module_manager, $ws_link_checker;
-            $blc_config_manager = blc_get_configuration();
+            global  $ws_link_checker;
+
+            $plugin_config = ConfigurationManager::getInstance();
+            $blc_module_manager = blcModuleManager::getInstance();
 
             static $init_done = false;
             if ($init_done) {
@@ -194,38 +224,33 @@ if (defined('BLC_ACTIVE')) {
 
             if (is_admin() || defined('DOING_CRON')) {
                 // Ensure the database is up to date
-                if (BLC_DATABASE_VERSION !== $blc_config_manager->options['current_db_version']) {
-                    require_once BLC_DIRECTORY_LEGACY . '/includes/admin/db-upgrade.php';
+                if (BLC_DATABASE_VERSION !== $plugin_config->options['current_db_version']) {
+                  
 
                     if (WPMutex::acquire('blc_dbupdate')) {
-                        blcDatabaseUpgrader::upgrade_database();
+                        DatabaseUpgrader::upgrade_database();
                         WPMutex::release('blc_dbupdate');
                     }
                 }
 
                 // Load the base classes and utilities
-                require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
-                require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-                require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
-                // Load the module subsystem
-                require_once BLC_DIRECTORY_LEGACY . '/includes/modules.php';
+       
+         
 
                 // Load the modules that want to be executed in all contexts
                 if (is_object($blc_module_manager) && method_exists($blc_module_manager, 'load_modules')) {
                     $blc_module_manager->load_modules();
                 }
 
-                // It's an admin-side or Cron request. Load the core.
-                require_once BLC_DIRECTORY_LEGACY . '/core/core.php';
-                $ws_link_checker = new wsBrokenLinkChecker();
+                $ws_link_checker = new BrokenLinkChecker();
             } else {
                 // This is user-side request, so we don't need to load the core.
                 // We might need to inject the CSS for removed links, though.
-                if ($blc_config_manager->options['mark_removed_links'] && ! empty($blc_config_manager->options['removed_link_css'])) {
+                if ($plugin_config->options['mark_removed_links'] && !empty($plugin_config->options['removed_link_css'])) {
                     function blc_print_removed_link_css()
                     {
-                        $blc_config_manager = blc_get_configuration();
-                        echo '<style type="text/css">', $blc_config_manager->options['removed_link_css'], '</style>';
+                        $plugin_config = ConfigurationManager::getInstance();
+                        echo '<style type="text/css">', $plugin_config->options['removed_link_css'], '</style>';
                     }
                     add_action('wp_head', 'blc_print_removed_link_css');
                 }
@@ -237,31 +262,27 @@ if (defined('BLC_ACTIVE')) {
         // Display installation errors (if any) on the Dashboard.
         function blc_print_installation_errors()
         {
-            global  $wpdb;
-            $blc_config_manager = blc_get_configuration();
-
-            if ($blc_config_manager->options['installation_complete']) {
-                return;
-            }
+          
+            $plugin_config = ConfigurationManager::getInstance();
 
             $messages = array(
                 '<strong>' . __('Broken Link Checker installation failed. Try deactivating and then reactivating the plugin.', 'broken-link-checker') . '</strong>',
             );
 
-   
-                $logger   = new blcCachedOptionLogger('blc_installation_log');
-                $messages = array_merge(
-                    $messages,
-                    array(
-                        'installation_complete = ' . ( isset($blc_config_manager->options['installation_complete']) ? intval($blc_config_manager->options['installation_complete']) : 'no value' ),
-                        'installation_flag_cleared_on = ' . $blc_config_manager->options['installation_flag_cleared_on'],
-                        'installation_flag_set_on = ' . $blc_config_manager->options['installation_flag_set_on'],
-                        '',
-                        '<em>Installation log follows :</em>',
-                    ),
-                    $logger->get_messages()
-                );
-            
+
+            $logger   = new blcCachedOptionLogger('blc_installation_log');
+            $messages = array_merge(
+                $messages,
+                array(
+                    'installation_complete = ' . (isset($plugin_config->options['installation_complete']) ? intval($plugin_config->options['installation_complete']) : 'no value'),
+                    'installation_flag_cleared_on = ' . $plugin_config->options['installation_flag_cleared_on'],
+                    'installation_flag_set_on = ' . $plugin_config->options['installation_flag_set_on'],
+                    '',
+                    '<em>Installation log follows :</em>',
+                ),
+                $logger->get_messages()
+            );
+
 
             echo '<div class="error"><p>', implode("<br>\n", $messages), '</p></div>';
         }

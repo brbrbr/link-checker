@@ -15,12 +15,12 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^https?://(?:([\w\d]+\.)*youtube\.[^/]+/watch\?.*v=[^/#]|youtu\.be/[^/#\?]+|(?:[\w\d]+\.)*?youtube\.[^/]+/(playlist|view_play_list)\?[^/#]{15,}?)@i
 */
-
+use Blc\Utils\ConfigurationManager;
 class blcYouTubeChecker extends blcChecker
 {
     var $api_grace_period = 0.3; // How long to wait between YouTube API requests.
     var $last_api_request = 0;   // Timestamp of the last request.
-
+    
     function can_check($url, $parsed)
     {
         return true;
@@ -76,8 +76,8 @@ class blcYouTubeChecker extends blcChecker
             $api_url = $this->get_playlist_resource_url($playlist_id);
         }
 
-        $conf = blc_get_configuration();
-        $args = array( 'timeout' => $conf->options['timeout'] );
+        $plugin_config = ConfigurationManager::getInstance();
+        $args = array( 'timeout' => $plugin_config->options['timeout'] );
 
         $start                      = microtime(true);
         $response                   = wp_remote_get($api_url, $args);
@@ -286,10 +286,8 @@ class blcYouTubeChecker extends blcChecker
 
     public function get_youtube_api_key()
     {
-        $conf = blc_get_configuration();
+        $plugin_config = ConfigurationManager::getInstance();
 
-        $api_key = ! empty($conf->options['youtube_api_key']) ? $conf->options['youtube_api_key'] : '';
-
-        return apply_filters('blc_youtube_api_key', $conf->options['youtube_api_key']);
+        return apply_filters('blc_youtube_api_key', $plugin_config->youtube_api_key??'');
     }
 }

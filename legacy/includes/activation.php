@@ -1,16 +1,16 @@
 <?php
 
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
-use Blc\Component\Blc\Administrator\Blc\Includes\blcCachedOptionLogger;
+use Blc\Includes\blcUtility;
+use Blc\Includes\blcCachedOptionLogger;
+use Blc\Utils\ConfigurationManager;
 
 if (get_option('blc_activation_enabled')) {
-    return;
+   // return;
 }
-require_once BLC_DIRECTORY_LEGACY . '/includes/config-manager.php';
 
+require_once BLC_DIRECTORY_LEGACY . '/init.php';
 
-
-$blc_config_manager = blc_get_configuration();
+$plugin_config =   ConfigurationManager::getInstance(); 
 
 
 global  $wpdb, $blclog;
@@ -31,20 +31,20 @@ ignore_user_abort(true);
 
 // Log installation progress to a DB option
 $blclog = new blcCachedOptionLogger('blc_installation_log');
-register_shutdown_function(array( &$blclog, 'save' )); // Make sure the log is saved even if the plugin crashes
+register_shutdown_function(array($blclog, 'save')); // Make sure the log is saved even if the plugin crashes
 
 $blclog->clear();
 $blclog->info(sprintf('Plugin activated at %s.', date_i18n('Y-m-d H:i:s')));
 $activation_start = microtime(true);
 
 // Reset the "installation_complete" flag
-$blc_config_manager->options['installation_complete']        = false;
-$blc_config_manager->options['installation_flag_cleared_on'] = date('c') . ' (' . microtime(true) . ')'; //phpcs:ignore
+$plugin_config->options['installation_complete']        = false;
+$plugin_config->options['installation_flag_cleared_on'] = date('c') . ' (' . microtime(true) . ')'; //phpcs:ignore
 // Note the time of the first installation (not very accurate, but still useful)
-if (empty($blc_config_manager->options['first_installation_timestamp'])) {
-    $blc_config_manager->options['first_installation_timestamp'] = time();
-}
-$blc_config_manager->save_options();
+
+$plugin_config->options['first_installation_timestamp'] ??= time();
+
+$plugin_config->save_options();
 $blclog->info('Installation/update begins.');
 
 // Load the base classes and utilities
@@ -58,16 +58,16 @@ require_once BLC_DIRECTORY_LEGACY . '/includes/modules.php';
 $moduleManager = blcModuleManager::getInstance();
 
 // If upgrading, activate/deactivate custom field and comment containers based on old ver. settings
-if (isset($blc_config_manager->options['check_comment_links'])) {
-    if (! $blc_config_manager->options['check_comment_links']) {
+if (isset($plugin_config->options['check_comment_links'])) {
+    if (!$plugin_config->options['check_comment_links']) {
         $moduleManager->deactivate('comment');
     }
-    unset($blc_config_manager->options['check_comment_links']);
+    unset($plugin_config->options['check_comment_links']);
 }
-if (empty($blc_config_manager->options['custom_fields'])) {
+if (empty($plugin_config->options['custom_fields'])) {
     $moduleManager->deactivate('custom_field');
 }
-if (empty($blc_config_manager->options['acf_fields'])) {
+if (empty($plugin_config->options['acf_fields'])) {
     $moduleManager->deactivate('acf_field');
 }
 
@@ -89,19 +89,21 @@ $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $cleanup_star
 $blclog->info('Notifying modules...');
 $notification_start = microtime(true);
 $moduleManager->plugin_activated();
+
 blcUtility::blc_got_unsynched_items();
+
 $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $notification_start));
 
 // Turn off load limiting if it's not available on this server.
 $blclog->info('Updating server load limit settings...');
 $load = blcUtility::get_server_load();
 if (empty($load)) {
-    $blc_config_manager->options['enable_load_limit'] = false;
+    $plugin_config->options['enable_load_limit'] = false;
     $blclog->info('Disable load limit. Cannot retrieve current load average.');
-} elseif ($blc_config_manager->options['enable_load_limit'] && ! isset($blc_config_manager->options['server_load_limit'])) {
+} elseif ($plugin_config->options['enable_load_limit'] && !isset($plugin_config->options['server_load_limit'])) {
     $fifteen_minutes                                  = floatval(end($load));
     $default_load_limit                               = round(max(min($fifteen_minutes * 2, $fifteen_minutes + 2), 4));
-    $blc_config_manager->options['server_load_limit'] = $default_load_limit;
+    $plugin_config->options['server_load_limit'] = $default_load_limit;
 
     $blclog->info(
         sprintf(
@@ -119,13 +121,14 @@ blcUtility::optimize_database();
 $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $optimize_start));
 
 $blclog->info('Completing installation...');
-$blc_config_manager->options['installation_complete']    = true;
-$blc_config_manager->options['installation_flag_set_on'] = date('c') . ' (' . microtime(true) . ')'; //phpcs:ignore
-if ($blc_config_manager->save_options()) {
+$plugin_config->installation_complete    = true;
+$plugin_config->installation_flag_set_on = date('c') . ' (' . microtime(true) . ')'; //phpcs:ignore
+if ($plugin_config->save_options()) {
     $blclog->info('Configuration saved.');
 } else {
     $blclog->error('Error saving plugin configuration!');
 }
+
 
 $blclog->info(
     sprintf(

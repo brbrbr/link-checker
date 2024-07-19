@@ -5,7 +5,7 @@
  * @copyright 2010
  */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\blcUtility;
 
 /**
  * Base class for embedded video/audio parsers.

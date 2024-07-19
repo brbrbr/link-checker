@@ -1,6 +1,6 @@
 <?php
 
-use Blc\Component\Blc\Administrator\Blc\Utils\ConfigurationManager;
+use Blc\Utils\ConfigurationManager;
 
 class blcModuleManager
 {
@@ -509,6 +509,7 @@ class blcModuleManager
         $blclog->info(sprintf('... %d modules loaded in %.3f seconds', count($this->loaded), microtime(true) - $start));
 
         $active = $this->get_active_modules();
+       
         foreach ($active as $module_id => $module_data) {
             $blclog->log(sprintf('... Notifying module "%s"', $module_id));
             $module = $this->get_module($module_id);

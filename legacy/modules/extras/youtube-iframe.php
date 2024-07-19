@@ -14,7 +14,7 @@ ModuleLazyInit: true
 ModulePriority: 120
 */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\blcUtility;
 
 require_once 'embed-parser-base.php';
 

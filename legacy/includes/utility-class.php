@@ -5,7 +5,9 @@
  * @copyright 2010
  */
 
-namespace Blc\Component\Blc\Administrator\Blc\Includes;
+namespace Blc\Includes;
+
+use Blc\Utils\ConfigurationManager;
 
 // Include the internationalized domain name converter (requires PHP 5)
 
@@ -284,7 +286,7 @@ class blcUtility
 
         // Delete synch. records for container types that don't exist
         $blclog->info('... Deleting invalid container records');
-        blcContainerHelper::cleanup_containers();
+        \blcContainerHelper::cleanup_containers();
 
         // Delete invalid instances
         $blclog->info('... Deleting invalid link instances');
@@ -303,9 +305,9 @@ class blcUtility
      */
     static function blc_got_unsynched_items()
     {
-        $conf = blc_get_configuration();
-        $conf->need_resynch = true;
-        $conf->save_options();
+        $plugin_conf            = ConfigurationManager::getInstance();
+        $plugin_conf->need_resynch = true;
+        $plugin_conf->save_options();
     }
 
     /**

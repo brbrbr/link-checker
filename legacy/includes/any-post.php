@@ -1,5 +1,7 @@
 <?php
 
+use Blc\Utils\ConfigurationManager;
+
 /**
  * The manager to rule all (post) managers.
  *
@@ -35,7 +37,7 @@ class blcPostTypeOverlord
      */
     function init()
     {
-        $this->plugin_conf = blc_get_configuration();
+        $this->plugin_conf = ConfigurationManager::getInstance();
 
         if (isset($this->plugin_conf->options['enabled_post_statuses'])) {
             $this->enabled_post_statuses = $this->plugin_conf->options['enabled_post_statuses'];

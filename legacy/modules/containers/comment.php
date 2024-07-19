@@ -11,7 +11,7 @@ ModuleCategory: container
 ModuleClassName: blcCommentManager
 */
 
-use Blc\Component\Blc\Administrator\Blc\Includes\blcUtility;
+use Blc\Includes\blcUtility;
 
 class blcComment extends blcContainer
 {

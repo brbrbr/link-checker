@@ -1,6 +1,6 @@
 <?php
 
-namespace Blc\Component\Blc\Administrator\Blc\Includes;
+namespace Blc\Includes;
 
 class WPMutex
 {

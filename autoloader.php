@@ -22,7 +22,7 @@
  */
 
 
-namespace Blc\Component\Blc\Administrator\Blc;
+namespace Blc;
 
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -31,7 +31,7 @@ class Autoloader
 {
 	private $class_map       = array();
 	private $class_file      = 'class_map.php';
-	private $base_name_space = 'Blc\\Component\\Blc\\Administrator\\Blc\\';
+	private $base_name_space = 'Blc\\';
 	private $plugin_path;
 	private $legacy_dir;
 	public function __construct()

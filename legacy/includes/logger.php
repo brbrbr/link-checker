@@ -1,8 +1,8 @@
 <?php
 
-namespace Blc\Component\Blc\Administrator\Blc\Includes;
+namespace Blc\Includes;
 
-use Blc\Component\Blc\Administrator\Blc\Abstract\Logger;
+use Blc\Abstract\Logger;
 
 /**
  * A basic logger that uses WP options for permanent storage.

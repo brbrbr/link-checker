@@ -5,10 +5,10 @@
  * @copyright 2009
  */
 
-namespace Blc\Component\Blc\Administrator\Blc\Utils;
+namespace Blc\Utils;
 
 
-class ConfigurationManager
+final class ConfigurationManager
 {
     private  $name = '';
     public  $options = [];
@@ -20,7 +20,7 @@ class ConfigurationManager
      * @var bool Whether options have been successfully loaded from the database.
      */
 
-
+     //final class so we can use the __construct with the singleton
     private function __construct(string $name, ?array $default_settings = null)
     {
         $this->name = $name;

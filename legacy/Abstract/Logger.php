@@ -1,6 +1,6 @@
 <?php
 
-namespace Blc\Component\Blc\Administrator\Blc\Abstract;
+namespace Blc\Abstract;
 
 
 /**
@@ -63,6 +63,10 @@ abstract class Logger
 	}
 
 	function clear()
+	{
+	}
+
+	function save()
 	{
 	}
 

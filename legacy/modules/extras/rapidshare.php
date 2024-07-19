@@ -15,7 +15,7 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^https?://(?:[\w\d]+\.)*rapidshare\.\w+/files/(\d+)/([^&?#/]+?)(?:$|[&?#/])@i
 */
-
+use Blc\Utils\ConfigurationManager;
 /**
  * RapidShare API link checker.
  *
@@ -101,8 +101,8 @@ class blcRapidShareChecker extends blcChecker
             $file_name
         );
 
-        $conf = blc_get_configuration();
-        $args = array( 'timeout' => $conf->options['timeout'] );
+        $plugin_config = ConfigurationManager::getInstance();
+        $args = array( 'timeout' => $plugin_config->options['timeout'] );
 
         $start                      = microtime(true);
         $response                   = wp_remote_get($api_url, $args);

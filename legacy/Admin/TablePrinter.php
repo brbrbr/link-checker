@@ -6,11 +6,12 @@
  * @package Broken Link Checker
  * @access public
  */
+namespace Blc\Admin;
 
 use Blc\Util\Utility;
 use Blc\Util\ConfigurationManager;
 
-class blcTablePrinter
+class TablePrinter
 {
     var $current_filter;       // The current search filter. Also contains the list of links to display.
     var $page;                 // The current page number
@@ -507,7 +508,7 @@ class blcTablePrinter
     /**
      * Print the details row for a specific link.
      *
-     * @uses blcTablePrinter::details_row_contents()
+     * @uses TablePrinter::details_row_contents()
      *
      * @param blcLink $link The link to display.
      * @param array   $visible_columns List of visible columns.
@@ -867,7 +868,7 @@ class blcTablePrinter
     /**
      * Callback function for sorting link instances.
      *
-     * @see blcTablePrinter::sort_instances_for_display()
+     * @see TablePrinter::sort_instances_for_display()
      *
      * @param blcLinkInstance $a
      * @param blcLinkInstance $b

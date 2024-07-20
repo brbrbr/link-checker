@@ -1,6 +1,6 @@
 *******************************************************************************
 *                                                                             *
-*                    IDNA Convert (idna_convert.class.php)                    *
+*                    IDNA Convert (IdnaConvert.class.php)                    *
 *                                                                             *
 * http://idnaconv.phlymail.de                     mailto:phlymail@phlylabs.de *
 *******************************************************************************
@@ -11,7 +11,7 @@
 Introduction
 ------------
 
-The class idna_convert allows to convert internationalized domain names
+The class IdnaConvert allows to convert internationalized domain names
 (see RFC 3490, 3491, 3492 and 3454 for detials) as they can be used with various
 registries worldwide to be translated between their original (localized) form
 and their encoded form as it will be used in the DNS (Domain Name System).

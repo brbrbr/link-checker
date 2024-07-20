@@ -5,9 +5,10 @@
  * @copyright 2010
  */
 
-namespace Blc\Includes;
+namespace Blc\Util;
 
 use Blc\Util\ConfigurationManager;
+use Blc\Util\IdnaConvert;
 
 // Include the internationalized domain name converter (requires PHP 5)
 
@@ -354,8 +355,7 @@ class Utility
      */
     static function idn_to_ascii($url, $charset = '')
     {
-        $idn = self::get_idna_converter();
-        if (null != $idn) {
+        $idn =new IdnaConvert();
             if (empty($charset)) {
                 $charset = get_bloginfo('charset');
             }
@@ -365,14 +365,37 @@ class Utility
             if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
                 $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
             }
-            $host = $idn->encode($host);
+            $host = $idn->hostToAscii($host);
 
             $parsed['host'] =  $host;
             $url  = self::parsedToUrl($parsed);
-        }
+        
 
         return $url;
     }
+
+
+    /**
+     * Convert an internationalized domain name (or URL) from ASCII-compatible encoding to UTF8.
+     *
+     * @param string $url
+     * @return string
+     */
+    static function idn_to_utf8($url)
+    {
+        $idn =new IdnaConvert();
+       
+            $parsed  = parse_url($url);
+            // Encode only the host.
+            $host = $parsed['host'];
+            $host = $idn->hostToUTF8($host);
+            $parsed['host'] =  $host;
+            $url  = self::parsedToUrl($parsed);
+        
+
+        return $url;
+    }
+
     static function parsedToUrl($parsed)
     {
       
@@ -383,41 +406,6 @@ class Utility
             . (empty($parsed['path']) ? '' : $parsed['path'])
             . (empty($parsed['query']) ? '' : '?' . $parsed['query'])
             . (empty($parsed['fragment']) ? '' : '#' . $parsed['fragment']);
-    }
-
-    /**
-     * Convert an internationalized domain name (or URL) from ASCII-compatible encoding to UTF8.
-     *
-     * @param string $url
-     * @return string
-     */
-    static function idn_to_utf8($url)
-    {
-        $idn = self::get_idna_converter();
-        if (null !== $idn) {
-            $parsed  = parse_url($url);
-            // Encode only the host.
-            $host = $parsed['host'];
-            $host = $idn->hostToUTF8($host);
-            $parsed['host'] =  $host;
-            $url  = self::parsedToUrl($parsed);
-        }
-
-        return $url;
-    }
-
-    /**
-     * Get an instance of idna_converter
-     *
-     * @return idna_convert|null Either an instance of IDNA converter, or NULL if the converter class is not available
-     */
-    static function get_idna_converter()
-    {
-        static $idn = null;
-        if ((null === $idn) && class_exists('idna_convert')) {
-            $idn = new \idna_convert();
-        }
-        return $idn;
     }
 
     /**

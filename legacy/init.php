@@ -95,9 +95,6 @@ require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-
-require_once BLC_DIRECTORY_LEGACY . '/includes/admin/table-printer.php';
-require_once BLC_DIRECTORY_LEGACY . '/idn/idna_convert.class.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/token-bucket.php';
 require_once BLC_DIRECTORY_LEGACY . '/modules/extras/embed-parser-base.php';
 require_once BLC_DIRECTORY_LEGACY . '/modules/extras/plaintext-url-parser-base.php';

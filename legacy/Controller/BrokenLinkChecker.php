@@ -13,6 +13,7 @@ use Blc\Database\WPMutex;
 use Blc\Util\UpdatePlugin;
 use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
+use Blc\Admin\TablePrinter;
 use Blc\Util\ConfigurationManager;
 use Blc\Includes\CachedOptionLogger;
 
@@ -1992,7 +1993,7 @@ class BrokenLinkChecker
             // Display the links, if any
             if ($current_filter['links'] && ( count($current_filter['links']) > 0 )) {
              
-                $table = new \blcTablePrinter($this);
+                $table = new TablePrinter($this);
                 $table->print_table(
                     $current_filter,
                     $this->plugin_config->options['table_layout'],
@@ -2637,7 +2638,7 @@ class BrokenLinkChecker
         $html = '<h5>' . __('Table columns', 'broken-link-checker') . '</h5>';
 
    
-        $table             = new \blcTablePrinter($this);
+        $table             = new TablePrinter($this);
         $available_columns = $table->get_layout_columns($this->plugin_config->options['table_layout']);
 
         $html .= '<div id="blc-column-selector" class="metabox-prefs">';
@@ -3772,7 +3773,7 @@ class BrokenLinkChecker
 
         if (! $link->is_new) {
             // FB::info($link, 'Link loaded');
-            \blcTablePrinter::details_row_contents($link);
+            TablePrinter::details_row_contents($link);
             die();
         } else {
             printf(__('Failed to load link details (%s)', 'broken-link-checker'), $wpdb->last_error);

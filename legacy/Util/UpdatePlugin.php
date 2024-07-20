@@ -1,6 +1,6 @@
 <?php
 
-namespace Blc\Utils;
+namespace Blc\Util;
 
 class UpdatePlugin
 {

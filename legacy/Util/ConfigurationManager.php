@@ -5,7 +5,7 @@
  * @copyright 2009
  */
 
-namespace Blc\Utils;
+namespace Blc\Util;
 
 
 final class ConfigurationManager

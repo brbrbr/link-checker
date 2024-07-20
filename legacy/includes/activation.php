@@ -3,9 +3,9 @@
 use Blc\Util\Utility;
 use Blc\Logger\CachedOptionLogger;
 use Blc\Util\ConfigurationManager;
-
+use Blc\Database\DatabaseUpgrader;
 if (get_option('blc_activation_enabled')) {
-   // return;
+   return;
 }
 
 require_once BLC_DIRECTORY_LEGACY . '/init.php';
@@ -71,8 +71,8 @@ if (empty($plugin_config->options['acf_fields'])) {
 // Prepare the database.
 $blclog->info('Upgrading the database...');
 $upgrade_start = microtime(true);
-require_once BLC_DIRECTORY_LEGACY . '/includes/admin/db-upgrade.php';
-blcDatabaseUpgrader::upgrade_database();
+
+DatabaseUpgrader::upgrade_database();
 $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $upgrade_start));
 
 // Remove invalid DB entries

@@ -92,14 +92,10 @@ require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 require_once BLC_DIRECTORY_LEGACY . '/modules/extras/embed-parser-base.php';
 require_once BLC_DIRECTORY_LEGACY . '/modules/extras/plaintext-url-parser-base.php';
-
-
-
 
 $blc_module_manager = blcModuleManager::getInstance(
     array(

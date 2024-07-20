@@ -14,6 +14,7 @@ use Blc\Util\UpdatePlugin;
 use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
 use Blc\Admin\TablePrinter;
+use Blc\Admin\ScreenOptions;
 use Blc\Util\ConfigurationManager;
 use Blc\Includes\CachedOptionLogger;
 
@@ -149,7 +150,7 @@ class BrokenLinkChecker
 
         if (empty($_GET['local-settings'])) {
             // Add a "Screen Options" panel to the "Broken Links" page.
-            add_screen_options_panel(
+            (new ScreenOptions())->add_screen_options_panel(
                 'blc-screen-options',
                 '',
                 array( $this, 'screen_options_html' ),

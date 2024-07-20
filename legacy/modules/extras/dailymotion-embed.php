@@ -13,10 +13,10 @@ ModuleLazyInit: true
 */
 
 
- 
+use Blc\Abstract\EmbedParser;
 
 
-class blcDailyMotionEmbed extends blcEmbedParserBase
+class blcDailyMotionEmbed extends EmbedParser
 {
     function init()
     {

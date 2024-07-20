@@ -14,7 +14,7 @@ ModuleClassName: blcHttpChecker
 ModulePriority: -1
 */
 
-use Blc\Uti\Utility;
+use Blc\Util\Utility;
 use Blc\Util\TokenBucketList;
 
 
@@ -103,7 +103,7 @@ class blcHttpCheckerBase extends blcChecker
                 '/([\?&]sid=\w+)$/i',       // remove another flavour of session ID
                 '/' . $ltrm . '/',          // remove Left-to-Right marks that can show up when copying from Word.
             ),
-            array( '', '', '&', '', '' ),
+            array('', '', '&', '', ''),
             $url
         );
         $url  = trim($url);
@@ -117,8 +117,8 @@ class blcHttpCheckerBase extends blcChecker
         "Good" response codes are anything in the 2XX range (e.g "200 OK") and redirects  - the 3XX range.
             HTTP 401 Unauthorized is a special case that is considered OK as well. Other errors - the 4XX range -
             are treated as such. */
-        $good_code = ( ( $http_code >= 200 ) && ( $http_code < 400 ) ) || ( 401 === $http_code );
-        return ! $good_code;
+        $good_code = (($http_code >= 200) && ($http_code < 400)) || (401 === $http_code);
+        return !$good_code;
     }
 
     /**
@@ -130,11 +130,11 @@ class blcHttpCheckerBase extends blcChecker
      */
     function can_check($url, $parsed)
     {
-        if (! isset($parsed['scheme'])) {
+        if (!isset($parsed['scheme'])) {
             return false;
         }
 
-        return in_array(strtolower($parsed['scheme']), array( 'http', 'https' ));
+        return in_array(strtolower($parsed['scheme']), array('http', 'https'));
     }
 
     /**
@@ -160,8 +160,8 @@ class blcHttpCheckerBase extends blcChecker
         $langCode = get_bloginfo('language');
 
         $short                       = explode('-', $langCode);
-        $languageAccept[ $short[0] ] = $short[0];
-        $languageAccept[ $langCode ] = $langCode;
+        $languageAccept[$short[0]] = $short[0];
+        $languageAccept[$langCode] = $langCode;
 
         $q = 1.0;
         array_walk(
@@ -199,7 +199,7 @@ class blcCurlHttp extends blcHttpCheckerBase
     {
 
         global $blclog;
-        $blclog->info(__CLASS__ . ' Checking link', $url);
+     
 
         $this->last_headers = '';
 
@@ -217,15 +217,18 @@ class blcCurlHttp extends blcHttpCheckerBase
         // Get the BLC configuration. It's used below to set the right timeout values and such.
         $conf = $this->plugin_conf->options;
 
+       
+
         // Init curl.
         $ch = curl_init();
-
+     
+       
         $signature = $this->loadSignature('firefox');
         // Masquerade as a recent version of Firefox
         $ua                                 = $signature['userAgent'] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0';
         $request_headers                    = $signature['headers'] ?? array();
         $request_headers['Accept-Language'] = 'Accept-Language: ' . $this->getLanguage();
-
+     
         $options = array(
             CURLOPT_ENCODING       => '',
             CURLOPT_URL            => $this->urlencodefix($url),
@@ -238,7 +241,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             CURLOPT_CONNECTTIMEOUT => $conf['timeout'],
             // Register a callback function which will process the HTTP header(s).
             // It can be called multiple times if the remote server performs a redirect.
-         CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
+            CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
 
             // Add a semi-plausible referer header to avoid tripping up some bot traps
             CURLOPT_REFERER        => home_url(),
@@ -249,64 +252,69 @@ class blcCurlHttp extends blcHttpCheckerBase
             CURLINFO_HEADER_OUT    => true,
         );
 
-        if ($conf['cookies_enabled']) {
-                    $options[ CURLOPT_COOKIEJAR ]  = $conf['cookie_jar'];
-                    $options[ CURLOPT_COOKIEFILE ] = $conf['cookie_jar'];
-        }
+      
 
+        if ($conf['cookies_enabled']) {
+            $options[CURLOPT_COOKIEJAR]  = $conf['cookie_jar'];
+            $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
+        }
+      
         // Close the connection after the request (disables keep-alive). The plugin rate-limits requests,
         // so it's likely we'd overrun the keep-alive timeout anyway.
         $request_headers['Connection'] = 'Connection: close';
 
         // Redirects don't work when safe mode or open_basedir is enabled.
-        if (! Utility::is_open_basedir()) {
-            $options[ CURLOPT_FOLLOWLOCATION ] = true;
-        } else {
-            $log .= "[Warning] Could't follow the redirect URL (if any) because safemode or open base dir enabled\n";
-        }
-
+        if (!Utility::is_open_basedir()) {
+           $options[CURLOPT_FOLLOWLOCATION] = true;
+       } else {
+        $log .= "[Warning] Could't follow the redirect URL (if any) because safemode or open base dir enabled\n";
+     }
+        
+        
+       
         // Set the proxy configuration. The user can provide this in wp-config.php
         if (defined('WP_PROXY_HOST')) {
-            $options[ CURLOPT_PROXY ] = WP_PROXY_HOST;
+            $options[CURLOPT_PROXY] = WP_PROXY_HOST;
 
             if (defined('WP_PROXY_PORT')) {
-                $options[ CURLOPT_PROXYPORT ] = WP_PROXY_PORT;
+                $options[CURLOPT_PROXYPORT] = WP_PROXY_PORT;
             }
             if (defined('WP_PROXY_USERNAME')) {
                 $auth = WP_PROXY_USERNAME;
                 if (defined('WP_PROXY_PASSWORD')) {
                     $auth .= ':' . WP_PROXY_PASSWORD;
                 }
-                $options[ CURLOPT_PROXYUSERPWD ] = $auth;
+                $options[CURLOPT_PROXYUSERPWD] = $auth;
             }
         }
+       
 
         // Make CURL return a valid result even if it gets a 404 or other error.
 
-        $nobody = ! $use_get; // Whether to send a HEAD request (the default) or a GET request
+        $nobody = !$use_get; // Whether to send a HEAD request (the default) or a GET request
 
         if ('https' === strtolower(parse_url($url, PHP_URL_SCHEME))) {
             // Require valid ssl
-            $options[ CURLOPT_SSL_VERIFYPEER ] = true;
-            $options[ CURLOPT_SSL_VERIFYHOST ] = 2;
+            $options[CURLOPT_SSL_VERIFYPEER] = true;
+            $options[CURLOPT_SSL_VERIFYHOST] = 2;
         }
 
         if ($nobody) {
             // If possible, use HEAD requests for speed.
-            $options[ CURLOPT_NOBODY ] = true;
+            $options[CURLOPT_NOBODY] = true;
         } else {
             // If we must use GET at least limit the amount of downloaded data.
             $request_headers['Range'] = 'Range: bytes=0-2048'; // 2 KB
         }
 
         // Set request headers.
-        if (! empty($request_headers)) {
-            $options[ CURLOPT_HTTPHEADER ] = $request_headers;
-        }
+        if (!empty($request_headers)) {
+            $options[CURLOPT_HTTPHEADER] = $request_headers;
+        } 
 
         // Apply filter for additional options
         curl_setopt_array($ch, apply_filters('broken-link-checker-curl-options', $options));
-
+      
         // Execute the request
         $start_time                = microtime(true);
         $content                   = curl_exec($ch);
@@ -390,7 +398,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         $retryGet = apply_filters('broken-link-checker-retry-with-get-after-head', true, $result);
 
-        if ($nobody && ! $result['timeout'] && $retryGet && ( $result['broken'] || $result['redirect_count'] == 1 )) {
+        if ($nobody && !$result['timeout'] && $retryGet && ($result['broken'] || $result['redirect_count'] == 1)) {
             // The site in question might be expecting GET instead of HEAD, so lets retry the request
             // using the GET verb...but not in cases of timeout, or where we've already done it.
             return $this->check($url, true);
@@ -404,7 +412,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         // so redirect_count will be 0 for all URLs. As a workaround, set it to 1 when the HTTP
         // response codes indicates a redirect but redirect_count is zero.
         // Note to self : Extracting the Location header might also be helpful.
-        if (( 0 === absint($result['redirect_count']) ) && ( in_array($result['http_code'], array( 301, 302, 303, 307 )) )) {
+        if ((0 === absint($result['redirect_count'])) && (in_array($result['http_code'], array(301, 302, 303, 307)))) {
             $result['redirect_count'] = 1;
         }
 
@@ -427,11 +435,11 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
-        if (! $nobody && ( false !== $content ) && $result['broken']) {
+        if (!$nobody && (false !== $content) && $result['broken']) {
             if (strpos($contentType, 'text') !== false) {
                 // in case the returned stuff is gzipped or what
                 // technically we should check against the database collation
-                if (! mb_detect_encoding($content, strict: true)) {
+                if (!mb_detect_encoding($content, strict: true)) {
                     $content = 'Not Valid MultiByte content';
                 }
                 $log .= "Response HTML\n" . str_repeat('=', 16) . "\n";
@@ -439,7 +447,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             }
         }
 
-        if (! empty($result['broken']) && ! empty($result['timeout'])) {
+        if (!empty($result['broken']) && !empty($result['timeout'])) {
             $log .= "\n(" . __("Most likely the connection timed out or the domain doesn't exist.", 'broken-link-checker') . ')';
         }
 
@@ -451,9 +459,10 @@ class blcCurlHttp extends blcHttpCheckerBase
             '|',
             array(
                 $result['http_code'],
-                ( $result['redirect_count'] > 0 ? 'redirect' : 'final' ),
+                ($result['redirect_count'] > 0 ? 'redirect' : 'final'),
             )
         );
+  
 
         return $result;
     }

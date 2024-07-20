@@ -16,36 +16,8 @@ class UpdatePlugin
     {
 
         add_filter('update_plugins_downloads.brokenlinkchecker.dev', array( $this, 'checkUpdate' ), accepted_args: 2);
-        add_filter('plugins_api', array( $this, 'get_plugin_information' ), 10, 3);
+    
     }
-
-    /**
-     * Check  for updates.
-     */
-    public function get_plugin_information($data, $action, $args)
-    {
-        if ($action !== 'plugin_information') {
-            return $data;
-        }
-
-        if (! isset($args->slug)) {
-            return $data;
-        }
-
-        if ('broken-link-checker' !== $args->slug) {
-            return $data;
-        }
-
-        $data           = new \stdClass();
-        $data->slug     = $args->slug;
-        $data->name     = 'Broken Link Checker (Fork)';
-        $data->homepage = 'https://brokenlinkchecker.dev/wordpress/broken-link-checker';
-        return $data;
-    }
-
-
-
-
 
     public function checkUpdate($update, $plugin_data)
     {

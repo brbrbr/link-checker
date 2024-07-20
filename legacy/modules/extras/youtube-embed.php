@@ -15,7 +15,7 @@ ModulePriority: 110
 */
 
 
-class blcYouTubeEmbed extends blcEmbedParserBase
+class blcYouTubeEmbed extends EmbedParser
 {
     function init()
     {

@@ -96,28 +96,6 @@ define('BLC_DATABASE_VERSION', 20);
 require_once 'autoloader.php';
 
 $autoloaded = new Autoloader();
-/**
- * Run plugin activation hook to setup plugin.
- *
- * @since 2.0.0
- */
-
-
-	/**
-	 * Main instance of plugin.
-	 *
-	 * Returns the main instance of WPMUDEV_BLC to prevent the need to use globals
-	 * and to maintain a single copy of the plugin object.
-	 * You can simply call WPMUDEV_BLC\instance() to access the object.
-	 *
-	 * @since  2.0.0
-	 *
-	 * @return object WPMUDEV_BLC\Core\Loader
-	 */
-
-
-	// Init the plugin and load the plugin instance for the first time.
-	//add_action( 'plugins_loaded', 'WPMUDEV_BLC\\wpmudev_blc_instance' );
 
 	add_action(
 		'plugins_loaded',

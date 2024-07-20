@@ -1,5 +1,6 @@
 <?php
 
+namespace Blc\Util;
 /**
  * This class implements a variant of the popular token bucket algorithm.
  */
@@ -60,6 +61,8 @@ class TokenBucketList
         $totalWait          = round(max($intervalWait, $refillWait) * self::MICROSECONDS_PER_SECOND, 0);
 
         if ($totalWait > 0) {
+            global $blclog;
+            $blclog->debug("Waiting for token $totalWait");
             usleep(intval($totalWait));
         }
 

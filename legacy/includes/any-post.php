@@ -37,6 +37,7 @@ class blcPostTypeOverlord
      */
     function init()
     {
+      
         $this->plugin_conf = ConfigurationManager::getInstance();
 
         if (isset($this->plugin_conf->options['enabled_post_statuses'])) {
@@ -66,7 +67,7 @@ class blcPostTypeOverlord
                 )
             );
         }
-
+     
         // These hooks update the synch & instance records when posts are added, deleted or modified.
         add_action('delete_post', array( &$this, 'post_deleted' ));
         add_action('save_post', array( &$this, 'post_saved' ));
@@ -179,26 +180,29 @@ class blcPostTypeOverlord
      */
     function post_saved($post_id)
     {
+   
+    
         // Get the container type matching the type of the deleted post
         $post = get_post($post_id);
         if (! $post) {
             return;
         }
-
+     
         // Only check links in currently enabled post types
         if (! in_array($post->post_type, $this->enabled_post_types)) {
             return;
         }
-
+   
         // Only check posts that have one of the allowed statuses
         if (! in_array($post->post_status, $this->enabled_post_statuses)) {
             return;
         }
-
+      
         // Get the container & mark it as unparsed
         $args           = array( $post->post_type, intval($post_id) );
         $post_container = blcContainerHelper::get_container($args);
 
+     
         $post_container->mark_as_unsynched();
     }
 
@@ -449,8 +453,7 @@ class blcPostTypeOverlord
     }
 }
 
-// Start up the post overlord
-blcPostTypeOverlord::getInstance();
+
 
 
 /**

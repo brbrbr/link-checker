@@ -571,11 +571,11 @@ class blcAcfMetaManager extends blcContainerManager
 
         // Only check custom fields on selected post types. By default, that's "post" and "page".
         $post_types = array( 'post', 'page' );
-        if (class_exists('blcPostTypeOverlord')) {
+      
             $overlord   = blcPostTypeOverlord::getInstance();
             $post_types = array_merge($post_types, $overlord->enabled_post_types);
             $post_types = array_unique($post_types);
-        }
+        
 
         $escaped_post_types = "'" . implode("', '", array_map('esc_sql', $post_types)) . "'";
 

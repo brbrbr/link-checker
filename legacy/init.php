@@ -22,6 +22,7 @@ if (defined('BLC_ACTIVE')) {
     );
 } else {
     define('BLC_ACTIVE', true);
+ 
 
     $plugin_config = ConfigurationManager::getInstance(
         // Save the plugin's configuration into this DB option
@@ -79,48 +80,22 @@ if (defined('BLC_ACTIVE')) {
         )
     );
 
-
-
     /**
- * Load all files pertaining to BLC's module subsystem
- */
+     * Load all files pertaining to BLC's module subsystem
+     */
 
-require_once BLC_DIRECTORY_LEGACY . '/includes/module-manager.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-require_once BLC_DIRECTORY_LEGACY . '/modules/extras/embed-parser-base.php';
-require_once BLC_DIRECTORY_LEGACY . '/modules/extras/plaintext-url-parser-base.php';
-
-$blc_module_manager = blcModuleManager::getInstance(
-    array(
-        // List of modules active by default
-        'http',             // Link checker for the HTTP(s) protocol
-        'link',             // HTML link parser
-        'image',            // HTML image parser
-        'metadata',         // Metadata (custom field) parser
-        'url_field',        // URL field parser
-        'comment',          // Comment container
-        'custom_field',     // Post metadata container (aka custom fields)
-        'acf_field',        // Post acf container (aka advanced custom fields)
-        'acf',              // acf parser
-        'post',             // Post content container
-        'page',             // Page content container
-        'youtube-checker',  // Video checker using the YouTube API
-        'youtube-iframe',   // Embedded YouTube video container
-        'dummy',            // Dummy container used as a fallback
-    )
-);
+    require_once BLC_DIRECTORY_LEGACY . '/includes/module-manager.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
+    require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 
 
 
-// Let other plugins register virtual modules.
-do_action('blc_register_modules', $blc_module_manager);
 
     /***********************************************
                     Debugging stuff
@@ -201,34 +176,60 @@ do_action('blc_register_modules', $blc_module_manager);
 
     add_filter('cron_schedules', 'blc_cron_schedules');
 
-    /***********************************************
-                    Main functionality
-     */
-
-
-
     // Load the plugin if installed successfully
     if ($plugin_config->installation_complete) {
-        function blc_init()
-        {
-            global  $ws_link_checker;
+        if (is_admin() || wp_doing_cron() ) {
+            // Start up the post overlord and module- must runoutside the 'init' action
+            $blclog->debug("========== BOOOOOOT =========");
+            $blc_module_manager = \blcModuleManager::getInstance(
+                array(
+                    // List of modules active by default
+                    'http',             // Link checker for the HTTP(s) protocol
+                    'link',             // HTML link parser
+                    'image',            // HTML image parser
+                    'metadata',         // Metadata (custom field) parser
+                    'url_field',        // URL field parser
+                    'comment',          // Comment container
+                    'custom_field',     // Post metadata container (aka custom fields)
+                    'acf_field',        // Post acf container (aka advanced custom fields)
+                    'acf',              // acf parser
+                    'post',             // Post content container
+                    'page',             // Page content container
+                    'youtube-checker',  // Video checker using the YouTube API
+                    'youtube-iframe',   // Embedded YouTube video container
+                    'dummy',            // Dummy container used as a fallback
+                )
+            );
+       
+            // Let other plugins register virtual modules.
+            do_action('blc_register_modules', $blc_module_manager);
 
-            $plugin_config = ConfigurationManager::getInstance();
-            $blc_module_manager = blcModuleManager::getInstance();
-
-            static $init_done = false;
-            if ($init_done) {
-                return;
+            \blcPostTypeOverlord::getInstance();
+            // Load the modules that want to be executed in all contexts
+            if (is_object($blc_module_manager) && method_exists($blc_module_manager, 'load_modules')) {
+                $blc_module_manager->load_modules();
             }
-            $init_done = true;
+           
+            /***********************************************
+                            Main functionality
+             */
 
-            // moved the IF up. No need to load all the crap every time on the front page
+            function blc_init()
+            {
+                global  $ws_link_checker;
 
-            if (is_admin() || defined('DOING_CRON')) {
+                $plugin_config = ConfigurationManager::getInstance();
+                static $init_done = false;
+                if ($init_done) {
+                    return;
+                }
+                $init_done = true;
+
+                // moved the IF up. No need to load all the crap every time on the front page
+
+
                 // Ensure the database is up to date
                 if (BLC_DATABASE_VERSION !== $plugin_config->options['current_db_version']) {
-                  
-
                     if (WPMutex::acquire('blc_dbupdate')) {
                         DatabaseUpgrader::upgrade_database();
                         WPMutex::release('blc_dbupdate');
@@ -236,35 +237,29 @@ do_action('blc_register_modules', $blc_module_manager);
                 }
 
                 // Load the base classes and utilities
-       
-         
 
-                // Load the modules that want to be executed in all contexts
-                if (is_object($blc_module_manager) && method_exists($blc_module_manager, 'load_modules')) {
-                    $blc_module_manager->load_modules();
-                }
+
 
                 $ws_link_checker = new BrokenLinkChecker();
-            } else {
-                // This is user-side request, so we don't need to load the core.
-                // We might need to inject the CSS for removed links, though.
-                if ($plugin_config->options['mark_removed_links'] && !empty($plugin_config->options['removed_link_css'])) {
-                    function blc_print_removed_link_css()
-                    {
-                        $plugin_config = ConfigurationManager::getInstance();
-                        echo '<style type="text/css">', $plugin_config->options['removed_link_css'], '</style>';
-                    }
-                    add_action('wp_head', 'blc_print_removed_link_css');
+            }
+            add_action('init', 'blc_init', 2000);
+        } else {
+            // This is user-side request, so we don't need to load the core.
+            // We might need to inject the CSS for removed links, though.
+            if ($plugin_config->options['mark_removed_links'] && !empty($plugin_config->options['removed_link_css'])) {
+                function blc_print_removed_link_css()
+                {
+                    $plugin_config = ConfigurationManager::getInstance();
+                    echo '<style type="text/css">', $plugin_config->options['removed_link_css'], '</style>';
                 }
+                add_action('wp_head', 'blc_print_removed_link_css');
             }
         }
-
-        add_action('init', 'blc_init', 2000);
     } else {
         // Display installation errors (if any) on the Dashboard.
         function blc_print_installation_errors()
         {
-          
+
             $plugin_config = ConfigurationManager::getInstance();
 
             $messages = array(

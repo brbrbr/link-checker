@@ -141,12 +141,14 @@ class blcLink
             'dismissed'          => 'bool',
             'parked'             => '%d',
         );
-
+      
+      
         if (is_numeric($arg)) {
             // Load a link with ID = $arg from the DB.
             $q   = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}blc_links WHERE link_id=%d LIMIT 1", $arg);
+         
             $arr = $wpdb->get_row($q, ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-
+     
             if (is_array($arr)) { // Loaded successfully
                 $this->set_values($arr);
             } else {
@@ -219,7 +221,7 @@ class blcLink
         if (!$this->valid()) {
             return false;
         }
-
+       
         $this->last_check_attempt = time();
 
         /*
@@ -243,9 +245,10 @@ class blcLink
                 $this->save();
             }
 
-            return false;
+         //   return false;
         }
 
+     
         $this->being_checked = true;
         ++$this->check_count;
 
@@ -288,7 +291,7 @@ class blcLink
 
             return true;
         }
-
+    
         // Check the link
         $rez = $checker->check($this->get_ascii_url());
         // FB::info($rez, "Check results");
@@ -615,7 +618,7 @@ class blcLink
             );
             // FB::log($q, 'Link update query');
             // $blclog->debug( __CLASS__ . ':' . __FUNCTION__ . ' Updating a link. SQL query:' . "\n", $q );
-            $blclog->debug(__CLASS__ . ':' . __FUNCTION__ . ' Updating a link. Values:' . "\n", $values);
+        //    $blclog->debug(__CLASS__ . ':' . __FUNCTION__ . ' Updating a link. Values:' . "\n", $values);
 
             $rez = false !== $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             if ($rez) {

@@ -2,7 +2,7 @@
 
 use Blc\Abstract\Parser;
 
-class blcPlaintextUrlBase extends Parser
+class PlaintextUrlParser extends Parser
 {
     var $supported_formats = array( 'html', 'plaintext' );
 

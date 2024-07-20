@@ -12,8 +12,9 @@ ModuleContext: on-demand
 ModuleLazyInit: true
 */
 
+use Blc\Abstract\EmbedParser;
 
-class blcVimeoEmbed extends blcEmbedParserBase
+class blcVimeoEmbed extends EmbedParser
 {
     var $supported_formats = array( 'html' );
 

@@ -14,8 +14,10 @@ ModuleLazyInit: true
 ModulePriority: 110
 */
 
+use Blc\Abstract\EmbedParser;
 
-class blcYouTubePlaylistEmbed extends blcEmbedParserBase
+
+class blcYouTubePlaylistEmbed extends EmbedParser
 {
     function init()
     {

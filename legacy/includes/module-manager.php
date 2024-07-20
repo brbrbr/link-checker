@@ -7,6 +7,7 @@ class blcModuleManager
 {
     /* @var ConfigurationManager */
     protected ConfigurationManager $plugin_conf;
+
     var $module_dir = '';
 
     var $_module_cache;

@@ -14,8 +14,8 @@ ModuleLazyInit: true
 ModulePriority: 800
 */
 
+use Blc\Abstract\PlaintextUrlParser;
 
-
-class blcPlaintextURL extends blcPlaintextUrlBase
+class blcPlaintextURL extends PlaintextUrlParser
 {
 }

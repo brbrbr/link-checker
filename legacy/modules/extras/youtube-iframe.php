@@ -16,8 +16,10 @@ ModulePriority: 120
 
 use Blc\Util\Utility;
 
+use Blc\Abstract\EmbedParser;
 
-class blcYouTubeIframe extends blcEmbedParserBase
+
+class blcYouTubeIframe extends EmbedParser
 {
     var $supported_formats = array( 'html' );
 

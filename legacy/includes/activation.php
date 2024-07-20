@@ -1,7 +1,7 @@
 <?php
 
 use Blc\Util\Utility;
-use Blc\Includes\CachedOptionLogger;
+use Blc\Logger\CachedOptionLogger;
 use Blc\Util\ConfigurationManager;
 
 if (get_option('blc_activation_enabled')) {

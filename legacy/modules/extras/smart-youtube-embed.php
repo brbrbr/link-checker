@@ -14,8 +14,9 @@ ModuleLazyInit: true
 ModulePriority: 100
 */
 
+use Blc\Abstract\PlaintextUrlParser;
 
-class blcSmartYouTubeURL extends blcPlaintextUrlBase
+class blcSmartYouTubeURL extends PlaintextUrlParser
 {
     protected function validate_url($url)
     {

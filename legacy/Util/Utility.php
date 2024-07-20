@@ -7,7 +7,7 @@
 
 namespace Blc\Includes;
 
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 
 // Include the internationalized domain name converter (requires PHP 5)
 
@@ -16,9 +16,7 @@ use Blc\Utils\ConfigurationManager;
 
 
 
-
-
-class blcUtility
+class Utility
 {
     public static function is_host_wp_engine()
     {

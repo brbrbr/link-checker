@@ -7,9 +7,9 @@
  */
 
 use Blc\Database\WPMutex;
-use Blc\Includes\blcFileLogger;
-use Blc\Includes\blcDummyLogger;
-use Blc\Includes\blcCachedOptionLogger;
+use Blc\Logger\FileLogger;
+use Blc\Logger\DummyLogger;
+use Blc\Logger\CachedOptionLogger;
 use Blc\Utils\ConfigurationManager;
 use Blc\Controller\BrokenLinkChecker;
 use Blc\Database\DatabaseUpgrader;
@@ -88,11 +88,22 @@ if (defined('BLC_ACTIVE')) {
 require_once BLC_DIRECTORY_LEGACY . '/includes/module-manager.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/parsers.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
+
+require_once BLC_DIRECTORY_LEGACY . '/includes/admin/table-printer.php';
+require_once BLC_DIRECTORY_LEGACY . '/idn/idna_convert.class.php';
+require_once BLC_DIRECTORY_LEGACY . '/includes/token-bucket.php';
+require_once BLC_DIRECTORY_LEGACY . '/modules/extras/embed-parser-base.php';
+require_once BLC_DIRECTORY_LEGACY . '/modules/extras/plaintext-url-parser-base.php';
+
+
+
 
 $blc_module_manager = blcModuleManager::getInstance(
     array(
@@ -154,9 +165,9 @@ do_action('blc_register_modules', $blc_module_manager);
 
 
     if ($plugin_config->get('logging_enabled', false) && is_writable($plugin_config->get('log_file'))) {
-        $blclog = new blcFileLogger($plugin_config->get('log_file'));
+        $blclog = new FileLogger($plugin_config->get('log_file'));
     } else {
-        $blclog = new blcDummyLogger();
+        $blclog = new DummyLogger();
     }
 
 
@@ -269,7 +280,7 @@ do_action('blc_register_modules', $blc_module_manager);
             );
 
 
-            $logger   = new blcCachedOptionLogger('blc_installation_log');
+            $logger   = new CachedOptionLogger('blc_installation_log');
             $messages = array_merge(
                 $messages,
                 array(

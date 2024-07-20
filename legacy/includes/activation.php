@@ -1,7 +1,7 @@
 <?php
 
 use Blc\Includes\blcUtility;
-use Blc\Includes\blcCachedOptionLogger;
+use Blc\Includes\CachedOptionLogger;
 use Blc\Utils\ConfigurationManager;
 
 if (get_option('blc_activation_enabled')) {
@@ -30,7 +30,7 @@ if (blcUtility::is_host_wp_engine() || blcUtility::is_host_flywheel()) {
 ignore_user_abort(true);
 
 // Log installation progress to a DB option
-$blclog = new blcCachedOptionLogger('blc_installation_log');
+$blclog = new CachedOptionLogger('blc_installation_log');
 register_shutdown_function(array($blclog, 'save')); // Make sure the log is saved even if the plugin crashes
 
 $blclog->clear();
@@ -47,14 +47,11 @@ $plugin_config->options['first_installation_timestamp'] ??= time();
 $plugin_config->save_options();
 $blclog->info('Installation/update begins.');
 
-// Load the base classes and utilities
-require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
+
 
 
 // Load the module subsystem
-require_once BLC_DIRECTORY_LEGACY . '/includes/modules.php';
+
 $moduleManager = blcModuleManager::getInstance();
 
 // If upgrading, activate/deactivate custom field and comment containers based on old ver. settings

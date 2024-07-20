@@ -19,7 +19,7 @@
  * N Note
 
 2.3.0.xxxx
- # git c
+ # Convert punnycode url back to utf8
  - Removed safe mode checks
  ^ Started namespaces and use instead of all the includes
  ^ Changed order of columns in link overview. Makes more sence to have the anchor next to the source

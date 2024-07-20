@@ -14,7 +14,10 @@
  */
 
 // TODO: Update image parser to use the same HTML tag parsing routine as the HTML link parser.
-class blcHTMLImage extends blcParser
+
+use Blc\Abstract\Parser;
+
+class blcHTMLImage extends Parser
 {
     var $supported_formats = array( 'html' );
 

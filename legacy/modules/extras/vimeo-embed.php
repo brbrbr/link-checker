@@ -12,7 +12,6 @@ ModuleContext: on-demand
 ModuleLazyInit: true
 */
 
-require_once 'embed-parser-base.php';
 
 class blcVimeoEmbed extends blcEmbedParserBase
 {

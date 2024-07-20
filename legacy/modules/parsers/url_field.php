@@ -23,7 +23,11 @@
  * @package Broken Link Checker
  * @access public
  */
-class blcUrlField extends blcParser
+
+ use Blc\Abstract\Parser;
+
+
+class blcUrlField extends Parser
 {
     var $supported_formats = array( 'url_field' );
 

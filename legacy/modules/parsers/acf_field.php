@@ -14,9 +14,11 @@
  * ModuleHidden: true
  */
 
-class blcACFParser extends blcParser
+use Blc\Abstract\Parser;
+
+class blcACFParser extends Parser
 {
-    var $supported_formats    = array( 'acf_field' );
+    var $supported_formats    = array('acf_field');
     var $supported_containers = array();
 
     /**
@@ -31,8 +33,8 @@ class blcACFParser extends blcParser
     {
         $instances = array();
 
-        if (! is_array($content)) {
-            $content = array( $content );
+        if (!is_array($content)) {
+            $content = array($content);
         }
 
         foreach ($content as $value) {
@@ -47,17 +49,17 @@ class blcACFParser extends blcParser
 
             // Attempt to parse the URL
             $parts = @parse_url($url);
-            if (! $parts) {
+            if (!$parts) {
                 // Ignore invalid URLs
                 return $instances;
             }
 
-            if (! isset($parts['scheme'])) {
+            if (!isset($parts['scheme'])) {
                 // No scheme - likely a relative URL. Turn it into an absolute one.
                 $url = $this->relative2absolute($url, $base_url);
 
                 // Skip invalid URLs (again)
-                if (! $url || ( strlen($url) < 6 )) {
+                if (!$url || (strlen($url) < 6)) {
                     return $instances;
                 }
             }

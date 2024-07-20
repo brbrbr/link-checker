@@ -1,5 +1,5 @@
 <?php
-
+use Blc\Abstract\Parser;
 /*
 Plugin Name: Acf fields
 Description: Container module for acf fields.
@@ -111,7 +111,7 @@ class blcAcfMeta extends blcContainer
      * "Unlink"-ing a custom fields removes all metadata fields that contain the specified URL.
      *
      * @param string    $field_name
-     * @param blcParser $parser
+     * @param Parser $parser
      * @param string    $url
      * @param string    $raw_url
      *
@@ -142,7 +142,7 @@ class blcAcfMeta extends blcContainer
      * Change a meta field containing the specified URL to a new URL.
      *
      * @param string    $field_name Meta name
-     * @param blcParser $parser
+     * @param Parser $parser
      * @param string    $new_url New URL.
      * @param string    $old_url
      * @param string    $old_raw_url Old meta value.

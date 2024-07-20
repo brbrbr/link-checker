@@ -29,6 +29,10 @@ ModuleClassName: blcPostMetaManager
  * @package Broken Link Checker
  * @access public
  */
+
+ use Blc\Abstract\Parser;
+
+ 
 class blcPostMeta extends blcContainer
 {
     var $meta_type = 'post';
@@ -121,7 +125,7 @@ class blcPostMeta extends blcContainer
      * "Unlink"-ing a custom fields removes all metadata fields that contain the specified URL.
      *
      * @param string    $field_name
-     * @param blcParser $parser
+     * @param Parser $parser
      * @param string    $url
      * @param string    $raw_url
      * @return bool|WP_Error True on success, or an error object if something went wrong.
@@ -152,7 +156,7 @@ class blcPostMeta extends blcContainer
      * Change a meta field containing the specified URL to a new URL.
      *
      * @param string    $field_name Meta name
-     * @param blcParser $parser
+     * @param Parser $parser
      * @param string    $new_url New URL.
      * @param string    $old_url
      * @param string    $old_raw_url Old meta value.

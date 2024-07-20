@@ -385,7 +385,7 @@ class blcPostTypeOverlord
         }
 
         // Iterate over all HTML links and modify the broken ones
-        $parser = blcParserHelper::get_parser('link');
+        $parser = blcModuleManager::getInstance()->get_parser('link');
         if ($parser) {
             $content = $parser->multi_edit($content, array( &$this, 'highlight_broken_link' ), $broken_link_urls);
         }

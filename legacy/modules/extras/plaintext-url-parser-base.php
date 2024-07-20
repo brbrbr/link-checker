@@ -1,6 +1,8 @@
 <?php
 
-class blcPlaintextUrlBase extends blcParser
+use Blc\Abstract\Parser;
+
+class blcPlaintextUrlBase extends Parser
 {
     var $supported_formats = array( 'html', 'plaintext' );
 

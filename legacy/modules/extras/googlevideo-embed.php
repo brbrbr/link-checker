@@ -14,7 +14,7 @@ ModuleLazyInit: true
 ModulePriority: 110
 */
 
-require_once 'embed-parser-base.php';
+
 
 class blcGoogleVideoEmbed extends blcEmbedParserBase
 {

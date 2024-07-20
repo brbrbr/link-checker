@@ -14,7 +14,7 @@ use Blc\Utils\ConfigurationManager;
 //worpdress has its own idn converter. //use WpOrg\Requests\IdnaEncoder;
 //however only one direction
 
-require_once BLC_DIRECTORY_LEGACY . '/idn/idna_convert.class.php';
+
 
 
 

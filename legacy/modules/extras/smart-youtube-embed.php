@@ -15,9 +15,6 @@ ModulePriority: 100
 */
 
 
-require_once 'plaintext-url-parser-base.php';
-
-
 class blcSmartYouTubeURL extends blcPlaintextUrlBase
 {
     protected function validate_url($url)

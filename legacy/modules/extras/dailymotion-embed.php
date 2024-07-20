@@ -13,7 +13,7 @@ ModuleLazyInit: true
 */
 
 
-    require_once 'embed-parser-base.php';
+ 
 
 
 class blcDailyMotionEmbed extends blcEmbedParserBase

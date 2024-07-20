@@ -15,8 +15,9 @@
 
 use Blc\Includes\blcUtility;
 use Blc\Utils\ConfigurationManager;
+use Blc\Abstract\Parser;
 
-class blcHTMLLink extends blcParser
+class blcHTMLLink extends Parser
 {
     var $supported_formats = array( 'html' );
 
@@ -265,7 +266,7 @@ class blcHTMLLink extends blcParser
      * Any attributes of the link tag will also be included in the returned array as attr_name => attr_value
      * pairs. This function will also automatically decode any HTML entities found in attribute values.
      *
-     * @see blcParser::map()
+     * @see Parser::map()
      *
      * @param string   $content A text string to parse for links.
      * @param callable $callback Callback function to apply to all found links.
@@ -316,7 +317,7 @@ class blcHTMLLink extends blcParser
      *
      * htmlentities() will be automatically applied to attribute values (but not to #link_text).
      *
-     * @see blcParser::multi_edit()
+     * @see Parser::multi_edit()
      *
      * @param string   $content A text string containing the links to edit.
      * @param callback $callback Callback function used to modify the links.

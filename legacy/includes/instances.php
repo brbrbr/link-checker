@@ -4,7 +4,7 @@
  * @author W-Shadow
  * @copyright 2009
  */
-
+use Blc\Abstract\Parser;
 
 class blcLinkInstance
 {
@@ -355,12 +355,12 @@ class blcLinkInstance
     /**
      * Get the parser associated with this link instance.
      *
-     * @return blcParser|null
+     * @return Parser|null
      */
     function get_parser()
     {
         if (is_null($this->_parser)) {
-            $this->_parser = blcParserHelper::get_parser($this->parser_type);
+            $this->_parser = blcModuleManager::getInstance()->get_parser($this->parser_type);
         }
 
         return $this->_parser;
@@ -369,7 +369,7 @@ class blcLinkInstance
     /**
      * Set a new parser fo this link instance.
      *
-     * @param blcParser|null $new_parser
+     * @param Parser|null $new_parser
      * @return void
      */
     function set_parser(&$new_parser)

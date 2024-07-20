@@ -16,7 +16,6 @@ ModulePriority: 120
 
 use Blc\Includes\blcUtility;
 
-require_once 'embed-parser-base.php';
 
 class blcYouTubeIframe extends blcEmbedParserBase
 {

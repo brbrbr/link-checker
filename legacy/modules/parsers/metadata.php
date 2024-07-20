@@ -14,7 +14,9 @@
  * ModuleHidden: true
  */
 
-class blcMetadataParser extends blcParser
+ use Blc\Abstract\Parser;
+
+class blcMetadataParser extends Parser
 {
     var $supported_formats    = array( 'metadata' );
     var $supported_containers = array();

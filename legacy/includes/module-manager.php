@@ -1,6 +1,7 @@
 <?php
 
 use Blc\Utils\ConfigurationManager;
+use Blc\Abstract\Parser;
 
 class blcModuleManager
 {
@@ -883,4 +884,51 @@ class blcModuleManager
 
         return "<?php\n" . implode("\n", $strings) . "\n";
     }
+
+     /**
+     * Get the parser matching a parser type ID.
+     *
+     * @uses blcModuleManager::get_module()
+     *
+     * @param string $parser_type
+     * @return Parser|null
+     */
+    public function get_parser($parser_type)
+    {
+    
+        return $this->get_module($parser_type, true, 'parser');
+        
+    }
+
+    /**
+     * Get all parsers that support either the specified format or the container type.
+     * If a parser supports both, it will still be included only once.
+     *
+     * @param string $format
+     * @param string $container_type
+     * @return Parser[]
+     */
+    public function get_parsers($format, $container_type)
+    {
+        $found = array();
+
+        // Retrieve a list of active parsers
+      
+        $active_parsers = $this->get_modules_by_category('parser');
+
+        // Try each one
+        foreach ($active_parsers as $module_id => $module_data) {
+            $parser = $this->get_module($module_id); // Will autoload if necessary
+            if (! $parser) {
+                continue;
+            }
+
+            if (in_array($format, $parser->supported_formats) || in_array($container_type, $parser->supported_containers)) {
+                array_push($found, $parser);
+            }
+        }
+
+        return $found;
+    }
+
 }

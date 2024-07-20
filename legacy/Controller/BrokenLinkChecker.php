@@ -14,15 +14,9 @@ use Blc\Utils\UpdatePlugin;
 use Blc\Database\TransactionManager;
 use Blc\Includes\blcUtility;
 use Blc\Utils\ConfigurationManager;
-
-require_once BLC_DIRECTORY_LEGACY . '/includes/screen-options/screen-options.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
+use Blc\Includes\CachedOptionLogger;
 
 
-
-
-
-require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 
 
 /**
@@ -2002,8 +1996,7 @@ class BrokenLinkChecker
 
             // Display the "Search" form and associated buttons.
             // The form requires the $filter_id and $current_filter variables to be set.
-            require_once dirname($this->loader) . '/includes/admin/search-form.php';
-
+            require_once BLC_DIRECTORY_LEGACY . '/includes/admin/search-form.php';
             // If the user has decided to switch the table to a different mode (compact/full),
             // save the new setting.
             if (isset($_GET['compact'])) {
@@ -2013,7 +2006,7 @@ class BrokenLinkChecker
 
             // Display the links, if any
             if ($current_filter['links'] && ( count($current_filter['links']) > 0 )) {
-                require_once dirname($this->loader) . '/includes/admin/table-printer.php';
+             
                 $table = new \blcTablePrinter($this);
                 $table->print_table(
                     $current_filter,
@@ -2658,7 +2651,7 @@ class BrokenLinkChecker
         // Let the user show/hide individual table columns
         $html = '<h5>' . __('Table columns', 'broken-link-checker') . '</h5>';
 
-        require_once dirname($this->loader) . '/includes/admin/table-printer.php';
+   
         $table             = new \blcTablePrinter($this);
         $available_columns = $table->get_layout_columns($this->plugin_config->options['table_layout']);
 
@@ -3794,9 +3787,6 @@ class BrokenLinkChecker
 
         if (! $link->is_new) {
             // FB::info($link, 'Link loaded');
-
-            require_once dirname($this->loader) . '/includes/admin/table-printer.php';
-
             \blcTablePrinter::details_row_contents($link);
             die();
         } else {
@@ -4021,7 +4011,7 @@ class BrokenLinkChecker
         }
 
         // Installation log
-        $logger           = new \blcCachedOptionLogger('blc_installation_log');
+        $logger           = new CachedOptionLogger('blc_installation_log');
         $installation_log = $logger->get_messages();
         if (! empty($installation_log)) {
             $debug['Installation log'] = array(

@@ -1,6 +1,4 @@
 <?php
-
-use Blc\Abstract\Module;
 /**
  * A base class for parsers.
  *
@@ -16,14 +14,19 @@ use Blc\Abstract\Module;
  * container class will look up the parsers that support the relevant format or the container's type,
  * and apply them to the to-be-parsed string.
  *
- * All sub-classes of blcParser should override at least the blcParser::parse() method.
+ * All sub-classes of Parser should override at least the Parser::parse() method.
  *
  * @see blcContainer::$fields
  *
  * @package Broken Link Checker
  * @access public
  */
-class blcParser extends Module
+
+namespace Blc\Abstract;
+
+use Blc\Abstract\Module;
+
+abstract class Parser extends Module
 {
     var $parser_type;
     var $supported_formats    = array();
@@ -312,7 +315,7 @@ class blcParser extends Module
      * This method is currently only used internally, so sub-classes are not required
      * to implement it.
      *
-     * @see blcParser::map()
+     * @see Parser::map()
      *
      * @param string   $content A text string containing the links to edit.
      * @param callback $callback Callback function used to modify the links.
@@ -325,58 +328,4 @@ class blcParser extends Module
     }
 }
 
-/**
- * A helper class for working with parsers. All its methods should be called statically.
- *
- * @see blcParser
- *
- * @package Broken Link Checker
- * @access public
- */
-class blcParserHelper
-{
-    /**
-     * Get the parser matching a parser type ID.
-     *
-     * @uses blcModuleManager::get_module()
-     *
-     * @param string $parser_type
-     * @return blcParser|null
-     */
-    static function get_parser($parser_type)
-    {
-        $manager = blcModuleManager::getInstance();
-        return $manager->get_module($parser_type, true, 'parser');
-    }
 
-    /**
-     * Get all parsers that support either the specified format or the container type.
-     * If a parser supports both, it will still be included only once.
-     *
-     * @param string $format
-     * @param string $container_type
-     * @return blcParser[]
-     */
-    static function get_parsers($format, $container_type)
-    {
-        $found = array();
-
-        // Retrieve a list of active parsers
-        $manager        = blcModuleManager::getInstance();
-        $active_parsers = $manager->get_modules_by_category('parser');
-
-        // Try each one
-        foreach ($active_parsers as $module_id => $module_data) {
-            $parser = $manager->get_module($module_id); // Will autoload if necessary
-            if (! $parser) {
-                continue;
-            }
-
-            if (in_array($format, $parser->supported_formats) || in_array($container_type, $parser->supported_containers)) {
-                array_push($found, $parser);
-            }
-        }
-
-        return $found;
-    }
-}

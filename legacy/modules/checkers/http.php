@@ -16,7 +16,7 @@ ModulePriority: -1
 
 use Blc\Includes\blcUtility;
 
-require_once BLC_DIRECTORY_LEGACY . '/includes/token-bucket.php';
+
 
 // TODO: Rewrite sub-classes as transports, not stand-alone checkers
 class blcHttpChecker extends blcChecker

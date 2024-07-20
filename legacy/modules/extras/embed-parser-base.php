@@ -6,6 +6,7 @@
  */
 
 use Blc\Includes\blcUtility;
+use Blc\Abstract\Parser;
 
 /**
  * Base class for embedded video/audio parsers.
@@ -17,7 +18,7 @@ use Blc\Includes\blcUtility;
  * @author Janis Elsts
  * @access public
  */
-class blcEmbedParserBase extends blcParser
+class blcEmbedParserBase extends Parser
 {
     var $supported_formats = array( 'html' );
 

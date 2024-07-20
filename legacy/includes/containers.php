@@ -3,6 +3,7 @@
 use Blc\Database\TransactionManager;
 use Blc\Includes\blcUtility;
 use Blc\Abstract\Module;
+use Blc\Abstract\Parser;
 
 /**
  * The base class for link container managers.
@@ -259,7 +260,7 @@ class blcContainer
             // FB::log($name, "Parsing field");
 
             // Get all parsers applicable to this field
-            $parsers = blcParserHelper::get_parsers($format, $this->container_type);
+            $parsers =  blcModuleManager::getInstance()->get_parsers($format, $this->container_type);
             // FB::log($parsers, "Applicable parsers");
 
             if (empty($parsers)) {
@@ -486,7 +487,7 @@ class blcContainer
      * Change all links with the specified URL to a new URL.
      *
      * @param string    $field_name
-     * @param blcParser $parser
+     * @param Parser $parser
      * @param string    $new_url
      * @param string    $old_url
      * @param string    $old_raw_url
@@ -551,7 +552,7 @@ class blcContainer
      * Remove all links with the specified URL, leaving their anchor text intact.
      *
      * @param string    $field_name
-     * @param blcParser $parser
+     * @param Parser $parser
      * @param string    $url
      * @param string    $raw_url
      * @return bool|WP_Error True on success, or an error object if something went wrong.

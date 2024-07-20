@@ -1,15 +1,15 @@
 <?php
 /**
- * Broken Link Checker - Fork
+ * Link Checker
  *
  * @link              https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * @since             1.0.0
  * @package           link-checker
  *
  * @wordpress-plugin
- * Plugin Name:       Broken Link Checker - Fork
+ * Plugin Name:       Link Checker
  * Plugin URI:        https://brokenlinkchecker.dev/wordpress/broken-link-checker
- * Description:       This is a Fork of the broken link checker maintained by  WPMU DEV with only the legacy version. Checks your blog for broken links and notifies you on the dashboard if any are found.
+ * Description:       Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by  WPMU DEV with only the legacy version. 
  * Version:           2.3.0.6337
  * Requires at least: 6.2
  * Requires PHP:      8.1

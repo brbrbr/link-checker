@@ -749,7 +749,7 @@
         });
 
         //Automatically disable bulk actions that don't apply to the currently selected links.
-        $('#blc-bulk-action').focus(function() {
+        $('#blc-bulk-action').on('focus',function() {
             var redirectsSelected = false,
                 brokenLinksSelected = false;
             $('tr th.check-column input:checked', '#blc-links').each(function() {

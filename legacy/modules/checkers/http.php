@@ -15,6 +15,7 @@ ModulePriority: -1
 */
 
 use Blc\Uti\Utility;
+use Blc\Util\TokenBucketList;
 
 
 
@@ -24,15 +25,15 @@ class blcHttpChecker extends blcChecker
     /* @var blcChecker */
     var $implementation = null;
 
-    /** @var  blcTokenBucketList */
-    private $token_bucket_list;
+    /** @var  TokenBucketList */
+    private TokenBucketList $token_bucket_list;
 
     function init()
     {
         parent::init();
 
         $conf                    = $this->plugin_conf;
-        $this->token_bucket_list = new blcTokenBucketList(
+        $this->token_bucket_list = new TokenBucketList(
             $conf->get('http_throttle_rate', 3),
             $conf->get('http_throttle_period', 15),
             $conf->get('http_throttle_min_interval', 2)

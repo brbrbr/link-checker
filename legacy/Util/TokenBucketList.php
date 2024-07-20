@@ -3,7 +3,7 @@
 /**
  * This class implements a variant of the popular token bucket algorithm.
  */
-class blcTokenBucketList
+class TokenBucketList
 {
     const MICROSECONDS_PER_SECOND = 1000000;
 

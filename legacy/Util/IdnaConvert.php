@@ -158,115 +158,7 @@ class IdnaConvert
         return true;
     }
 
-    /**
-     * Decode a given ACE domain name
-     *
-     * @param    string   Domain name (ACE string)
-     * [@param    string   Desired output encoding, see {@link set_parameter}]
-     * @return   string   Decoded Domain name (UTF-8 or UCS-4)
-     */
-    public function decode($input, $one_time_encoding = false)
-    {
-        // Optionally set
-        if ($one_time_encoding) {
-            switch ($one_time_encoding) {
-                case 'utf8':
-                case 'ucs4_string':
-                case 'ucs4_array':
-                    break;
-                default:
-                    $this->_error('Unknown encoding ' . $one_time_encoding);
-                    return false;
-            }
-        }
-        // Make sure to drop any newline characters around
-        $input = trim($input);
 
-        // Negotiate input and try to determine, whether it is a plain string,
-        // an email address or something like a complete URL
-        if (strpos($input, '@')) { // Maybe it is an email address
-            // No no in strict mode
-            if ($this->_strict_mode) {
-                $this->_error('Only simple domain name parts can be handled in strict mode');
-                return false;
-            }
-            list($email_pref, $input) = explode('@', $input, 2);
-            $arr                       = explode('.', $input);
-            foreach ($arr as $k => $v) {
-                if (preg_match('!^' . preg_quote($this->_punycode_prefix, '!') . '!', $v)) {
-                    $conv = $this->_decode($v);
-                    if ($conv) {
-                        $arr[$k] = $conv;
-                    }
-                }
-            }
-            $input = join('.', $arr);
-            $arr   = explode('.', $email_pref);
-            foreach ($arr as $k => $v) {
-                if (preg_match('!^' . preg_quote($this->_punycode_prefix, '!') . '!', $v)) {
-                    $conv = $this->_decode($v);
-                    if ($conv) {
-                        $arr[$k] = $conv;
-                    }
-                }
-            }
-            $email_pref = join('.', $arr);
-            $return     = $email_pref . '@' . $input;
-        } elseif (preg_match('![:\./]!', $input)) { // Or a complete domain name (with or without paths / parameters)
-            // No no in strict mode
-            if ($this->_strict_mode) {
-                $this->_error('Only simple domain name parts can be handled in strict mode');
-                return false;
-            }
-            $parsed = parse_url($input);
-            if (isset($parsed['host'])) {
-                $arr = explode('.', $parsed['host']);
-                foreach ($arr as $k => $v) {
-                    $conv = $this->_decode($v);
-                    if ($conv) {
-                        $arr[$k] = $conv;
-                    }
-                }
-                $parsed['host'] = join('.', $arr);
-                $return         =
-                    (empty($parsed['scheme']) ? '' : $parsed['scheme'] . (strtolower($parsed['scheme']) == 'mailto' ? ':' : '://'))
-                    . (empty($parsed['user']) ? '' : $parsed['user'] . (empty($parsed['pass']) ? '' : ':' . $parsed['pass']) . '@')
-                    . $parsed['host']
-                    . (empty($parsed['port']) ? '' : ':' . $parsed['port'])
-                    . (empty($parsed['path']) ? '' : $parsed['path'])
-                    . (empty($parsed['query']) ? '' : '?' . $parsed['query'])
-                    . (empty($parsed['fragment']) ? '' : '#' . $parsed['fragment']);
-            } else { // parse_url seems to have failed, try without it
-                $arr = explode('.', $input);
-                foreach ($arr as $k => $v) {
-                    $conv      = $this->_decode($v);
-                    $arr[$k] = ($conv) ? $conv : $v;
-                }
-                $return = join('.', $arr);
-            }
-        } else { // Otherwise we consider it being a pure domain name string
-            $return = $this->_decode($input);
-            if (!$return) {
-                $return = $input;
-            }
-        }
-        // The output is UTF-8 by default, other output formats need conversion here
-        // If one time encoding is given, use this, else the objects property
-        switch (($one_time_encoding) ? $one_time_encoding : $this->_api_encoding) {
-            case 'utf8':
-                return $return;
-                break;
-            case 'ucs4_string':
-                return $this->_ucs4_to_ucs4_string($this->_utf8_to_ucs4($return));
-                break;
-            case 'ucs4_array':
-                return $this->_utf8_to_ucs4($return);
-                break;
-            default:
-                $this->_error('Unsupported output format');
-                return false;
-        }
-    }
 
     /**
      * Decode a given ACE domain name
@@ -326,7 +218,7 @@ class IdnaConvert
      * [@param    string   Desired input encoding, see {@link set_parameter}]
      * @return   string   Encoded Domain name (ACE string)
      */
-    public function encode($decoded, $one_time_encoding = false)
+    public function hostToAscii($decoded, $one_time_encoding = false)
     {
         // Forcing conversion of input to UCS4 array
         // If one time encoding is given, use this, else the objects property

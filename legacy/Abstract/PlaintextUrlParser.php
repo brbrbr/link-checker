@@ -1,8 +1,11 @@
 <?php
+namespace Blc\Abstract;
 
 use Blc\Abstract\Parser;
 
-class PlaintextUrlParser extends Parser
+
+
+abstract class PlaintextUrlParser extends Parser
 {
     var $supported_formats = array( 'html', 'plaintext' );
 

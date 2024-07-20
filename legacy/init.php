@@ -10,7 +10,7 @@ use Blc\Database\WPMutex;
 use Blc\Logger\FileLogger;
 use Blc\Logger\DummyLogger;
 use Blc\Logger\CachedOptionLogger;
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 use Blc\Controller\BrokenLinkChecker;
 use Blc\Database\DatabaseUpgrader;
 

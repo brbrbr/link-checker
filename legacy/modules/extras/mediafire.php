@@ -15,7 +15,7 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^http://(?:www\.)?mediafire\.com/(?:(?:download\.php)?\?|download/)([0-9a-zA-Z]{11,20})(?:$|[^0-9a-zA-Z])@
 */
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 /**
  * MediaFire link checker.
  *

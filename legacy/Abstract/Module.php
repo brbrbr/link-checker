@@ -1,7 +1,7 @@
 <?php
 namespace Blc\Abstract;
 
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 
 /**
  * @author Janis Elsts

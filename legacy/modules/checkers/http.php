@@ -14,7 +14,7 @@ ModuleClassName: blcHttpChecker
 ModulePriority: -1
 */
 
-use Blc\Includes\blcUtility;
+use Blc\Uti\Utility;
 
 
 
@@ -258,7 +258,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         $request_headers['Connection'] = 'Connection: close';
 
         // Redirects don't work when safe mode or open_basedir is enabled.
-        if (! blcUtility::is_open_basedir()) {
+        if (! Utility::is_open_basedir()) {
             $options[ CURLOPT_FOLLOWLOCATION ] = true;
         } else {
             $log .= "[Warning] Could't follow the redirect URL (if any) because safemode or open base dir enabled\n";

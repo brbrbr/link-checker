@@ -1,6 +1,6 @@
 <?php
 
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 
 /**
  * The manager to rule all (post) managers.

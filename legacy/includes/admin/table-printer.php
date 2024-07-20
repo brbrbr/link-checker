@@ -7,8 +7,8 @@
  * @access public
  */
 
-use Blc\Includes\blcUtility;
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\Utility;
+use Blc\Util\ConfigurationManager;
 
 class blcTablePrinter
 {
@@ -616,7 +616,7 @@ class blcTablePrinter
                             $delta = time() - $link->first_failure;
                             printf(
                                 __('This link has been broken for %s.', 'broken-link-checker'),
-                                blcUtility::fuzzy_delta($delta)
+                                Utility::fuzzy_delta($delta)
                             );
                             ?>
                         </li>
@@ -675,7 +675,7 @@ class blcTablePrinter
         // Last checked...
         if (0 != $link->last_check) {
             $last_check  = _x('Checked', 'checked how long ago', 'broken-link-checker') . ' ';
-            $last_check .= blcUtility::fuzzy_delta(time() - $link->last_check, 'ago');
+            $last_check .= Utility::fuzzy_delta(time() - $link->last_check, 'ago');
 
             printf(
                 '<tr class="link-last-checked"><td>%s</td></tr>',
@@ -686,7 +686,7 @@ class blcTablePrinter
         // Broken for...
         if ($link->broken) {
             $delta      = time() - $link->first_failure;
-            $broken_for = blcUtility::fuzzy_delta($delta);
+            $broken_for = Utility::fuzzy_delta($delta);
             printf(
                 '<tr class="link-broken-for"><td>%s %s</td></tr>',
                 __('Broken for', 'broken-link-checker'),

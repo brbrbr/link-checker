@@ -1,8 +1,8 @@
 <?php
 
-use Blc\Includes\blcUtility;
+use Blc\Util\Utility;
 use Blc\Includes\CachedOptionLogger;
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 
 if (get_option('blc_activation_enabled')) {
    // return;
@@ -21,7 +21,7 @@ $queryCnt = $wpdb->num_queries;
 // Completing the installation/upgrade is required for the plugin to work, so make sure
 // the script doesn't get aborted by (for example) the browser timing out.
 // set_time_limit( 300 );  //5 minutes should be plenty, anything more would probably indicate an infinite loop or a deadlock
-if (blcUtility::is_host_wp_engine() || blcUtility::is_host_flywheel()) {
+if (Utility::is_host_wp_engine() || Utility::is_host_flywheel()) {
     set_time_limit(60);
 } else {
     set_time_limit(300);
@@ -78,7 +78,7 @@ $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $upgrade_star
 // Remove invalid DB entries
 $blclog->info('Cleaning up the database...');
 $cleanup_start = microtime(true);
-blcUtility::blc_cleanup_database();
+Utility::blc_cleanup_database();
 $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $cleanup_start));
 
 // Notify modules that the plugin has been activated. This will cause container
@@ -87,13 +87,13 @@ $blclog->info('Notifying modules...');
 $notification_start = microtime(true);
 $moduleManager->plugin_activated();
 
-blcUtility::blc_got_unsynched_items();
+Utility::blc_got_unsynched_items();
 
 $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $notification_start));
 
 // Turn off load limiting if it's not available on this server.
 $blclog->info('Updating server load limit settings...');
-$load = blcUtility::get_server_load();
+$load = Utility::get_server_load();
 if (empty($load)) {
     $plugin_config->options['enable_load_limit'] = false;
     $blclog->info('Disable load limit. Cannot retrieve current load average.');
@@ -114,7 +114,7 @@ if (empty($load)) {
 // And optimize my DB tables, too (for good measure)
 $blclog->info('Optimizing the database...');
 $optimize_start = microtime(true);
-blcUtility::optimize_database();
+Utility::optimize_database();
 $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $optimize_start));
 
 $blclog->info('Completing installation...');

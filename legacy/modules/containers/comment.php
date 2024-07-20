@@ -11,7 +11,7 @@ ModuleCategory: container
 ModuleClassName: blcCommentManager
 */
 
-use Blc\Includes\blcUtility;
+use Blc\Util\Utility;
 
 class blcComment extends blcContainer
 {
@@ -202,7 +202,7 @@ class blcComment extends blcContainer
 
         // Display a small text sample from the comment
         $text_sample = strip_tags($comment->comment_content);
-        $text_sample = blcUtility::truncate($text_sample, 65);
+        $text_sample = Utility::truncate($text_sample, 65);
 
         $html = sprintf(
             '<a href="%s" title="%s"><b>%s</b> &mdash; %s</a>',

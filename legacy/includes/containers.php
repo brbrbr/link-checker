@@ -1,7 +1,7 @@
 <?php
 
 use Blc\Database\TransactionManager;
-use Blc\Includes\blcUtility;
+use Blc\Util\Utility;
 use Blc\Abstract\Module;
 use Blc\Abstract\Parser;
 
@@ -111,7 +111,7 @@ class blcContainerManager extends Module
     function activated()
     {
         $this->resynch();
-        blcUtility::blc_got_unsynched_items();
+        Utility::blc_got_unsynched_items();
     }
 
     /**
@@ -339,7 +339,7 @@ class blcContainer
             )
         );
 
-        blcUtility::blc_got_unsynched_items();
+        Utility::blc_got_unsynched_items();
 
         return ( false !== $rez );
     }
@@ -907,7 +907,7 @@ class blcContainerHelper
         $rez        = ( $wpdb->query($q) !== false ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $blclog->log(sprintf('...... %d rows affected, %.3f seconds', $wpdb->rows_affected, microtime(true) - $start_time));
 
-        blcUtility::blc_got_unsynched_items();
+        Utility::blc_got_unsynched_items();
         return $rez;
     }
 

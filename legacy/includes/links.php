@@ -6,9 +6,9 @@
  */
 
 use Blc\Database\TransactionManager;
-use Blc\Includes\blcUtility;
+use Blc\Util\Utility;
 use Blc\Controller\BrokenLinkChecker;
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
 define('BLC_LINK_STATUS_OK', 'ok');
@@ -308,7 +308,7 @@ class blcLink
         // Update the object's fields with the new results
         $this->set_values($results);
         if ($this->final_url && $this->url != $this->final_url) {
-            $this->final_url = blcUtility::idn_to_utf8($this->final_url);
+            $this->final_url = Utility::idn_to_utf8($this->final_url);
         }
 
         // Update timestamps & state-dependent fields
@@ -1083,7 +1083,7 @@ class blcLink
      */
     function get_ascii_url()
     {
-        return blcUtility::idn_to_ascii($this->url);
+        return Utility::idn_to_ascii($this->url);
     }
 
 

@@ -2,7 +2,7 @@
 
 namespace Blc\Database;
 
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 
 class DatabaseUpgrader
 {

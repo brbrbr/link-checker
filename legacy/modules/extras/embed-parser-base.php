@@ -5,7 +5,7 @@
  * @copyright 2010
  */
 
-use Blc\Includes\blcUtility;
+use Blc\Util\Utility;
 use Blc\Abstract\Parser;
 
 /**
@@ -75,12 +75,12 @@ class blcEmbedParserBase extends Parser
      * string. Embeds without a 'src' attribute are skipped.
      *
      * Each array item has the same basic structure as the array items
-     * returned by blcUtility::extract_tags(), plus an additional 'embed_code' key
+     * returned by Utility::extract_tags(), plus an additional 'embed_code' key
      * that contains the HTML code for the element. If the embed element is wrapped
      * in an <object>, the 'embed_code' key contains the full HTML for the entire
      * <object> + <embed> structure.
      *
-     * @uses blcUtility::extract_tags() This function is a simple wrapper around extract_tags()
+     * @uses Utility::extract_tags() This function is a simple wrapper around extract_tags()
      *
      * @param string $html
      * @return array
@@ -93,10 +93,10 @@ class blcEmbedParserBase extends Parser
         $html = preg_replace('/<code[^>]*>.+?<\/code>/si', ' ', $html);
 
         // Find likely-looking <object> elements
-        $objects = blcUtility::extract_tags($html, 'object', false, true);
+        $objects = Utility::extract_tags($html, 'object', false, true);
         foreach ($objects as $candidate) {
             // Find the <embed> tag
-            $embed = blcUtility::extract_tags($candidate['full_tag'], 'embed', true);
+            $embed = Utility::extract_tags($candidate['full_tag'], 'embed', true);
             if (empty($embed)) {
                 continue;
             }
@@ -115,7 +115,7 @@ class blcEmbedParserBase extends Parser
         }
 
         // Find <embed> elements not wrapped in an <object> element.
-        $embeds = blcUtility::extract_tags($html, 'embed', true, true);
+        $embeds = Utility::extract_tags($html, 'embed', true, true);
         foreach ($embeds as $embed) {
             if (! empty($embed['attributes']['src'])) {
                 $embed['embed_code'] = $embed['full_tag'];

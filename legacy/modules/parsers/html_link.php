@@ -13,8 +13,8 @@
  * ModulePriority: 1000
  */
 
-use Blc\Includes\blcUtility;
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\Utility;
+use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Parser;
 
 class blcHTMLLink extends Parser
@@ -278,7 +278,7 @@ class blcHTMLLink extends Parser
         $results = array();
 
         // Find all links
-        $links = blcUtility::extract_tags($content, 'a', false, true);
+        $links = Utility::extract_tags($content, 'a', false, true);
 
         // Iterate over the links and apply $callback to each
         foreach ($links as $link) {

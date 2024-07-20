@@ -10,10 +10,10 @@ namespace Blc\Controller;
  */
 
 use Blc\Database\WPMutex;
-use Blc\Utils\UpdatePlugin;
+use Blc\Util\UpdatePlugin;
 use Blc\Database\TransactionManager;
-use Blc\Includes\blcUtility;
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\Utility;
+use Blc\Util\ConfigurationManager;
 use Blc\Includes\CachedOptionLogger;
 
 
@@ -358,14 +358,14 @@ class BrokenLinkChecker
         }
 
         // Remove invalid DB entries
-       blcUtility::blc_cleanup_database();
+        Utility::blc_cleanup_database();
 
         // (Re)create and update synch. records for all container types.
         $blclog->info('... (Re)creating container records');
         \blcContainerHelper::resynch($forced);
 
         $blclog->info('... Setting resync. flags');
-        blcUtility::blc_got_unsynched_items();
+        Utility::blc_got_unsynched_items();
 
         // All done.
         $blclog->info('Database resynchronization complete.');
@@ -411,7 +411,7 @@ class BrokenLinkChecker
         blc_cleanup_instances();
         blc_cleanup_links();
 
-        blcUtility::optimize_database();
+        Utility::optimize_database();
     }
 
     /**
@@ -625,7 +625,7 @@ class BrokenLinkChecker
             $this->plugin_config->options['enabled_post_statuses'] = $enabled_post_statuses;
 
             // The execution time limit must be above zero
-            $new_execution_time = ( $this->is_host_wp_engine() || $this->is_host_flywheel() ) ? 60 : intval($_POST['max_execution_time']);
+            $new_execution_time =       (Utility::is_host_wp_engine() ||Utility::is_host_flywheel())  ? 60 : intval($_POST['max_execution_time']);
 
             if ($new_execution_time > 0) {
                 $this->plugin_config->options['max_execution_time'] = $new_execution_time;
@@ -805,7 +805,7 @@ class BrokenLinkChecker
                 $manager = \blcContainerHelper::get_manager('custom_field');
                 if (! is_null($manager)) {
                     $manager->resynch();
-                    blcUtility::blc_got_unsynched_items();
+                    Utility::blc_got_unsynched_items();
                 }
             }
 
@@ -818,7 +818,7 @@ class BrokenLinkChecker
                 $manager = \blcContainerHelper::get_manager('acf_field');
                 if (! is_null($manager)) {
                     $manager->resynch();
-                    blcUtility::blc_got_unsynched_items();
+                    Utility::blc_got_unsynched_items();
                 }
             }
 
@@ -828,7 +828,7 @@ class BrokenLinkChecker
                 $overlord->enabled_post_statuses = $this->plugin_config->get('enabled_post_statuses', array());
                 $overlord->resynch('wsh_status_resynch_trigger');
 
-                blcUtility::blc_got_unsynched_items();
+                Utility::blc_got_unsynched_items();
                 blc_cleanup_instances();
                 blc_cleanup_links();
             }
@@ -1093,7 +1093,7 @@ class BrokenLinkChecker
 
                                         <div id="broken-link-css-wrap" 
                                         <?php
-                                        if (! blcUtility::get_cookie('broken-link-css-wrap', false)) {
+                                        if (! Utility::get_cookie('broken-link-css-wrap', false)) {
                                             echo ' class="hidden"';
                                         }
                                         ?>
@@ -1137,7 +1137,7 @@ class BrokenLinkChecker
 
                                         <div id="removed-link-css-wrap" 
                                         <?php
-                                        if (! blcUtility::get_cookie('removed-link-css-wrap', false)) {
+                                        if (! Utility::get_cookie('removed-link-css-wrap', false)) {
                                             echo ' class="hidden"';
                                         }
                                         ?>
@@ -1438,7 +1438,7 @@ class BrokenLinkChecker
                                         ?>
                                     </td>
                                 </tr>
-                                <?php if (! $this->is_host_wp_engine() && ! $this->is_host_flywheel()) : ?>
+                                <?php       if (!Utility::is_host_wp_engine() && !Utility::is_host_flywheel()) : ?>
                                     <tr valign="top">
                                         <th scope="row"><?php _e('Max. execution time', 'broken-link-checker'); ?></th>
                                         <td>
@@ -1471,7 +1471,7 @@ class BrokenLinkChecker
                                     <td>
                                         <?php
 
-                                        $load      = blcUtility::get_server_load();
+                                        $load      = Utility::get_server_load();
                                         $available = ! empty($load);
 
                                         if ($available) {
@@ -1708,7 +1708,7 @@ class BrokenLinkChecker
 
                 // The plugin remembers the last open/closed state of module configuration boxes
                 $box_id = 'module-extra-settings-' . $module_id;
-                $show   = blcUtility::get_cookie(
+                $show   = Utility::get_cookie(
                     $box_id,
                     $moduleManager->is_active($module_id)
                 );
@@ -1728,29 +1728,14 @@ class BrokenLinkChecker
     protected function max_execution_time_option()
     {
         // It's safe to return the conf property as it is set in constructor.
-        if ($this->is_host_wp_engine() || $this->is_host_flywheel()) {
+        if (Utility::is_host_wp_engine() ||Utility::is_host_flywheel()) {
             $this->plugin_config->options['max_execution_time'] = 60;
         }
 
         return apply_filters('wpmudev_blc_max_execution_time', $this->plugin_config->options['max_execution_time']);
     }
 
-    protected function is_host_wp_engine()
-    {
-        // return ( function_exists( 'is_wpe' ) && is_wpe() ) || ( defined( 'IS_WPE' ) && IS_WPE );
-        return blcUtility::is_host_wp_engine();
-    }
 
-    protected function is_host_flywheel()
-    {
-        return blcUtility::is_host_flywheel();
-        /*
-            $host_name = 'flywheel';
-
-            return ! empty( $_SERVER['SERVER_SOFTWARE'] ) &&
-                    substr( strtolower( $_SERVER['SERVER_SOFTWARE'] ), 0, strlen( $host_name ) ) === strtolower( $host_name );
-            */
-    }
 
     /**
      * Output a checkbox for a module.
@@ -2210,7 +2195,7 @@ class BrokenLinkChecker
 
         if (count($selected_links) > 0) {
             // In case the user decides to edit hundreds of links at once
-            if ($this->is_host_wp_engine() || $this->is_host_flywheel()) {
+            if (Utility::is_host_wp_engine() ||Utility::is_host_flywheel()) {
                 set_time_limit(60);
             } else {
                 set_time_limit(300);
@@ -2798,7 +2783,7 @@ class BrokenLinkChecker
          * Preparation
          */
 
-        if ($this->is_host_wp_engine() || $this->is_host_flywheel()) {
+         if (Utility::is_host_wp_engine() ||Utility::is_host_flywheel()) {
             @set_time_limit($max_execution_time);
         } else {
             // Do it the regular way
@@ -3282,7 +3267,7 @@ class BrokenLinkChecker
      */
     function ajax_current_load()
     {
-        $load = blcUtility::get_server_load();
+        $load = Utility::get_server_load();
         if (empty($load)) {
             die(_x('Unknown', 'current load', 'broken-link-checker'));
         }
@@ -3828,7 +3813,7 @@ class BrokenLinkChecker
             return false;
         }
 
-        $loads = blcUtility::get_server_load();
+        $loads = Utility::get_server_load();
         if (empty($loads)) {
             return false;
         }
@@ -3910,7 +3895,7 @@ class BrokenLinkChecker
         $debug[ __('CURL version', 'broken-link-checker') ] = $data;
 
         // Open_basedir status
-        if (blcUtility::is_open_basedir()) {
+        if (Utility::is_open_basedir()) {
             $debug['open_basedir'] = array(
                 'state'   => 'warning',
                 'value'   => sprintf(__('On ( %s )', 'broken-link-checker'), ini_get('open_basedir')),
@@ -4141,7 +4126,7 @@ class BrokenLinkChecker
             /* @var \blcLinkInstance $instance */
             $pieces = array(
                 sprintf(__('Link text : %s', 'broken-link-checker'), $instance->ui_get_link_text('email')),
-                sprintf(__('Link URL : <a href="%1$s">%2$s</a>', 'broken-link-checker'), htmlentities($instance->get_url()), blcUtility::truncate($instance->get_url(), 70, '')),
+                sprintf(__('Link URL : <a href="%1$s">%2$s</a>', 'broken-link-checker'), htmlentities($instance->get_url()), Utility::truncate($instance->get_url(), 70, '')),
                 sprintf(__('Source : %s', 'broken-link-checker'), $instance->ui_get_source('email')),
             );
 

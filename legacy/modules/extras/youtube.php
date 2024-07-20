@@ -15,7 +15,7 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^https?://(?:([\w\d]+\.)*youtube\.[^/]+/watch\?.*v=[^/#]|youtu\.be/[^/#\?]+|(?:[\w\d]+\.)*?youtube\.[^/]+/(playlist|view_play_list)\?[^/#]{15,}?)@i
 */
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 class blcYouTubeChecker extends blcChecker
 {
     var $api_grace_period = 0.3; // How long to wait between YouTube API requests.

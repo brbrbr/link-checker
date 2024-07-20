@@ -1,5 +1,5 @@
 <?php
 defined('WPINC') or die;
 return [
-	'Blc\\Includes\\blcUtility' => 'includes/utility-class.php',
+	'Blc\\Includes\\blcUtility' => 'Utils/Utility.php',
 ];

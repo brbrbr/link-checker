@@ -1,6 +1,6 @@
 <?php
 
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Parser;
 
 class blcModuleManager

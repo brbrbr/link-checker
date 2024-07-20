@@ -15,7 +15,7 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^https?://(?:[\w\d]+\.)*rapidshare\.\w+/files/(\d+)/([^&?#/]+?)(?:$|[&?#/])@i
 */
-use Blc\Utils\ConfigurationManager;
+use Blc\Util\ConfigurationManager;
 /**
  * RapidShare API link checker.
  *

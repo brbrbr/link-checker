@@ -180,7 +180,6 @@ if (defined('BLC_ACTIVE')) {
     if ($plugin_config->installation_complete) {
         if (is_admin() || wp_doing_cron() ) {
             // Start up the post overlord and module- must runoutside the 'init' action
-            $blclog->debug("========== BOOOOOOT =========");
             $blc_module_manager = \blcModuleManager::getInstance(
                 array(
                     // List of modules active by default

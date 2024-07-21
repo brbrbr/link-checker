@@ -130,7 +130,6 @@ if (defined('BLC_ACTIVE')) {
 
     global $blclog;
 
-
     if ($plugin_config->get('logging_enabled', false) && is_writable($plugin_config->get('log_file'))) {
         $blclog = new FileLogger($plugin_config->get('log_file'));
     } else {

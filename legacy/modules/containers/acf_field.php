@@ -119,7 +119,7 @@ class blcAcfMeta extends blcContainer
      */
     function unlink($field_name, $parser, $url, $raw_url = '')
     {
-        // error_log(print_r('unlink', true));
+        
         $meta = get_metadata('post', $this->container_id, '_' . $field_name, true);
         $key  = explode('|', str_replace('_field', '|field', $meta));
 
@@ -152,19 +152,7 @@ class blcAcfMeta extends blcContainer
      */
     function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
     {
-        // error_log(print_r('edit_link', true));
-
-        /*
-        FB::log(sprintf(
-            'Editing %s[%d]:%s - %s to %s',
-            $this->container_type,
-            $this->container_id,
-            $field_name,
-            $old_url,
-            $new_url
-        ));
-        */
-
+    
         $meta = get_metadata('post', $this->container_id, '_' . $field_name, true);
         $key  = explode('|', str_replace('_field', '|field', $meta));
 
@@ -214,8 +202,6 @@ class blcAcfMeta extends blcContainer
      */
     function default_link_text($field = '')
     {
-        // error_log(print_r('default_link_text', true));
-
         // Just use the field name. There's no way to know how the links inside custom fields are
         // used, so no way to know the "real" link text. Displaying the field name at least gives
         // the user a clue where to look if they want to find/modify the field.
@@ -224,8 +210,7 @@ class blcAcfMeta extends blcContainer
 
     function ui_get_source($container_field = '', $context = 'display')
     {
-        // error_log(print_r('ui_get_source', true));
-
+     
         if (! post_type_exists(get_post_type($this->container_id))) {
             // Error: Invalid post type. The user probably removed a CPT without removing the actual posts.
             $post_html = '';
@@ -246,8 +231,7 @@ class blcAcfMeta extends blcContainer
 
     function ui_get_action_links($container_field)
     {
-        // error_log(print_r('ui_get_action_links', true));
-
+       
         $actions = array();
         if (! post_type_exists(get_post_type($this->container_id))) {
             return $actions;
@@ -279,7 +263,7 @@ class blcAcfMeta extends blcContainer
      */
     function get_edit_url()
     {
-        // error_log(print_r('get_edit_url', true));
+    
 
         /*
         The below is a near-exact copy of the get_post_edit_link() function.
@@ -328,8 +312,7 @@ class blcAcfMeta extends blcContainer
      */
     function delete_wrapped_object()
     {
-        // error_log(print_r('delete_wrapped_object', true));
-
+     
         if (EMPTY_TRASH_DAYS) {
             return $this->trash_wrapped_object();
         } elseif (wp_delete_post($this->container_id)) {
@@ -346,8 +329,7 @@ class blcAcfMeta extends blcContainer
      */
     function trash_wrapped_object()
     {
-        // error_log(print_r('trash_wrapped_object', true));
-
+     
         if (! EMPTY_TRASH_DAYS) {
             return new WP_Error('trash_disabled', sprintf(__('Can\'t move post "%1$s" (%2$d) to the trash because the trash feature is disabled', 'broken-link-checker'), get_the_title($this->container_id), $this->container_id));
         }
@@ -563,8 +545,7 @@ class blcAcfMetaManager extends blcContainerManager
      */
     function resynch($forced = false)
     {
-        // error_log(print_r('resynch', true));
-
+      
         global $wpdb;
         /** @var wpdb $wpdb */
         global $blclog;

@@ -18,7 +18,7 @@
  * L Language
  * N Note
 
-2.3.0.xxxx
+2.3.0.6541
  # Do not display redirected link when the final url equals the original (for example with cookie redirects)
  # Convert punnycode url back to utf8
  - Removed safe mode checks

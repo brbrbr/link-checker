@@ -53,7 +53,7 @@ class blcLinkQuery
             ),
             'redirects' => array(
                 'params'       => array(
-                    'where_expr'          => '( `redirect_count` > 0 )',
+                    'where_expr'          => '( `redirect_count` > 0 AND `url` != `final_url` )',
                     's_include_dismissed' => false,
                 ),
                 'name'         => __('Redirects', 'broken-link-checker'),

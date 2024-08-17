@@ -38,7 +38,6 @@ class blcHttpChecker extends blcChecker
             $conf->get('http_throttle_period', 15),
             $conf->get('http_throttle_min_interval', 2)
         );
-
         if (function_exists('curl_init') || is_callable('curl_init')) {
             $this->implementation = new blcCurlHttp(
                 $this->module_id,
@@ -199,7 +198,7 @@ class blcCurlHttp extends blcHttpCheckerBase
     {
 
         global $blclog;
-     
+
 
         $this->last_headers = '';
 
@@ -217,18 +216,18 @@ class blcCurlHttp extends blcHttpCheckerBase
         // Get the BLC configuration. It's used below to set the right timeout values and such.
         $conf = $this->plugin_conf->options;
 
-       
+
 
         // Init curl.
         $ch = curl_init();
-     
-       
+
+
         $signature = $this->loadSignature('firefox');
         // Masquerade as a recent version of Firefox
         $ua                                 = $signature['userAgent'] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0';
         $request_headers                    = $signature['headers'] ?? array();
         $request_headers['Accept-Language'] = 'Accept-Language: ' . $this->getLanguage();
-     
+
         $options = array(
             CURLOPT_ENCODING       => '',
             CURLOPT_URL            => $this->urlencodefix($url),
@@ -252,26 +251,26 @@ class blcCurlHttp extends blcHttpCheckerBase
             CURLINFO_HEADER_OUT    => true,
         );
 
-      
+
 
         if ($conf['cookies_enabled']) {
             $options[CURLOPT_COOKIEJAR]  = $conf['cookie_jar'];
             $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
         }
-      
+
         // Close the connection after the request (disables keep-alive). The plugin rate-limits requests,
         // so it's likely we'd overrun the keep-alive timeout anyway.
         $request_headers['Connection'] = 'Connection: close';
 
         // Redirects don't work when safe mode or open_basedir is enabled.
         if (!Utility::is_open_basedir()) {
-           $options[CURLOPT_FOLLOWLOCATION] = true;
-       } else {
-        $log .= "[Warning] Could't follow the redirect URL (if any) because safemode or open base dir enabled\n";
-     }
-        
-        
-       
+            $options[CURLOPT_FOLLOWLOCATION] = true;
+        } else {
+            $log .= "[Warning] Could't follow the redirect URL (if any) because safemode or open base dir enabled\n";
+        }
+
+
+
         // Set the proxy configuration. The user can provide this in wp-config.php
         if (defined('WP_PROXY_HOST')) {
             $options[CURLOPT_PROXY] = WP_PROXY_HOST;
@@ -287,7 +286,7 @@ class blcCurlHttp extends blcHttpCheckerBase
                 $options[CURLOPT_PROXYUSERPWD] = $auth;
             }
         }
-       
+
 
         // Make CURL return a valid result even if it gets a 404 or other error.
 
@@ -310,11 +309,11 @@ class blcCurlHttp extends blcHttpCheckerBase
         // Set request headers.
         if (!empty($request_headers)) {
             $options[CURLOPT_HTTPHEADER] = $request_headers;
-        } 
+        }
 
         // Apply filter for additional options
         curl_setopt_array($ch, apply_filters('broken-link-checker-curl-options', $options));
-      
+
         // Execute the request
         $start_time                = microtime(true);
         $content                   = curl_exec($ch);
@@ -462,7 +461,7 @@ class blcCurlHttp extends blcHttpCheckerBase
                 ($result['redirect_count'] > 0 ? 'redirect' : 'final'),
             )
         );
-  
+
 
         return $result;
     }
@@ -502,6 +501,7 @@ class blcWPHttp extends blcHttpCheckerBase
             'aa'         => 1024 * 5,
         );
         $request      = wp_safe_remote_get($this->urlencodefix($url), $request_args);
+        $request['http_response']->set_data('');
 
         // request timeout results in WP ERROR
         if (is_wp_error($request)) {
@@ -510,7 +510,7 @@ class blcWPHttp extends blcHttpCheckerBase
             $result['message']   = $request->get_error_message();
         } else {
             $http_resp           = $request['http_response'];
-            $result['http_code'] = $request['response']['status']; // HTTP status code
+            $result['http_code'] = $http_resp->get_status(); //$request['response']['status']; // HTTP status code
             $result['message']   = $request['response']['message'];
         }
 

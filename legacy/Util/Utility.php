@@ -33,7 +33,7 @@ class Utility
     }
 
     /**
-     * blcUtility::is_open_basedir()
+     * Utility::is_open_basedir()
      * Checks if open_basedir is enabled
      *
      * @return bool

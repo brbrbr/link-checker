@@ -19,6 +19,7 @@
  * N Note
 
 2.3.0.xxxx
+ # Do not display redirected link when the final url equals the original (for example with cookie redirects)
  # Convert punnycode url back to utf8
  - Removed safe mode checks
  ^ Started namespaces and use instead of all the includes

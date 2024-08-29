@@ -16,7 +16,7 @@
  *
  * All sub-classes of Parser should override at least the Parser::parse() method.
  *
- * @see blcContainer::$fields
+ * @see Container::$fields
  *
  * @package Broken Link Checker
  * @access public

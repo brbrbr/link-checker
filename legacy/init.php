@@ -85,7 +85,6 @@ if (defined('BLC_ACTIVE')) {
      * Load all files pertaining to BLC's module subsystem
      */
 
-    require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';

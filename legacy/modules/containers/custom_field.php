@@ -32,9 +32,11 @@ ModuleClassName: blcPostMetaManager
 
  use Blc\Abstract\Parser;
  use Blc\Helper\ContainerHelper;
+ use Blc\Abstract\ContainerManager;
+ use Blc\Abstract\Container;
 
  
-class blcPostMeta extends blcContainer
+class blcPostMeta extends Container
 {
     var $meta_type = 'post';
 
@@ -413,7 +415,7 @@ class blcPostMeta extends blcContainer
     }
 }
 
-class blcPostMetaManager extends blcContainerManager
+class blcPostMetaManager extends ContainerManager
 {
     var $container_class_name  = 'blcPostMeta';
     var $meta_type             = 'post';

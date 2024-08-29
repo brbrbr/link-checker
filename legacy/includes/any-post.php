@@ -2,6 +2,9 @@
 
 use Blc\Util\ConfigurationManager;
 use Blc\Controller\ModuleManager;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
+use Blc\Helper\ContainerHelper;
 
 /**
  * The manager to rule all (post) managers.
@@ -464,7 +467,7 @@ class blcPostTypeOverlord
  * @author Janis Elsts
  * @access public
  */
-class blcAnyPostContainer extends blcContainer
+class blcAnyPostContainer extends Container
 {
     var $default_field = 'post_content';
 
@@ -768,7 +771,7 @@ class blcAnyPostContainer extends blcContainer
  * @package Broken Link Checker
  * @access public
  */
-class blcAnyPostContainerManager extends blcContainerManager
+class blcAnyPostContainerManager extends ContainerManager
 {
     var $container_class_name = 'blcAnyPostContainer';
     var $fields               = array(

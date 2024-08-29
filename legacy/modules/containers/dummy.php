@@ -19,7 +19,12 @@ ModuleHidden: true
  * @package Broken Link Checker
  * @access public
  */
-class blcDummyContainer extends blcContainer
+
+ use Blc\Abstract\ContainerManager;
+ use Blc\Abstract\Container;
+
+
+class blcDummyContainer extends Container
 {
     function synch()
     {
@@ -68,7 +73,7 @@ class blcDummyContainer extends blcContainer
  * @package Broken Link Checker
  * @access public
  */
-class blcDummyManager extends blcContainerManager
+class blcDummyManager extends ContainerManager
 {
     var $container_class_name = 'blcDummyContainer';
 

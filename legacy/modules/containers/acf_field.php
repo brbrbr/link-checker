@@ -1,6 +1,8 @@
 <?php
 use Blc\Abstract\Parser;
 use Blc\Helper\ContainerHelper;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
 /*
 Plugin Name: Acf fields
 Description: Container module for acf fields.
@@ -30,7 +32,7 @@ ModuleClassName: blcAcfMetaManager
  * @package Broken Link Checker
  * @access public
  */
-class blcAcfMeta extends blcContainer
+class blcAcfMeta extends Container
 {
     var $meta_type = 'post';
 
@@ -402,7 +404,7 @@ class blcAcfExtractedFieldWalker
     }
 }
 
-class blcAcfMetaManager extends blcContainerManager
+class blcAcfMetaManager extends ContainerManager
 {
     var $container_class_name = 'blcAcfMeta';
 

@@ -12,8 +12,10 @@ ModuleClassName: blcBookmarkManager
 */
 
 use Blc\Helper\ContainerHelper;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
 
-class blcBookmark extends blcContainer
+class blcBookmark extends Container
 {
     function ui_get_source($container_field = '', $context = 'display')
     {
@@ -176,7 +178,7 @@ class blcBookmark extends blcContainer
     }
 }
 
-class blcBookmarkManager extends blcContainerManager
+class BookmarkManager extends ContainerManager
 {
     var $container_class_name = 'blcBookmark';
     var $fields               = array( 'link_url' => 'url_field' );

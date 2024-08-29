@@ -4107,7 +4107,7 @@ class BrokenLinkChecker
             foreach ($link->get_instances() as $instance) {
                 /* @var \blcLinkInstance $instance */
                 $container = $instance->get_container();
-                /** @var \blcContainer $container */
+                /** @var \Container $container */
                 if (empty($container) || !($container instanceof \blcAnyPostContainer)) {
                     continue;
                 }

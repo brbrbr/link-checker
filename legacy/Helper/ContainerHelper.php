@@ -17,7 +17,7 @@ class ContainerHelper
      *
      * @param string $container_type
      * @param string $fallback If there is no manager associated with $container_type, return the manager of this container type instead.
-     * @return blcContainerManager|null
+     * @return ContainerManager|null
      */
     static function get_manager($container_type, $fallback = '')
     {
@@ -45,7 +45,7 @@ class ContainerHelper
      * from the data in the array.
      *
      * @param array $container Either [container_type, container_id], or an assoc. array of container data.
-     * @return blcContainer|null
+     * @return Container|null
      */
     static function get_container($container)
     {
@@ -100,7 +100,7 @@ class ContainerHelper
      * @param string $purpose Optional code indicating how the retrieved containers will be used.
      * @param string $fallback The fallback container type to use for unrecognized containers.
      * @param bool   $load_wrapped_objects Preload wrapped objects regardless of purpose.
-     * @return blcContainer[] Array of blcContainer indexed by "container_type|container_id"
+     * @return Container[] Array of Container indexed by "container_type|container_id"
      */
     static function get_containers($containers, $purpose = '', $fallback = '', $load_wrapped_objects = false)
     {
@@ -176,7 +176,7 @@ class ContainerHelper
      * Retrieve link containers that need to be synchronized (parsed).
      *
      * @param integer $max_results The maximum number of containers to return. Defaults to returning all unsynched containers.
-     * @return blcContainer[]
+     * @return Container[]
      */
     static function get_unsynched_containers($max_results = 0)
     {

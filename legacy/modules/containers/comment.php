@@ -13,8 +13,10 @@ ModuleClassName: blcCommentManager
 
 use Blc\Util\Utility;
 use Blc\Helper\ContainerHelper;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
 
-class blcComment extends blcContainer
+class blcComment extends Container
 {
     /**
      * Retrieve the comment wrapped by this container.
@@ -233,7 +235,7 @@ class blcComment extends blcContainer
     }
 }
 
-class blcCommentManager extends blcContainerManager
+class blcCommentManager extends ContainerManager
 {
     var $container_class_name = 'blcComment';
 
@@ -394,7 +396,7 @@ class blcCommentManager extends blcContainerManager
         $preload = $load_wrapped_objects || in_array($purpose, array( BLC_FOR_DISPLAY, BLC_FOR_PARSING ));
         if ($preload) {
             $comment_ids = array();
-            foreach ($containers as $container) { /* @var blcContainer $container */
+            foreach ($containers as $container) { /* @var Container $container */
                 $comment_ids[] = $container->container_id;
             }
 

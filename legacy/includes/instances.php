@@ -6,6 +6,7 @@
  */
 use Blc\Abstract\Parser;
 use Blc\Controller\ModuleManager;
+use Blc\Helper\ContainerHelper;
 
 class blcLinkInstance
 {
@@ -26,7 +27,7 @@ class blcLinkInstance
     var $link_context = '';
     var $raw_url      = '';
 
-    /** @var blcContainer */
+    /** @var Container */
     var $_container = null;
     var $_parser    = null;
     /** @var blcLink|null */
@@ -320,7 +321,7 @@ class blcLinkInstance
     /**
      * Get the container object associated with this link instance
      *
-     * @return blcContainer|null
+     * @return Container|null
      */
     function get_container()
     {
@@ -334,7 +335,7 @@ class blcLinkInstance
     /**
      * Set a new container for the link instance.
      *
-     * @param blcContainer $new_container
+     * @param Container $new_container
      * @param string       $field
      * @return void
      */

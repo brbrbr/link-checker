@@ -1,4 +1,8 @@
 <?php
+use Blc\Controller\ModuleManager;
+
+
+
     $search_params = $current_filter['search_params'];
 ?>
 <div class="search-box">
@@ -69,7 +73,7 @@
     <select name="s_link_type" id="s_link_type">
         <option value=""><?php _e('Any', 'broken-link-checker'); ?></option>
         <?php
-        $moduleManager = blcModuleManager::getInstance();
+        $moduleManager = ModuleManager::getInstance();
 
         printf('<optgroup label="%s">', esc_attr(__('Links used in', 'broken-link-checker')));
         $containers = $moduleManager->get_modules_by_category('container', false, true);

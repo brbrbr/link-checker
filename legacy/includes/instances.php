@@ -5,6 +5,7 @@
  * @copyright 2009
  */
 use Blc\Abstract\Parser;
+use Blc\Controller\ModuleManager;
 
 class blcLinkInstance
 {
@@ -324,7 +325,7 @@ class blcLinkInstance
     function get_container()
     {
         if (is_null($this->_container)) {
-            $this->_container = blcContainerHelper::get_container(array( $this->container_type, $this->container_id ));
+            $this->_container = ContainerHelper::get_container(array( $this->container_type, $this->container_id ));
         }
 
         return $this->_container;
@@ -360,7 +361,7 @@ class blcLinkInstance
     function get_parser()
     {
         if (is_null($this->_parser)) {
-            $this->_parser = blcModuleManager::getInstance()->get_parser($this->parser_type);
+            $this->_parser = ModuleManager::getInstance()->get_parser($this->parser_type);
         }
 
         return $this->_parser;
@@ -531,7 +532,7 @@ function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $
 
     // Skip instances that reference containers or parsers that aren't currently loaded
     if (! $include_invalid) {
-        $manager           = blcModuleManager::getInstance();
+        $manager           = ModuleManager::getInstance();
         $active_containers = $manager->get_escaped_ids('container');
         $active_parsers    = $manager->get_escaped_ids('parser');
 
@@ -557,7 +558,7 @@ function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $
                 array( $result['container_type'], intval($result['container_id']) )
             );
         }
-        $containers = blcContainerHelper::get_containers($container_ids, $purpose, '', $load_wrapped_objects);
+        $containers = ContainerHelper::get_containers($container_ids, $purpose, '', $load_wrapped_objects);
     }
 
     // Create an object for each instance and group them by link ID
@@ -595,7 +596,7 @@ function blc_get_usable_instance_count()
     $q = "SELECT COUNT(instance_id) FROM {$wpdb->prefix}blc_instances WHERE 1";
 
     // Skip instances that reference containers or parsers that aren't currently loaded
-    $manager           = blcModuleManager::getInstance();
+    $manager           = ModuleManager::getInstance();
     $active_containers = $manager->get_escaped_ids('container');
     $active_parsers    = $manager->get_escaped_ids('parser');
 
@@ -629,7 +630,7 @@ function blc_cleanup_instances()
 
     // Delete instances that reference containers and parsers that are no longer active
     $start             = microtime(true);
-    $manager           = blcModuleManager::getInstance();
+    $manager           = ModuleManager::getInstance();
     $active_containers = $manager->get_escaped_ids('container');
     $active_parsers    = $manager->get_escaped_ids('parser');
 

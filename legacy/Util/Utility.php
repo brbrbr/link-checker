@@ -9,6 +9,7 @@ namespace Blc\Util;
 
 use Blc\Util\ConfigurationManager;
 use Blc\Util\IdnaConvert;
+use Blc\Helper\ContainerHelper;
 
 // Include the internationalized domain name converter (requires PHP 5)
 
@@ -288,7 +289,7 @@ class Utility
 
         // Delete synch. records for container types that don't exist
         $blclog->info('... Deleting invalid container records');
-        \blcContainerHelper::cleanup_containers();
+        ContainerHelper::cleanup_containers();
 
         // Delete invalid instances
         $blclog->info('... Deleting invalid link instances');

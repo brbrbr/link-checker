@@ -31,6 +31,7 @@ ModuleClassName: blcPostMetaManager
  */
 
  use Blc\Abstract\Parser;
+ use Blc\Helper\ContainerHelper;
 
  
 class blcPostMeta extends blcContainer
@@ -627,7 +628,7 @@ class blcPostMetaManager extends blcContainerManager
             return;
         }
 
-        $container = blcContainerHelper::get_container(array( $this->container_type, intval($object_id) ));
+        $container = ContainerHelper::get_container(array( $this->container_type, intval($object_id) ));
         $container->mark_as_unsynched();
     }
 
@@ -641,7 +642,7 @@ class blcPostMetaManager extends blcContainerManager
     {
         // Get the associated container object
 
-        $container = blcContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
         if (null != $container) {
             // Delete it
             $container->delete();
@@ -660,7 +661,7 @@ class blcPostMetaManager extends blcContainerManager
     function post_untrashed($post_id)
     {
         // Get the associated container object
-        $container = blcContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
         $container->mark_as_unsynched();
     }
 }

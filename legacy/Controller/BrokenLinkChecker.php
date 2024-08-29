@@ -18,6 +18,8 @@ use Blc\Admin\TablePrinter;
 use Blc\Admin\ScreenOptions;
 use Blc\Util\ConfigurationManager;
 use Blc\Logger\CachedOptionLogger;
+use Blc\Controller\ModuleManager;
+use Blc\Helper\ContainerHelper;
 
 
 
@@ -362,7 +364,7 @@ class BrokenLinkChecker
 
         // (Re)create and update synch. records for all container types.
         $blclog->info('... (Re)creating container records');
-        \blcContainerHelper::resynch($forced);
+        ContainerHelper::resynch($forced);
 
         $blclog->info('... Setting resync. flags');
         Utility::blc_got_unsynched_items();
@@ -387,7 +389,7 @@ class BrokenLinkChecker
         wp_clear_scheduled_hook('blc_cron_check_news'); // Unused event.
         // Note the deactivation time for each module. This will help them
         // synch up propely if/when the plugin is reactivated.
-        $moduleManager = \blcModuleManager::getInstance();
+        $moduleManager = ModuleManager::getInstance();
         $the_time      = current_time('timestamp');
         foreach ($moduleManager->get_active_modules() as $module_id => $module) {
             $this->plugin_config->options['module_deactivated_when'][$module_id] = $the_time;
@@ -407,7 +409,7 @@ class BrokenLinkChecker
      */
     public function database_maintenance()
     {
-        \blcContainerHelper::cleanup_containers();
+        ContainerHelper::cleanup_containers();
         blc_cleanup_instances();
         blc_cleanup_links();
 
@@ -537,7 +539,7 @@ class BrokenLinkChecker
      */
     public function options_page()
     {
-        $moduleManager = \blcModuleManager::getInstance();
+        $moduleManager = ModuleManager::getInstance();
 
         if (isset($_POST['recheck']) && !empty($_POST['recheck'])) {
             $this->initiate_recheck();
@@ -785,7 +787,7 @@ class BrokenLinkChecker
                 inefficient.
                 */
             if ((count($diff1) > 0) || (count($diff2) > 0)) {
-                $manager = \blcContainerHelper::get_manager('custom_field');
+                $manager = ContainerHelper::get_manager('custom_field');
                 if (!is_null($manager)) {
                     $manager->resynch();
                     Utility::blc_got_unsynched_items();
@@ -798,7 +800,7 @@ class BrokenLinkChecker
                 inefficient.
                 */
             if ((count($acf_fields_diff1) > 0) || (count($acf_fields_diff2) > 0)) {
-                $manager = \blcContainerHelper::get_manager('acf_field');
+                $manager = ContainerHelper::get_manager('acf_field');
                 if (!is_null($manager)) {
                     $manager->resynch();
                     Utility::blc_got_unsynched_items();
@@ -1643,7 +1645,7 @@ class BrokenLinkChecker
      */
     function print_module_list($modules, $current_settings)
     {
-        $moduleManager = \blcModuleManager::getInstance();
+        $moduleManager = ModuleManager::getInstance();
 
         foreach ($modules as $module_id => $module_data) {
             $module_id = $module_data['ModuleID'];
@@ -1827,7 +1829,7 @@ class BrokenLinkChecker
         $blc_link_query = \blcLinkQuery::getInstance();
 
         // Cull invalid and missing modules so that we don't get dummy links/instances showing up.
-        $moduleManager = \blcModuleManager::getInstance();
+        $moduleManager = ModuleManager::getInstance();
         $moduleManager->validate_active_modules();
 
         if (defined('BLC_DEBUG') && constant('BLC_DEBUG')) {
@@ -2781,7 +2783,7 @@ class BrokenLinkChecker
             }
         }
         // Load modules for this context
-        $moduleManager = \blcModuleManager::getInstance();
+        $moduleManager = ModuleManager::getInstance();
         $moduleManager->load_modules('work');
 
         $target_usage_fraction = $this->plugin_config->get('target_resource_usage', 0.25);
@@ -2799,7 +2801,7 @@ class BrokenLinkChecker
             $max_containers_per_query = 50;
 
             $start               = microtime(true);
-            $containers          = \blcContainerHelper::get_unsynched_containers($max_containers_per_query);
+            $containers          = ContainerHelper::get_unsynched_containers($max_containers_per_query);
             $get_containers_time = microtime(true) - $start;
 
             while (!empty($containers)) {
@@ -2847,7 +2849,7 @@ class BrokenLinkChecker
                 $orphans_possible = true;
 
                 $start               = microtime(true);
-                $containers          = \blcContainerHelper::get_unsynched_containers($max_containers_per_query);
+                $containers          = ContainerHelper::get_unsynched_containers($max_containers_per_query);
                 $get_containers_time = microtime(true) - $start;
             }
 
@@ -3060,7 +3062,7 @@ class BrokenLinkChecker
 
         // Only check links that have at least one valid instance (i.e. an instance exists and
         // it corresponds to one of the currently loaded container/parser types).
-        $manager           = \blcModuleManager::getInstance();
+        $manager           = ModuleManager::getInstance();
         $loaded_containers = $manager->get_escaped_ids('container');
         $loaded_parsers    = $manager->get_escaped_ids('parser');
 

@@ -1,6 +1,7 @@
 <?php
 
 use Blc\Util\ConfigurationManager;
+use Blc\Controller\ModuleManager;
 
 /**
  * The manager to rule all (post) managers.
@@ -45,7 +46,7 @@ class blcPostTypeOverlord
         }
 
         // Register a virtual container module for each enabled post type
-        $module_manager = blcModuleManager::getInstance();
+        $module_manager = ModuleManager::getInstance();
 
         $post_types = get_post_types(array(), 'objects');
         $exceptions = array( 'revision', 'nav_menu_item', 'attachment' );
@@ -135,7 +136,7 @@ class blcPostTypeOverlord
         }
         // Get the associated container object
         $post_type      = get_post_type($post);
-        $post_container = blcContainerHelper::get_container(array( $post_type, $post_id ));
+        $post_container = ContainerHelper::get_container(array( $post_type, $post_id ));
 
         if ($post_container) {
             // Delete the container
@@ -200,7 +201,7 @@ class blcPostTypeOverlord
       
         // Get the container & mark it as unparsed
         $args           = array( $post->post_type, intval($post_id) );
-        $post_container = blcContainerHelper::get_container($args);
+        $post_container = ContainerHelper::get_container($args);
 
      
         $post_container->mark_as_unsynched();
@@ -389,7 +390,7 @@ class blcPostTypeOverlord
         }
 
         // Iterate over all HTML links and modify the broken ones
-        $parser = blcModuleManager::getInstance()->get_parser('link');
+        $parser = ModuleManager::getInstance()->get_parser('link');
         if ($parser) {
             $content = $parser->multi_edit($content, array( &$this, 'highlight_broken_link' ), $broken_link_urls);
         }

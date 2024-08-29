@@ -4,6 +4,7 @@ use Blc\Util\Utility;
 use Blc\Logger\CachedOptionLogger;
 use Blc\Util\ConfigurationManager;
 use Blc\Database\DatabaseUpgrader;
+use Blc\Controller\ModuleManager;
 if (get_option('blc_activation_enabled')) {
    return;
 }
@@ -52,7 +53,7 @@ $blclog->info('Installation/update begins.');
 
 // Load the module subsystem
 
-$moduleManager = blcModuleManager::getInstance();
+$moduleManager = ModuleManager::getInstance();
 
 // If upgrading, activate/deactivate custom field and comment containers based on old ver. settings
 if (isset($plugin_config->options['check_comment_links'])) {

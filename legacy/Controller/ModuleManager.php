@@ -1,9 +1,11 @@
 <?php
 
+namespace Blc\Controller;
+
 use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Parser;
 
-class blcModuleManager
+class ModuleManager
 {
     /* @var ConfigurationManager */
     protected ConfigurationManager $plugin_conf;
@@ -43,14 +45,14 @@ class blcModuleManager
      * Get an instance of the module manager.
      *
      * @param array|null $default_active_modules
-     * @return blcModuleManager
+     * @return ModuleManager
      */
 	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
     static function getInstance($default_active_modules = null)
     {
         static $instance = null;
         if (is_null($instance)) {
-            $instance = new blcModuleManager();
+            $instance = new ModuleManager();
             $instance->init($default_active_modules);
         }
         return $instance;
@@ -159,7 +161,7 @@ class blcModuleManager
     /**
      * Retrieve active modules that match a specific category, or all active modules sorted by categories.
      *
-     * @see blcModuleManager::get_modules_by_category()
+     * @see ModuleManager::get_modules_by_category()
      *
      * @param string $category Category id. Optional.
      * @return array An associative array of categories or module data.
@@ -889,7 +891,7 @@ class blcModuleManager
      /**
      * Get the parser matching a parser type ID.
      *
-     * @uses blcModuleManager::get_module()
+     * @uses ModuleManager::get_module()
      *
      * @param string $parser_type
      * @return Parser|null

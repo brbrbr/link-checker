@@ -1,6 +1,6 @@
 <?php
 use Blc\Abstract\Module;
-
+use Blc\Controller\ModuleManager;
 /**
  * Base class for link checking algorithms.
  *
@@ -70,14 +70,14 @@ class blcCheckerHelper
     /**
      * Get a reference to a specific checker.
      *
-     * @uses blcModuleManager::get_module()
+     * @uses ModuleManager::get_module()
      *
      * @param string $checker_id
      * @return blcChecker
      */
     static function get_checker($checker_id)
     {
-        $manager = blcModuleManager::getInstance();
+        $manager = cModuleManager::getInstance();
         return $manager->get_module($checker_id, true, 'checker');
     }
 
@@ -91,7 +91,7 @@ class blcCheckerHelper
     {
         $parsed = @parse_url($url);
 
-        $manager         = blcModuleManager::getInstance();
+        $manager         = ModuleManager::getInstance();
         $active_checkers = $manager->get_active_by_category('checker');
         foreach ($active_checkers as $module_id => $module_data) {
             // Try the URL pattern in the header first. If it doesn't match,

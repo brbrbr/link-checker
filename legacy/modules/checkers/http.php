@@ -196,9 +196,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 
     function check($url, $use_get = false)
     {
-
         global $blclog;
-
 
         $this->last_headers = '';
 

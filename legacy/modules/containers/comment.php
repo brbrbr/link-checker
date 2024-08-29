@@ -12,6 +12,7 @@ ModuleClassName: blcCommentManager
 */
 
 use Blc\Util\Utility;
+use Blc\Helper\ContainerHelper;
 
 class blcComment extends blcContainer
 {
@@ -256,7 +257,7 @@ class blcCommentManager extends blcContainerManager
     function hook_post_comment($comment_id, $comment_status)
     {
         if ('1' == $comment_status) {
-            $container = blcContainerHelper::get_container(array( $this->container_type, $comment_id ));
+            $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
             $container->mark_as_unsynched();
         }
     }
@@ -264,7 +265,7 @@ class blcCommentManager extends blcContainerManager
     function hook_edit_comment($comment_id)
     {
         if ('approved' == wp_get_comment_status($comment_id)) {
-            $container = blcContainerHelper::get_container(array( $this->container_type, $comment_id ));
+            $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
             $container->mark_as_unsynched();
         }
     }
@@ -273,7 +274,7 @@ class blcCommentManager extends blcContainerManager
     {
         // We only care about approved comments.
         if (( 'approved' == $new_status ) || ( 'approved' == $old_status )) {
-            $container = blcContainerHelper::get_container(array( $this->container_type, $comment->comment_ID ));
+            $container = ContainerHelper::get_container(array( $this->container_type, $comment->comment_ID ));
             if ('approved' == $new_status) {
                 $container->mark_as_unsynched();
             } else {
@@ -287,7 +288,7 @@ class blcCommentManager extends blcContainerManager
     {
         foreach ($statuses as $comment_id => $comment_status) {
             if ('1' == $comment_status) {
-                $container = blcContainerHelper::get_container(array( $this->container_type, $comment_id ));
+                $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
                 $container->delete();
             }
         }
@@ -306,7 +307,7 @@ class blcCommentManager extends blcContainerManager
 
         foreach ($statuses as $comment_id => $comment_status) {
             if ('1' == $comment_status) { // if approved
-                $container = blcContainerHelper::get_container(array( $this->container_type, $comment_id ));
+                $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
                 $container->mark_as_unsynched();
             }
         }

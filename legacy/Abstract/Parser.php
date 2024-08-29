@@ -25,6 +25,7 @@
 namespace Blc\Abstract;
 
 use Blc\Abstract\Module;
+use Blc\Helper\ContainerHelper;
 
 abstract class Parser extends Module
 {
@@ -66,7 +67,7 @@ abstract class Parser extends Module
     /**
      * Mark containers that this parser might be interested in as unparsed.
      *
-     * @uses blcContainerHelper::mark_as_unsynched_where()
+     * @uses ContainerHelper::mark_as_unsynched_where()
      *
      * @param bool $only_return If true, just return the list of formats and container types without actually modifying any synch. records.
      * @return void|array Either nothing or an array in the form [ [format1=>timestamp1, ...], [container_type1=>timestamp1, ...] ]
@@ -91,7 +92,7 @@ abstract class Parser extends Module
         if ($only_return) {
             return array( $formats, $container_types );
         } else {
-            blcContainerHelper::mark_as_unsynched_where($formats, $container_types);
+            ContainerHelper::mark_as_unsynched_where($formats, $container_types);
         }
     }
 

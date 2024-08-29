@@ -12,6 +12,7 @@ use Blc\Logger\DummyLogger;
 use Blc\Logger\CachedOptionLogger;
 use Blc\Util\ConfigurationManager;
 use Blc\Controller\BrokenLinkChecker;
+use Blc\Controller\ModuleManager;
 use Blc\Database\DatabaseUpgrader;
 
 // To prevent conflicts, only one version of the plugin can be activated at any given time.
@@ -84,7 +85,6 @@ if (defined('BLC_ACTIVE')) {
      * Load all files pertaining to BLC's module subsystem
      */
 
-    require_once BLC_DIRECTORY_LEGACY . '/includes/module-manager.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/containers.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/checkers.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
@@ -179,7 +179,7 @@ if (defined('BLC_ACTIVE')) {
     if ($plugin_config->installation_complete) {
         if (is_admin() || wp_doing_cron() ) {
             // Start up the post overlord and module- must runoutside the 'init' action
-            $blc_module_manager = \blcModuleManager::getInstance(
+            $blc_module_manager = ModuleManager::getInstance(
                 array(
                     // List of modules active by default
                     'http',             // Link checker for the HTTP(s) protocol

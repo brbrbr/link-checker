@@ -1,6 +1,7 @@
 <?php
 
 use Blc\Util\ConfigurationManager;
+use Blc\Controller\ModuleManager;
 
 /**
  * Class for querying, sorting and filtering links.
@@ -315,7 +316,7 @@ class blcLinkQuery
         // Don't include links with instances that reference invalid (not currently loaded)
         // containers and parsers (unless specifically told to also include invalid links).
         if (empty($params['include_invalid'])) {
-            $module_manager    = blcModuleManager::getInstance();
+            $module_manager    = ModuleManager::getInstance();
             $loaded_containers = array_keys($module_manager->get_active_by_category('container'));
             $loaded_parsers    = array_keys($module_manager->get_active_by_category('parser'));
 

@@ -11,6 +11,8 @@ ModuleCategory: container
 ModuleClassName: blcBookmarkManager
 */
 
+use Blc\Helper\ContainerHelper;
+
 class blcBookmark extends blcContainer
 {
     function ui_get_source($container_field = '', $context = 'display')
@@ -265,7 +267,7 @@ class blcBookmarkManager extends blcContainerManager
      */
     function hook_add_link($link_id)
     {
-        $container = blcContainerHelper::get_container(array( $this->container_type, $link_id ));
+        $container = ContainerHelper::get_container(array( $this->container_type, $link_id ));
         $container->mark_as_unsynched();
     }
 
@@ -289,7 +291,7 @@ class blcBookmarkManager extends blcContainerManager
     function hook_delete_link($link_id)
     {
         // Get the container object.
-        $container = blcContainerHelper::get_container(array( $this->container_type, $link_id ));
+        $container = ContainerHelper::get_container(array( $this->container_type, $link_id ));
         // Get the link(s) associated with it.
         $links = $container->get_links();
 

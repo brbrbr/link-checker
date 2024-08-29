@@ -2,6 +2,7 @@
 namespace Blc\Abstract;
 
 use Blc\Util\ConfigurationManager;
+use Blc\Controller\ModuleManager;
 
 /**
  * @author Janis Elsts
@@ -28,10 +29,10 @@ abstract class Module
      * @param string                  $module_id
      * @param array                   $cached_header
      * @param ConfigurationManager $plugin_conf
-     * @param blcModuleManager        $module_manager
+     * @param ModuleManager        $module_manager
      * @return void
      */
-    function __construct($module_id, $cached_header, ConfigurationManager $plugin_conf, $module_manager)
+    function __construct(string $module_id, array $cached_header, ConfigurationManager $plugin_conf, ModuleManager $module_manager)
     {
         $this->module_id      = $module_id;
         $this->cached_header  = $cached_header;

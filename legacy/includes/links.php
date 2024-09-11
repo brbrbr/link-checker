@@ -1013,7 +1013,7 @@ class blcLink
      *
      * @param bool   $ignore_cache Don't use the internally cached instance list.
      * @param string $purpose
-     * @return blcLinkInstance[] An array of instance objects or FALSE on failure.
+     * @return \blcLinkInstance[] An array of instance objects or FALSE on failure.
      */
     function get_instances($ignore_cache = false, $purpose = '')
     {
@@ -1022,7 +1022,7 @@ class blcLink
         }
 
         if ($ignore_cache || is_null($this->_instances)) {
-            $instances = blc_get_instances(array($this->link_id), $purpose);
+            $instances = \blcLinkInstance::blc_get_instances(array($this->link_id), $purpose);
             if (!empty($instances)) {
                 $this->_instances = $instances[$this->link_id];
             }
@@ -1132,34 +1132,4 @@ class blcLink
 }
 
 
-/**
- * Remove orphaned links that have no corresponding instances.
- *
- * @param int|array $link_id (optional) Only check these links
- * @return bool
- */
-function blc_cleanup_links($link_id = null)
-{
-    global $wpdb; /* @var wpdb $wpdb */
-    global $blclog;
 
-    $start = microtime(true);
-    $q     = "DELETE FROM {$wpdb->prefix}blc_links
-			USING {$wpdb->prefix}blc_links LEFT JOIN {$wpdb->prefix}blc_instances
-				ON {$wpdb->prefix}blc_instances.link_id = {$wpdb->prefix}blc_links.link_id
-			WHERE
-				{$wpdb->prefix}blc_instances.link_id IS NULL";
-
-    if (null !== $link_id) {
-        if (!is_array($link_id)) {
-            $link_id = array(intval($link_id));
-        }
-        $q .= " AND {$wpdb->prefix}blc_links.link_id IN (" . implode(', ', $link_id) . ')';
-    }
-
-    $rez     = $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-    $elapsed = microtime(true) - $start;
-    $blclog->log(sprintf('... %d links deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
-
-    return false !== $rez;
-}

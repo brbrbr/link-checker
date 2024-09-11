@@ -22,7 +22,7 @@ abstract class PlaintextUrlParser extends Parser
      * @param string $content The text to parse.
      * @param string $base_url The base URL. Ignored.
      * @param string $default_link_text Default link text.
-     * @return array An array of new blcLinkInstance objects.
+     * @return array An array of new \blcLinkInstance objects.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -56,7 +56,7 @@ abstract class PlaintextUrlParser extends Parser
                 }
 
                 // Create a new link instance.
-                $instance = new blcLinkInstance();
+                $instance = new \blcLinkInstance();
 
                 $instance->set_parser($this);
                 $instance->raw_url   = $match;

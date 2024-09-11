@@ -27,7 +27,7 @@ class blcACFParser extends Parser
      * @param string|array $content ACF value(s).
      * @param string       $base_url The base URL to use for normalizing relative URLs. If ommitted, the blog's root URL will be used.
      * @param string       $default_link_text
-     * @return array An array of new blcLinkInstance objects.
+     * @return array An array of new \blcLinkInstance objects.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -65,7 +65,7 @@ class blcACFParser extends Parser
             }
 
             // The URL is okay, create and populate a new link instance.
-            $instance = new blcLinkInstance();
+            $instance = new \blcLinkInstance();
 
             $instance->set_parser($this);
             $instance->raw_url   = $raw_url;
@@ -114,7 +114,7 @@ class blcACFParser extends Parser
     /**
      * Get the link text for printing in the "Broken Links" table.
      *
-     * @param blcLinkInstance $instance
+     * @param \blcLinkInstance $instance
      * @param string          $context
      * @return string HTML
      */

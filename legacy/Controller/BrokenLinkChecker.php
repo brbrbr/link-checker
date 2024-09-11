@@ -11,7 +11,7 @@ namespace Blc\Controller;
  */
 
 use Blc\Database\WPMutex;
-use Blc\Util\UpdatePlugin;
+
 use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
 use Blc\Admin\TablePrinter;
@@ -114,7 +114,7 @@ class BrokenLinkChecker
 
         add_action('admin_menu', array($this, 'admin_menu'));
 
-        $this->update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
+      
 
         $this->is_settings_tab = $this->is_settings_tab();
 
@@ -410,8 +410,8 @@ class BrokenLinkChecker
     public function database_maintenance()
     {
         ContainerHelper::cleanup_containers();
-        blc_cleanup_instances();
-        blc_cleanup_links();
+        \blcLinkInstance::blc_cleanup_instances();
+        Utility::blc_cleanup_links();
 
         Utility::optimize_database();
     }
@@ -814,8 +814,8 @@ class BrokenLinkChecker
                 $overlord->resynch('wsh_status_resynch_trigger');
 
                 Utility::blc_got_unsynched_items();
-                blc_cleanup_instances();
-                blc_cleanup_links();
+                \blcLinkInstance::blc_cleanup_instances();
+                Utility::blc_cleanup_links();
             }
 
             // Redirect back to the settings page
@@ -2827,7 +2827,7 @@ class BrokenLinkChecker
                     // Check if we still have some execution time left
                     if ($this->execution_time() > $max_execution_time) {
                         // FB::log('The allotted execution time has run out');
-                        blc_cleanup_links();
+                        Utility::blc_cleanup_links();
                         $this->release_lock();
 
                         return;
@@ -2836,7 +2836,7 @@ class BrokenLinkChecker
                     // Check if the server isn't overloaded
                     if ($this->server_too_busy()) {
                         // FB::log('Server overloaded, bailing out.');
-                        blc_cleanup_links();
+                        Utility::blc_cleanup_links();
                         $this->release_lock();
 
                         return;
@@ -2875,7 +2875,7 @@ class BrokenLinkChecker
             $start = microtime(true);
 
             $blclog->info('Removing orphaned links.');
-            blc_cleanup_links();
+            Utility::blc_cleanup_links();
 
             $get_links_time = microtime(true) - $start;
             $this->sleep_to_maintain_ratio($get_links_time, $target_usage_fraction);
@@ -3256,7 +3256,7 @@ class BrokenLinkChecker
         $recheck_threshold = date('Y-m-d H:i:s', time() - $this->plugin_config->options['recheck_threshold']); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 
         $known_links     = blc_get_links(array('count_only' => true));
-        $known_instances = blc_get_usable_instance_count();
+        $known_instances = \blcLinkInstance::blc_get_usable_instance_count();
 
         $broken_links = $blc_link_query->get_filter_links('broken', array('count_only' => true));
 
@@ -4049,7 +4049,7 @@ class BrokenLinkChecker
         // Show up to $max_displayed_links broken link instances right in the email.
         $displayed = 0;
         foreach ($instances as $instance) {
-            /* @var \blcLinkInstance $instance */
+            /* @var \\blcLinkInstance $instance */
             $pieces = array(
                 sprintf(__('Link text : %s', 'broken-link-checker'), $instance->ui_get_link_text('email')),
                 sprintf(__('Link URL : <a href="%1$s">%2$s</a>', 'broken-link-checker'), htmlentities($instance->get_url()), Utility::truncate($instance->get_url(), 70, '')),
@@ -4105,7 +4105,7 @@ class BrokenLinkChecker
         foreach ($links as $link) {
             /* @var \blcLink $link */
             foreach ($link->get_instances() as $instance) {
-                /* @var \blcLinkInstance $instance */
+                /* @var \\blcLinkInstance $instance */
                 $container = $instance->get_container();
                 /** @var \Container $container */
                 if (empty($container) || !($container instanceof \blcAnyPostContainer)) {

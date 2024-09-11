@@ -14,16 +14,14 @@ class UpdatePlugin
      */
     public function __construct()
     {
-
+    
         add_filter('update_plugins_downloads.brokenlinkchecker.dev', array( $this, 'checkUpdate' ), accepted_args: 2);
     
     }
 
     public function checkUpdate($update, $plugin_data)
     {
-       
         $update = $this->fetchUpdate($plugin_data['UpdateURI']);
-       
         return $update;
     }
 
@@ -38,10 +36,10 @@ class UpdatePlugin
             $body = wp_remote_retrieve_body($res);
             $code = wp_remote_retrieve_response_code($res);
             if ($code === 200 && ( $data = json_decode($body, true) )) {
+                error_log(var_export($data,true),3,'/tmp/d');
                 set_transient($transient, $data, $this->expiration);
             }
         }
-
         return $data ?: [];
     }
 }

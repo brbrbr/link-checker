@@ -293,11 +293,43 @@ class Utility
 
         // Delete invalid instances
         $blclog->info('... Deleting invalid link instances');
-        blc_cleanup_instances();
+        \blcLinkInstance::blc_cleanup_instances();
 
         // Delete orphaned links
         $blclog->info('... Deleting orphaned links');
-        blc_cleanup_links();
+        self::blc_cleanup_links();
+    }
+
+    /**
+     * Remove orphaned links that have no corresponding instances.
+     *
+     * @param int|array $link_id (optional) Only check these links
+     * @return bool
+     */
+    static function blc_cleanup_links($link_id = null)
+    {
+        global $wpdb; /* @var wpdb $wpdb */
+        global $blclog;
+
+        $start = microtime(true);
+        $q     = "DELETE FROM {$wpdb->prefix}blc_links
+			USING {$wpdb->prefix}blc_links LEFT JOIN {$wpdb->prefix}blc_instances
+				ON {$wpdb->prefix}blc_instances.link_id = {$wpdb->prefix}blc_links.link_id
+			WHERE
+				{$wpdb->prefix}blc_instances.link_id IS NULL";
+
+        if (null !== $link_id) {
+            if (!is_array($link_id)) {
+                $link_id = array(intval($link_id));
+            }
+            $q .= " AND {$wpdb->prefix}blc_links.link_id IN (" . implode(', ', $link_id) . ')';
+        }
+
+        $rez     = $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $elapsed = microtime(true) - $start;
+        $blclog->log(sprintf('... %d links deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
+
+        return false !== $rez;
     }
 
     /**
@@ -356,21 +388,21 @@ class Utility
      */
     static function idn_to_ascii($url, $charset = '')
     {
-        $idn =new IdnaConvert();
-            if (empty($charset)) {
-                $charset = get_bloginfo('charset');
-            }
-            $parsed  = parse_url($url);
-            // Encode only the host.
-            $host = $parsed['host'];
-            if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
-                $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
-            }
-            $host = $idn->hostToAscii($host);
+        $idn = new IdnaConvert();
+        if (empty($charset)) {
+            $charset = get_bloginfo('charset');
+        }
+        $parsed  = parse_url($url);
+        // Encode only the host.
+        $host = $parsed['host'];
+        if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
+            $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
+        }
+        $host = $idn->hostToAscii($host);
 
-            $parsed['host'] =  $host;
-            $url  = self::parsedToUrl($parsed);
-        
+        $parsed['host'] =  $host;
+        $url  = self::parsedToUrl($parsed);
+
 
         return $url;
     }
@@ -384,22 +416,22 @@ class Utility
      */
     static function idn_to_utf8($url)
     {
-        $idn =new IdnaConvert();
-       
-            $parsed  = parse_url($url);
-            // Encode only the host.
-            $host = $parsed['host'];
-            $host = $idn->hostToUTF8($host);
-            $parsed['host'] =  $host;
-            $url  = self::parsedToUrl($parsed);
-        
+        $idn = new IdnaConvert();
+
+        $parsed  = parse_url($url);
+        // Encode only the host.
+        $host = $parsed['host'];
+        $host = $idn->hostToUTF8($host);
+        $parsed['host'] =  $host;
+        $url  = self::parsedToUrl($parsed);
+
 
         return $url;
     }
 
     static function parsedToUrl($parsed)
     {
-      
+
         return (empty($parsed['scheme']) ? '' : $parsed['scheme'] . (strtolower($parsed['scheme']) == 'mailto' ? ':' : '://'))
             . (empty($parsed['user']) ? '' : $parsed['user'] . (empty($parsed['pass']) ? '' : ':' . $parsed['pass']) . '@')
             . $parsed['host']

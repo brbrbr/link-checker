@@ -90,7 +90,6 @@ if (defined('BLC_ACTIVE')) {
     require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/instances.php';
-    require_once BLC_DIRECTORY_LEGACY . '/includes/screen-meta-links.php';
     require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 
 

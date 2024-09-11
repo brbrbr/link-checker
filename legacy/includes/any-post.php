@@ -5,6 +5,7 @@ use Blc\Controller\ModuleManager;
 use Blc\Abstract\ContainerManager;
 use Blc\Abstract\Container;
 use Blc\Helper\ContainerHelper;
+use Blc\Util\Utility;
 
 /**
  * The manager to rule all (post) managers.
@@ -172,7 +173,7 @@ class blcPostTypeOverlord
             $wpdb->query('DELETE FROM `' . $wpdb->prefix . 'blc_instances` WHERE instance_id IN (\'' . implode("', '", $current_instance_ids) . '\')');
 
             // Clean up any dangling links
-            blc_cleanup_links($current_link_ids);
+            Utility::blc_cleanup_links($current_link_ids);
         }
     }
 

@@ -281,7 +281,7 @@ class blcCommentManager extends ContainerManager
                 $container->mark_as_unsynched();
             } else {
                 $container->delete();
-                blc_cleanup_links();
+                Utility::blc_cleanup_links();
             }
         }
     }
@@ -294,7 +294,7 @@ class blcCommentManager extends ContainerManager
                 $container->delete();
             }
         }
-        blc_cleanup_links();
+        Utility::blc_cleanup_links();
     }
 
     function hook_untrash_post_comments($post_id)

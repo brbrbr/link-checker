@@ -14,6 +14,7 @@ ModuleClassName: blcBookmarkManager
 use Blc\Helper\ContainerHelper;
 use Blc\Abstract\ContainerManager;
 use Blc\Abstract\Container;
+use Blc\Util\Utility;
 
 class blcBookmark extends Container
 {
@@ -305,6 +306,6 @@ class BookmarkManager extends ContainerManager
         foreach ($links as $link) {
             $link_ids[] = $link->link_id;
         }
-        blc_cleanup_links($link_ids);
+        Utility::blc_cleanup_links($link_ids);
     }
 }

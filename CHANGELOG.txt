@@ -17,7 +17,10 @@
  * ! Security
  * L Language
  * N Note
-
+2.3.1.6553
+ # moved update action outside brokenlink checker main class. Must be active even with plugin de-activated
+ ^ namespace migrations
+ N Merged with https://plugins.svn.wordpress.org/broken-link-checker/tags/2.3.1 still no changes for legacy
 2.3.0.6541
  # Do not display redirected link when the final url equals the original (for example with cookie redirects)
  # Convert punnycode url back to utf8

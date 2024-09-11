@@ -32,7 +32,7 @@ abstract class EmbedParser extends Parser
      * @param string $content The text to parse.
      * @param string $base_url The base URL. Ignored.
      * @param string $default_link_text Default link text. Ignored.
-     * @return array An array of new blcLinkInstance objects. The objects will include info about the embeds found, but not about the corresponding container entity.
+     * @return array An array of new \blcLinkInstance objects. The objects will include info about the embeds found, but not about the corresponding container entity.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -53,7 +53,7 @@ abstract class EmbedParser extends Parser
             }
 
             // Create a new link instance.
-            $instance = new blcLinkInstance();
+            $instance = new \blcLinkInstance();
 
             $instance->set_parser($this);
             $instance->raw_url   = $embed['embed_code'];
@@ -146,7 +146,7 @@ abstract class EmbedParser extends Parser
     /**
      * Get the link text for printing in the "Broken Links" table.
      *
-     * @param blcLinkInstance $instance
+     * @param \blcLinkInstance $instance
      * @param string          $context
      * @return string HTML
      */

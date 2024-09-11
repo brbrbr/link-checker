@@ -34,7 +34,7 @@ class blcLinkInstance
     var $_link = null;
 
     /**
-     * blcLinkInstance::__construct()
+     * \blcLinkInstance::__construct()
      * Class constructor
      *
      * @param int|array $arg Either the instance ID or an associate array representing the instance's DB record. Should be NULL for new instances.
@@ -68,20 +68,10 @@ class blcLinkInstance
         }
     }
 
-    /**
-     * blcLinkInstance::blcLinkInstance()
-     * Old-style constructor for PHP 4. Do not use.
-     *
-     * @param mixed $arg
-     * @return void
-     */
-    function blcLinkInstance($arg = null)
-    {
-        $this->__construct($arg);
-    }
+
 
     /**
-     * blcLinkInstance::set_values()
+     * \blcLinkInstance::set_values()
      * Set property values to the ones provided in an array (doesn't sanitize).
      *
      * @param array $arr An associative array
@@ -155,7 +145,7 @@ class blcLinkInstance
     }
 
     /**
-     * blcLinkInstance::unlink()
+     * \blcLinkInstance::unlink()
      * Remove this instance from the post/blogroll/etc. Also deletes the appropriate DB record(s).
      *
      * @return bool|WP_Error
@@ -507,7 +497,7 @@ class blcLinkInstance
         }
         return $parser->is_url_editable();
     }
-}
+
 
     /**
      * Get all link instances associated with one or more links.
@@ -517,9 +507,9 @@ class blcLinkInstance
      * @param bool   $load_containers Preload containers regardless of purpose. Defaults to false.
      * @param bool   $load_wrapped_objects Preload wrapped objects regardless of purpose. Defaults to false.
      * @param bool   $include_invalid Include instances that refer to not-loaded containers or parsers. Defaults to false.
-     * @return blcLinkInstance[] An array indexed by link ID. Each item of the array will be an array of blcLinkInstance objects.
+     * @return \blcLinkInstance[] An array indexed by link ID. Each item of the array will be an array of \blcLinkInstance objects.
      */
-function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $load_wrapped_objects = false, $include_invalid = false)
+static public function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $load_wrapped_objects = false, $include_invalid = false)
 {
     global $wpdb; /** @var wpdb $wpdb */
 
@@ -565,7 +555,7 @@ function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $
     // Create an object for each instance and group them by link ID
     $instances = array();
     foreach ($results as $result) {
-        $instance = new blcLinkInstance($result);
+        $instance = new \blcLinkInstance($result);
 
         // Assign a container to the link instance, if available
         if ($load_containers && ! empty($containers)) {
@@ -590,7 +580,7 @@ function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $
      *
      * @return int
      */
-function blc_get_usable_instance_count()
+    static public  function blc_get_usable_instance_count()
 {
     global $wpdb; /** @var wpdb $wpdb */
 
@@ -612,7 +602,7 @@ function blc_get_usable_instance_count()
      *
      * @return bool
      */
-function blc_cleanup_instances()
+    static public function blc_cleanup_instances()
 {
     global $wpdb; /** @var wpdb $wpdb */
     global $blclog;
@@ -645,4 +635,5 @@ function blc_cleanup_instances()
     $blclog->log(sprintf('... %d more instances deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
 
     return ( false !== $rez ) && ( false !== $rez2 );
+}
 }

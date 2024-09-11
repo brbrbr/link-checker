@@ -38,6 +38,8 @@ along with Broken Link Checker. If not, see https://www.gnu.org/licenses/gpl-2.0
 */
 namespace Blc;
 
+use Blc\Util\UpdatePlugin;
+
 
 // If this file is called directly, abort.
 defined( 'WPINC' ) || die;
@@ -111,7 +113,7 @@ $autoloaded = new Autoloader();
 			require_once BLC_DIRECTORY_LEGACY . '/includes/activation.php';
 		}
 	);
-
+	$update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
 
 
 

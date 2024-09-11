@@ -86,7 +86,7 @@ abstract class Container
 
         // delete the container and sync data. This will trigger a rescan.
         $this->delete();
-        blc_cleanup_links();
+        Utility::blc_cleanup_links();
         return WP_Error('container_not_found', "Container not found while updating $field to $new_value");
     }
 

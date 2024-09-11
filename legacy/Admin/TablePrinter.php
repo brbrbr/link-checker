@@ -651,7 +651,7 @@ class TablePrinter
 
     /**
      * @param blcLink           $link
-     * @param blcLinkInstance[] $instances
+     * @param \blcLinkInstance[] $instances
      */
     function column_status($link, $instances)
     {
@@ -798,7 +798,7 @@ class TablePrinter
 
     /**
      * @param blcLink           $link
-     * @param blcLinkInstance[] $instances
+     * @param \blcLinkInstance[] $instances
      */
     function column_used_in($link, $instances)
     {
@@ -807,7 +807,7 @@ class TablePrinter
         '</span>';
 
         if (! empty($instances)) {
-            /** @var $instance blcLinkInstance */
+            /** @var $instance \blcLinkInstance */
             $instance = reset($instances);
             echo $instance->ui_get_source();
 
@@ -823,7 +823,7 @@ class TablePrinter
 
     /**
      * @param blcLink           $link
-     * @param blcLinkInstance[] $instances
+     * @param \blcLinkInstance[] $instances
      */
     function column_new_link_text($link, $instances)
     {
@@ -831,7 +831,7 @@ class TablePrinter
             echo '<em>N/A</em>';
         } else {
             $instance = reset($instances);
-            /** @var blcLinkInstance $instance */
+            /** @var \blcLinkInstance $instance */
             echo $instance->ui_get_link_text();
         }
     }
@@ -854,7 +854,7 @@ class TablePrinter
      * puts instances that have a matching container type or parser type at the
      * beginning.
      *
-     * @param array  $instances An array of blcLinkInstance objects.
+     * @param array  $instances An array of \blcLinkInstance objects.
      * @param string $searched_link_type Optional. The required container/parser type.
      * @return array Sorted array.
      */
@@ -870,8 +870,8 @@ class TablePrinter
      *
      * @see TablePrinter::sort_instances_for_display()
      *
-     * @param blcLinkInstance $a
-     * @param blcLinkInstance $b
+     * @param \blcLinkInstance $a
+     * @param \blcLinkInstance $b
      * @return int
      */
     function compare_link_instances($a, $b)

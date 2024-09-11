@@ -20,7 +20,7 @@ use Blc\Util\ConfigurationManager;
 use Blc\Logger\CachedOptionLogger;
 use Blc\Controller\ModuleManager;
 use Blc\Helper\ContainerHelper;
-
+use Blc\Util\UpdatePlugin;
 
 
 
@@ -115,7 +115,7 @@ class BrokenLinkChecker
         add_action('admin_menu', array($this, 'admin_menu'));
 
       
-
+        $this->update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
         $this->is_settings_tab = $this->is_settings_tab();
 
         // Load jQuery on Dashboard pages (probably redundant as WP already does that).
@@ -305,7 +305,7 @@ class BrokenLinkChecker
         wp_enqueue_script('jquery-ui-dialog');
         wp_enqueue_script('jquery-ui-tabs');
         wp_enqueue_script('jquery-cookie', plugins_url('js/jquery.cookie.js', BLC_PLUGIN_FILE_LEGACY), array(), '1.0.0', false); // Used for storing last widget states, etc.
-        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), '2.3.0.6337', false);
+        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), '2.3.1.6337', false);
         wp_set_script_translations('options-page-js', 'broken-link-checker');
     }
 

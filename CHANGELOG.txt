@@ -17,8 +17,11 @@
  * ! Security
  * L Language
  * N Note
+2.3.1.6554
+ - removed WPMUDEV_BLC_VERSION not needed anywhere
+ # update_plugins_downloads.brokenlinkchecker.dev hook only for this plugin
+ # reverted moved update action outside brokenlink checker main class. Must be active even with plugin de-activated
 2.3.1.6553
- # moved update action outside brokenlink checker main class. Must be active even with plugin de-activated
  ^ namespace migrations
  N Merged with https://plugins.svn.wordpress.org/broken-link-checker/tags/2.3.1 still no changes for legacy
 2.3.0.6541

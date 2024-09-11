@@ -8,9 +8,10 @@
  *
  * @wordpress-plugin
  * Plugin Name:       Link Checker
+ * Donate link:		  https://www.paypal.com/donate/?hosted_button_id=MV4L54K4UUF8W
  * Plugin URI:        https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * Description:       Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version. 
- * Version:           2.3.0.6525
+ * Version:           2.3.1.6554
  * Requires at least: 6.2
  * Requires PHP:      8.1
  * Author:            Bram Brambring
@@ -38,16 +39,13 @@ along with Broken Link Checker. If not, see https://www.gnu.org/licenses/gpl-2.0
 */
 namespace Blc;
 
-use Blc\Util\UpdatePlugin;
+
 
 
 // If this file is called directly, abort.
 defined( 'WPINC' ) || die;
 
-// Plugin version.
-if ( ! defined( 'WPMUDEV_BLC_VERSION' ) ) {
-	define( 'WPMUDEV_BLC_VERSION', '2.3.0.6337' );
-}
+
 
 // Define WPMUDEV_BLC_PLUGIN_FILE.
 if ( ! defined( 'WPMUDEV_BLC_PLUGIN_FILE' ) ) {
@@ -75,7 +73,7 @@ if ( ! defined( 'WPMUDEV_BLC_ASSETS_URL' ) ) {
 
 // Scripts version.
 if ( ! defined( 'WPMUDEV_BLC_SCIPTS_VERSION' ) ) {
-	define( 'WPMUDEV_BLC_SCIPTS_VERSION', WPMUDEV_BLC_VERSION );
+	define( 'WPMUDEV_BLC_SCIPTS_VERSION', '2.3.1.0' );
 }
 
 
@@ -113,7 +111,7 @@ $autoloaded = new Autoloader();
 			require_once BLC_DIRECTORY_LEGACY . '/includes/activation.php';
 		}
 	);
-	$update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
+
 
 
 

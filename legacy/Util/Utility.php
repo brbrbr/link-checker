@@ -10,6 +10,8 @@ namespace Blc\Util;
 use Blc\Util\ConfigurationManager;
 use Blc\Util\IdnaConvert;
 use Blc\Helper\ContainerHelper;
+use Blc\Controller\LinkInstance;
+use Blc\Controller\ModuleManager;
 
 // Include the internationalized domain name converter (requires PHP 5)
 
@@ -293,7 +295,7 @@ class Utility
 
         // Delete invalid instances
         $blclog->info('... Deleting invalid link instances');
-        \blcLinkInstance::blc_cleanup_instances();
+        self::blc_cleanup_instances();
 
         // Delete orphaned links
         $blclog->info('... Deleting orphaned links');
@@ -457,5 +459,147 @@ class Utility
         $hash           = substr(md5($input), $md5_char_count - $bytes_to_use * 2);
         $hash           = intval(hexdec($hash));
         return $min + (($max - $min) * ($hash / (pow(2, $bytes_to_use * 8) - 1)));
+    }
+
+
+    /**
+     * Get all link instances associated with one or more links.
+     *
+     * @param array  $link_ids Array of link IDs.
+     * @param string $purpose An optional code indicating how the instances will be used. Available predefined constants : BLC_FOR_DISPLAY, BLC_FOR_EDITING
+     * @param bool   $load_containers Preload containers regardless of purpose. Defaults to false.
+     * @param bool   $load_wrapped_objects Preload wrapped objects regardless of purpose. Defaults to false.
+     * @param bool   $include_invalid Include instances that refer to not-loaded containers or parsers. Defaults to false.
+     * @return LinkInstance[] An array indexed by link ID. Each item of the array will be an array of LinkInstance objects.
+     */
+    static public function blc_get_instances($link_ids, $purpose = '', $load_containers = false, $load_wrapped_objects = false, $include_invalid = false)
+    {
+        global $wpdb;
+        /** @var wpdb $wpdb */
+
+        if (empty($link_ids)) {
+            return array();
+        }
+
+        $link_ids_in = implode(', ', $link_ids);
+
+        $q = "SELECT * FROM {$wpdb->prefix}blc_instances WHERE link_id IN ($link_ids_in)";
+
+        // Skip instances that reference containers or parsers that aren't currently loaded
+        if (! $include_invalid) {
+            $manager           = ModuleManager::getInstance();
+            $active_containers = $manager->get_escaped_ids('container');
+            $active_parsers    = $manager->get_escaped_ids('parser');
+
+            $q .= " AND container_type IN ({$active_containers}) ";
+            $q .= " AND parser_type IN ({$active_parsers}) ";
+        }
+
+        $results = $wpdb->get_results($q, ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+        if (empty($results)) {
+            return array();
+        }
+
+        // Also retrieve the containers, if it could be useful.
+        $load_containers = $load_containers || in_array($purpose, array(BLC_FOR_DISPLAY, BLC_FOR_EDITING));
+        if ($load_containers) {
+            // Collect a list of (container_type, container_id) pairs
+            $container_ids = array();
+
+            foreach ($results as $result) {
+                array_push(
+                    $container_ids,
+                    array($result['container_type'], intval($result['container_id']))
+                );
+            }
+            $containers = ContainerHelper::get_containers($container_ids, $purpose, '', $load_wrapped_objects);
+        }
+
+        // Create an object for each instance and group them by link ID
+        $instances = array();
+        foreach ($results as $result) {
+            $instance = new LinkInstance($result);
+
+            // Assign a container to the link instance, if available
+            if ($load_containers && ! empty($containers)) {
+                $key = $instance->container_type . '|' . $instance->container_id;
+                if (isset($containers[$key])) {
+                    $instance->_container = $containers[$key];
+                }
+            }
+
+            if (isset($instances[$instance->link_id])) {
+                array_push($instances[$instance->link_id], $instance);
+            } else {
+                $instances[$instance->link_id] = array($instance);
+            }
+        }
+
+        return $instances;
+    }
+
+    /**
+     * Get the number of instances that reference only currently loaded containers and parsers.
+     *
+     * @return int
+     */
+    static public  function blc_get_usable_instance_count()
+    {
+        global $wpdb;
+        /** @var wpdb $wpdb */
+
+        $q = "SELECT COUNT(instance_id) FROM {$wpdb->prefix}blc_instances WHERE 1";
+
+        // Skip instances that reference containers or parsers that aren't currently loaded
+        $manager           = ModuleManager::getInstance();
+        $active_containers = $manager->get_escaped_ids('container');
+        $active_parsers    = $manager->get_escaped_ids('parser');
+
+        $q .= " AND container_type IN ({$active_containers}) ";
+        $q .= " AND parser_type IN ({$active_parsers}) ";
+
+        return $wpdb->get_var($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+    }
+
+    /**
+     * Remove instances that reference invalid containers or containers/parsers that are not currently loaded
+     *
+     * @return bool
+     */
+    static public function blc_cleanup_instances()
+    {
+        global $wpdb;
+        /** @var wpdb $wpdb */
+        global $blclog;
+
+        // Delete all instances that reference non-existent containers
+        $start   = microtime(true);
+        $q       = "DELETE instances.*
+		  FROM
+  			{$wpdb->prefix}blc_instances AS instances LEFT JOIN {$wpdb->prefix}blc_synch AS synch
+  			ON instances.container_type = synch.container_type AND instances.container_id = synch.container_id
+		  WHERE
+ 			synch.container_id IS NULL";
+        $rez     = $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $elapsed = microtime(true) - $start;
+        $blclog->log(sprintf('... %d instances deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
+
+        // Delete instances that reference containers and parsers that are no longer active
+        $start             = microtime(true);
+        $manager           = ModuleManager::getInstance();
+        $active_containers = $manager->get_escaped_ids('container');
+        $active_parsers    = $manager->get_escaped_ids('parser');
+
+        $q       = "DELETE instances.*
+	      FROM {$wpdb->prefix}blc_instances AS instances
+	      WHERE
+	        instances.container_type NOT IN ({$active_containers}) OR
+	        instances.parser_type NOT IN ({$active_parsers})";
+        $rez2    = $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $elapsed = microtime(true) - $start;
+        $blclog->log(sprintf('... %d more instances deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
+
+        return (false !== $rez) && (false !== $rez2);
     }
 }

@@ -53,6 +53,9 @@ class ModuleManager
         static $instance = null;
         if (is_null($instance)) {
             $instance = new ModuleManager();
+            error_log("\nModulemanager::getInstance\n",3,'/tmp/s.log');
+        //    debug_print_backtrace();exit;
+            error_log(var_export($default_active_modules,true)."\n",3,'/tmp/s.log');
             $instance->init($default_active_modules);
         }
         return $instance;
@@ -533,6 +536,7 @@ class ModuleManager
     function refresh_active_module_cache()
     {
         $modules = $this->get_modules();
+      
         foreach ($this->plugin_conf->options['active_modules'] as $module_id => $module_header) {
             if (array_key_exists($module_id, $modules)) {
                 $this->plugin_conf->options['active_modules'][ $module_id ] = $modules[ $module_id ];

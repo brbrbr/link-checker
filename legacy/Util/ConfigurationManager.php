@@ -20,7 +20,7 @@ final class ConfigurationManager
      * @var bool Whether options have been successfully loaded from the database.
      */
 
-     //final class so we can use the __construct with the singleton
+    //final class so we can use the __construct with the singleton
     private function __construct(string $name, ?array $default_settings = null)
     {
         $this->name = $name;
@@ -33,12 +33,17 @@ final class ConfigurationManager
 
     final public static function getInstance(string $name = 'wsblc_options', ?array $default_settings = null)
     {
-
         if (!isset(static::$instances[$name]) || !static::$instances[$name] instanceof static) {
             static::$instances[$name] = new static($name, $default_settings);
         }
 
         return static::$instances[$name];
+    }
+    final public static function clearInstance(string $name = 'wsblc_options')
+    {
+        if (isset(static::$instances[$name])) {
+            unset(static::$instances[$name]);
+        }
     }
 
     public function set_defaults(array $default_settings)
@@ -86,6 +91,12 @@ final class ConfigurationManager
     {
         return update_option($this->name, json_encode($this->options));
     }
+
+    public function delete(): bool
+    {
+        return delete_option($this->name);
+    }
+
 
     /**
      * blcOptionManager::save_options()

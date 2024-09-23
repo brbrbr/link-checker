@@ -17,8 +17,9 @@ ModuleCheckerUrlPattern: @^https?://(?:([\w\d]+\.)*youtube\.[^/]+/watch\?.*v=[^/
 */
 
 use Blc\Util\ConfigurationManager;
+use Blc\Abstract\Checker;
 
-class blcYouTubeChecker extends blcChecker
+class blcYouTubeChecker extends Checker
 {
     var $api_grace_period = 0.3; // How long to wait between YouTube API requests.
     var $last_api_request = 0;   // Timestamp of the last request.

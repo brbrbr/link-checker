@@ -16,13 +16,14 @@ ModulePriority: -1
 
 use Blc\Util\Utility;
 use Blc\Util\TokenBucketList;
+use Blc\Abstract\Checker;
 
 
 
 // TODO: Rewrite sub-classes as transports, not stand-alone checkers
-class blcHttpChecker extends blcChecker
+class blcHttpChecker extends Checker
 {
-    /* @var blcChecker */
+    /* @var Checker */
     var $implementation = null;
 
     /** @var  TokenBucketList */
@@ -87,7 +88,7 @@ class blcHttpChecker extends blcChecker
  * @package Broken Link Checker
  * @access public
  */
-class blcHttpCheckerBase extends blcChecker
+class blcHttpCheckerBase extends Checker
 {
     function clean_url($url)
     {

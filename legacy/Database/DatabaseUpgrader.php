@@ -16,7 +16,7 @@ class DatabaseUpgrader
         global $blclog;
 
         $plugin_config    = ConfigurationManager::getInstance();
-        $current = $plugin_config->options['current_db_version'];
+        $current = $plugin_config->options['current_db_version']??'';
 
         if (( 0 != $current ) && ( $current < 17 )) {
             // The 4th DB version makes a lot of backwards-incompatible changes to the main

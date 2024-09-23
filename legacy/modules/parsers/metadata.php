@@ -15,6 +15,7 @@
  */
 
  use Blc\Abstract\Parser;
+ use Blc\Controller\LinkInstance;
 
 class blcMetadataParser extends Parser
 {
@@ -27,7 +28,7 @@ class blcMetadataParser extends Parser
      * @param string|array $content Metadata value(s).
      * @param string       $base_url The base URL to use for normalizing relative URLs. If ommitted, the blog's root URL will be used.
      * @param string       $default_link_text
-     * @return array An array of new \blcLinkInstance objects.
+     * @return array An array of new LinkInstance objects.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -60,7 +61,7 @@ class blcMetadataParser extends Parser
      *
      * @param string $metaurl The url on the meta data
      * @param string $default_link_text
-     * @return array An array of new \blcLinkInstance objects.
+     * @return array An array of new LinkInstance objects.
      */
     function parse_metafield($metaurl = '', $base_url = '', $default_link_text = '')
     {
@@ -91,7 +92,7 @@ class blcMetadataParser extends Parser
         }
 
         // The URL is okay, create and populate a new link instance.
-        $instance = new \blcLinkInstance();
+        $instance = new LinkInstance();
 
         $instance->set_parser($this);
         $instance->raw_url   = $raw_url;
@@ -137,7 +138,7 @@ class blcMetadataParser extends Parser
     /**
      * Get the link text for printing in the "Broken Links" table.
      *
-     * @param \blcLinkInstance $instance
+     * @param LinkInstance $instance
      * @param string          $context
      * @return string HTML
      */

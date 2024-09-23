@@ -9,6 +9,9 @@ use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
 use Blc\Controller\BrokenLinkChecker;
 use Blc\Util\ConfigurationManager;
+use Blc\Controller\LinkInstance;
+use Blc\Helper\CheckerHelper;
+
 
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
 define('BLC_LINK_STATUS_OK', 'ok');
@@ -276,7 +279,7 @@ class blcLink
             'parked'           => BrokenLinkChecker::BLC_PARKED_UNCHECKED,
         );
 
-        $checker = blcCheckerHelper::get_checker_for($this->get_ascii_url());
+        $checker = CheckerHelper::get_checker_for($this->get_ascii_url());
 
         if (is_null($checker)) {
             // Oops, there are no checker implementations that can handle this link.
@@ -1013,7 +1016,7 @@ class blcLink
      *
      * @param bool   $ignore_cache Don't use the internally cached instance list.
      * @param string $purpose
-     * @return \blcLinkInstance[] An array of instance objects or FALSE on failure.
+     * @return LinkInstance[] An array of instance objects or FALSE on failure.
      */
     function get_instances($ignore_cache = false, $purpose = '')
     {
@@ -1022,7 +1025,7 @@ class blcLink
         }
 
         if ($ignore_cache || is_null($this->_instances)) {
-            $instances = \blcLinkInstance::blc_get_instances(array($this->link_id), $purpose);
+            $instances = Utility::blc_get_instances(array($this->link_id), $purpose);
             if (!empty($instances)) {
                 $this->_instances = $instances[$this->link_id];
             }

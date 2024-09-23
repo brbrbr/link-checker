@@ -16,6 +16,7 @@
 // TODO: Update image parser to use the same HTML tag parsing routine as the HTML link parser.
 
 use Blc\Abstract\Parser;
+use Blc\Controller\LinkInstance;
 
 class blcHTMLImage extends Parser
 {
@@ -35,7 +36,7 @@ class blcHTMLImage extends Parser
      * @param string $content The text to parse.
      * @param string $base_url The base URL to use for normalizing relative URLs. If omitted, the blog's root URL will be used.
      * @param string $default_link_text
-     * @return array An array of new \blcLinkInstance objects. The objects will include info about the links found, but not about the corresponding container entity.
+     * @return array An array of new LinkInstance objects. The objects will include info about the links found, but not about the corresponding container entity.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -101,7 +102,7 @@ class blcHTMLImage extends Parser
 
                 $blclog->info('Final URL: "' . $url . '"');
                 // The URL is okay, create and populate a new link instance.
-                $instance = new \blcLinkInstance();
+                $instance = new LinkInstance();
 
                 $instance->set_parser($this);
                 $instance->raw_url   = $raw_url;
@@ -195,7 +196,7 @@ class blcHTMLImage extends Parser
      * Get the link text for printing in the "Broken Links" table.
      * Sub-classes should override this method and display the link text in a way appropriate for the link type.
      *
-     * @param \blcLinkInstance $instance
+     * @param LinkInstance $instance
      * @param string          $context
      * @return string HTML
      */

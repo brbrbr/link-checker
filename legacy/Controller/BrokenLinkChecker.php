@@ -24,6 +24,7 @@ use Blc\Util\UpdatePlugin;
 
 
 
+
 /**
  * Broken Link Checker core
  */
@@ -93,7 +94,7 @@ class BrokenLinkChecker
      */
     public function __construct()
     {
-       
+
         static $method_called = false;
 
         if ($method_called) {
@@ -105,16 +106,16 @@ class BrokenLinkChecker
         $this->loader = BLC_PLUGIN_FILE_LEGACY;
 
         $this->load_language();
-      
+
         // Unlike the activation hook, the deactivation callback *can* be registered in this file.
 
         // because deactivation happens after this class has already been instantiated (during the 'init' action).
 
-        register_deactivation_hook(WPMUDEV_BLC_PLUGIN_FILE, array($this, 'deactivation'));
+
 
         add_action('admin_menu', array($this, 'admin_menu'));
 
-      
+
         $this->update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
         $this->is_settings_tab = $this->is_settings_tab();
 
@@ -137,6 +138,7 @@ class BrokenLinkChecker
 
         add_action('wp_ajax_blc_dismiss', array($this, 'ajax_dismiss'));
         add_action('wp_ajax_blc_undismiss', array($this, 'ajax_undismiss'));
+        add_filter('cron_schedules', array($this, 'blc_cron_schedules'));
 
         // Add/remove Cron events.
         $this->setup_cron_events();
@@ -168,6 +170,30 @@ class BrokenLinkChecker
         // Restore post date updated with the update link.
         add_filter('wp_insert_post_data', array($this, 'disable_post_date_update'), 10, 2);
     }
+
+    public function blc_cron_schedules($schedules)
+    {
+        $schedules['10min'] ??= array(
+            'interval' => 600,
+            'display'  => __('Every 10 minutes'),
+        );
+
+
+        $schedules['weekly'] ??= array(
+            'interval' => 604800, // 7 days
+            'display'  => __('Once Weekly'),
+        );
+
+
+        $schedules['bimonthly'] ??= array(
+            'interval' => 15 * 24 * 2600, // 15 days
+            'display'  => __('Twice a Month'),
+        );
+
+        return $schedules;
+    }
+
+
 
 
     /**
@@ -208,7 +234,7 @@ class BrokenLinkChecker
                 //(Re)starts the background worker thread
                 function blcDoWork() {
                     $.post(
-                        ajaxurl , {
+                        ajaxurl, {
                             'action': 'blc_work',
                             '_ajax_nonce': '<?php echo esc_js($nonce); ?>'
                         }
@@ -378,25 +404,29 @@ class BrokenLinkChecker
      *
      * @return void
      */
-    public function deactivation()
+    static public function deactivation()
     {
-        global  $blclog;
+
         // Remove our Cron events.
         wp_clear_scheduled_hook('blc_cron_check_links');
         wp_clear_scheduled_hook('blc_cron_email_notifications');
         wp_clear_scheduled_hook('blc_cron_database_maintenance');
         wp_clear_scheduled_hook('blc_corn_clear_log_file');
+
         wp_clear_scheduled_hook('blc_cron_check_news'); // Unused event.
         // Note the deactivation time for each module. This will help them
         // synch up propely if/when the plugin is reactivated.
         $moduleManager = ModuleManager::getInstance();
         $the_time      = current_time('timestamp');
+        $plugin_config = ConfigurationManager::getInstance();
         foreach ($moduleManager->get_active_modules() as $module_id => $module) {
-            $this->plugin_config->options['module_deactivated_when'][$module_id] = $the_time;
+            $plugin_config->options['module_deactivated_when'][$module_id] = $the_time;
         }
         delete_option('blc_activation_enabled');
-        $this->plugin_config->save_options();
-        $blclog->info('... deactivated');
+        delete_option('blc_installation_log');
+        $plugin_config->save_options();
+        $plugin_config->delete();
+        return '... deactivated';
     }
 
     /**
@@ -410,7 +440,7 @@ class BrokenLinkChecker
     public function database_maintenance()
     {
         ContainerHelper::cleanup_containers();
-        \blcLinkInstance::blc_cleanup_instances();
+        Utility::blc_cleanup_instances();
         Utility::blc_cleanup_links();
 
         Utility::optimize_database();
@@ -424,9 +454,10 @@ class BrokenLinkChecker
      */
     protected function icon_url()
     {
-        $data=file_get_contents(BLC_DIRECTORY_LEGACY . '/images/icon.svg');
+        $data = file_get_contents(BLC_DIRECTORY_LEGACY . '/images/icon.svg');
         return 'data:image/svg+xml;base64,' . base64_encode(
-     $data        );
+            $data
+        );
     }
     public function admin_menu()
     {
@@ -750,11 +781,11 @@ class BrokenLinkChecker
             // Logging. The plugin can log various events and results for debugging purposes.
             $this->plugin_config->options['logging_enabled'] = !empty($_POST['logging_enabled']);
             $this->plugin_config->options['cookies_enabled'] = !empty($_POST['cookies_enabled']);
-            $this->plugin_config->options['clear_log_on']    = strval($cleanPost['clear_log_on']??'');
+            $this->plugin_config->options['clear_log_on']    = strval($cleanPost['clear_log_on'] ?? '');
 
             // process the log snd cookie file option even if logging_enabled is false
             // if the value is changed and then logging_enabled is unchecked the change wouldn't be saved.
-            $log_file = self::checkAndCreateFile($cleanPost['log_file']??'');
+            $log_file = self::checkAndCreateFile($cleanPost['log_file'] ?? '');
 
             if (!$log_file) {
                 $log_file = self::checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_log_basename());
@@ -814,7 +845,7 @@ class BrokenLinkChecker
                 $overlord->resynch('wsh_status_resynch_trigger');
 
                 Utility::blc_got_unsynched_items();
-                \blcLinkInstance::blc_cleanup_instances();
+                Utility::blc_cleanup_instances();
                 Utility::blc_cleanup_links();
             }
 
@@ -2670,10 +2701,10 @@ class BrokenLinkChecker
     {
         if (!current_user_can('edit_others_posts')) {
             die(json_encode(
-                    array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                )
+            ));
         }
 
         $this->plugin_config->options['highlight_permanent_failures'] = !empty($form['highlight_permanent_failures']);
@@ -2710,7 +2741,7 @@ class BrokenLinkChecker
     function work()
     {
         global $blclog;
-      
+
         // Close the session to prevent lock-ups.
         // PHP sessions are blocking. session_start() will wait until all other scripts that are using the same session
         // are finished. As a result, a long-running script that unintentionally keeps the session open can cause
@@ -2757,7 +2788,7 @@ class BrokenLinkChecker
         // This reduces resource usage.
         // (Disable when debugging or you won't get the FirePHP output)
         if (
-          
+
             !headers_sent() &&
             (defined('DOING_AJAX') &&
                 constant('DOING_AJAX')) &&
@@ -2925,10 +2956,10 @@ class BrokenLinkChecker
                 // tested periodically to see if they're still on the exclusion list.
                 if (!$this->is_excluded($link->url)) {
                     // Check the link.
-         
+
                     $link->check(true);
                 } else {
-             
+
                     $link->last_check_attempt = time();
                     $link->save();
                 }
@@ -3256,7 +3287,7 @@ class BrokenLinkChecker
         $recheck_threshold = date('Y-m-d H:i:s', time() - $this->plugin_config->options['recheck_threshold']); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 
         $known_links     = blc_get_links(array('count_only' => true));
-        $known_instances = \blcLinkInstance::blc_get_usable_instance_count();
+        $known_instances = Utility::blc_get_usable_instance_count();
 
         $broken_links = $blc_link_query->get_filter_links('broken', array('count_only' => true));
 
@@ -3276,7 +3307,7 @@ class BrokenLinkChecker
     {
 
         check_ajax_referer('blc_work');
-    
+
         // Run the worker function
         $this->work();
         die();
@@ -3378,18 +3409,18 @@ class BrokenLinkChecker
     {
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_edit', false, false)) {
             die(json_encode(
-                    array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                )
+            ));
         }
 
         if (empty($_POST['link_id']) || empty($_POST['new_url']) || !is_numeric($_POST['link_id'])) {
             die(json_encode(
-                    array(
-                        'error' => __('Error : link_id or new_url not specified', 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __('Error : link_id or new_url not specified', 'broken-link-checker'),
+                )
+            ));
         }
 
         // Load the link
@@ -3397,10 +3428,10 @@ class BrokenLinkChecker
 
         if (!$link->valid()) {
             die(json_encode(
-                    array(
-                        'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id'])),
-                    )
-                ));
+                array(
+                    'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id'])),
+                )
+            ));
         }
 
         // Validate the new URL.
@@ -3408,10 +3439,10 @@ class BrokenLinkChecker
         $parsed  = @parse_url($new_url);
         if (!$parsed) {
             die(json_encode(
-                    array(
-                        'error' => __('Oops, the new URL is invalid!', 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __('Oops, the new URL is invalid!', 'broken-link-checker'),
+                )
+            ));
         }
 
         if (!current_user_can('unfiltered_html')) {
@@ -3420,10 +3451,10 @@ class BrokenLinkChecker
             $good_protocol_url = wp_kses_bad_protocol($new_url, $protocols);
             if ($new_url != $good_protocol_url) {
                 die(json_encode(
-                        array(
-                            'error' => __('Oops, the new URL is invalid!', 'broken-link-checker'),
-                        )
-                    ));
+                    array(
+                        'error' => __('Oops, the new URL is invalid!', 'broken-link-checker'),
+                    )
+                ));
             }
         }
 
@@ -3438,10 +3469,10 @@ class BrokenLinkChecker
         $rez = $link->edit($new_url, $new_text);
         if (false === $rez) {
             die(json_encode(
-                    array(
-                        'error' => __('An unexpected error occurred!', 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __('An unexpected error occurred!', 'broken-link-checker'),
+                )
+            ));
         } else {
             $new_link = $rez['new_link'];
             /** @var \blcLink $new_link */
@@ -3493,10 +3524,10 @@ class BrokenLinkChecker
     {
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_unlink', false, false)) {
             die(json_encode(
-                    array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                )
+            ));
         }
 
         if (isset($_POST['link_id'])) {
@@ -3505,10 +3536,10 @@ class BrokenLinkChecker
 
             if (!$link->valid()) {
                 die(json_encode(
-                        array(
-                            'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id'])),
-                        )
-                    ));
+                    array(
+                        'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id'])),
+                    )
+                ));
             }
 
             // Try and unlink it
@@ -3516,10 +3547,10 @@ class BrokenLinkChecker
 
             if (false === $rez) {
                 die(json_encode(
-                        array(
-                            'error' => __('An unexpected error occured!', 'broken-link-checker'),
-                        )
-                    ));
+                    array(
+                        'error' => __('An unexpected error occured!', 'broken-link-checker'),
+                    )
+                ));
             } else {
                 $response = array(
                     'cnt_okay'  => $rez['cnt_okay'],
@@ -3535,10 +3566,10 @@ class BrokenLinkChecker
             }
         } else {
             die(json_encode(
-                    array(
-                        'error' => __('Error : link_id not specified', 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __('Error : link_id not specified', 'broken-link-checker'),
+                )
+            ));
         }
     }
 
@@ -3546,18 +3577,18 @@ class BrokenLinkChecker
     {
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_deredirect', false, false)) {
             die(json_encode(
-                    array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                )
+            ));
         }
 
         if (!isset($_POST['link_id']) || !is_numeric($_POST['link_id'])) {
             die(json_encode(
-                    array(
-                        'error' => __('Error : link_id not specified', 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __('Error : link_id not specified', 'broken-link-checker'),
+                )
+            ));
         }
 
         $id   = intval($_POST['link_id']);
@@ -3565,20 +3596,20 @@ class BrokenLinkChecker
 
         if (!$link->valid()) {
             die(json_encode(
-                    array(
-                        'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), $id),
-                    )
-                ));
+                array(
+                    'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), $id),
+                )
+            ));
         }
 
         // The actual task is simple; it's error handling that's complicated.
         $result = $link->deredirect();
         if (is_wp_error($result)) {
             die(json_encode(
-                    array(
-                        'error' => sprintf('%s [%s]', $result->get_error_message(), $result->get_error_code()),
-                    )
-                ));
+                array(
+                    'error' => sprintf('%s [%s]', $result->get_error_message(), $result->get_error_code()),
+                )
+            ));
         }
 
         $link = $result['new_link'];
@@ -3619,18 +3650,18 @@ class BrokenLinkChecker
     {
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_recheck', false, false)) {
             die(json_encode(
-                    array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                )
+            ));
         }
 
         if (!isset($_POST['link_id']) || !is_numeric($_POST['link_id'])) {
             die(json_encode(
-                    array(
-                        'error' => __('Error : link_id not specified', 'broken-link-checker'),
-                    )
-                ));
+                array(
+                    'error' => __('Error : link_id not specified', 'broken-link-checker'),
+                )
+            ));
         }
 
         $id   = intval($_POST['link_id']);
@@ -3638,10 +3669,10 @@ class BrokenLinkChecker
 
         if (!$link->valid()) {
             die(json_encode(
-                    array(
-                        'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), $id),
-                    )
-                ));
+                array(
+                    'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), $id),
+                )
+            ));
         }
 
         $transactionManager = TransactionManager::getInstance();
@@ -4049,7 +4080,7 @@ class BrokenLinkChecker
         // Show up to $max_displayed_links broken link instances right in the email.
         $displayed = 0;
         foreach ($instances as $instance) {
-            /* @var \\blcLinkInstance $instance */
+
             $pieces = array(
                 sprintf(__('Link text : %s', 'broken-link-checker'), $instance->ui_get_link_text('email')),
                 sprintf(__('Link URL : <a href="%1$s">%2$s</a>', 'broken-link-checker'), htmlentities($instance->get_url()), Utility::truncate($instance->get_url(), 70, '')),
@@ -4105,9 +4136,9 @@ class BrokenLinkChecker
         foreach ($links as $link) {
             /* @var \blcLink $link */
             foreach ($link->get_instances() as $instance) {
-                /* @var \\blcLinkInstance $instance */
+
                 $container = $instance->get_container();
-                /** @var \Container $container */
+
                 if (empty($container) || !($container instanceof \blcAnyPostContainer)) {
                     continue;
                 }

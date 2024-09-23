@@ -12,8 +12,8 @@
  * Donate link:		  https://www.paypal.com/donate/?hosted_button_id=MV4L54K4UUF8W
  * Plugin URI:        https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * Description:       Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version. 
- * Version:           2.4.0.6556
- * Requires at least: 6.2
+ * Version:           2.4.0.6561
+ * Requires at least: 6.5
  * Requires PHP:      8.1
  * Author:            Bram Brambring
  * Author URI:        https://brambring.nl/
@@ -114,9 +114,12 @@ if (is_multisite()) {
 register_activation_hook(
 	__FILE__,
 	function () {
+	
 		require_once BLC_DIRECTORY_LEGACY . '/includes/activation.php';
 	}
 );
+
+register_deactivation_hook(WPMUDEV_BLC_PLUGIN_FILE, ['Blc\Controller\BrokenLinkChecker', 'deactivation']);
 
 function blc_on_activate_blog($blog_id)
 {

@@ -25,6 +25,7 @@
  */
 
  use Blc\Abstract\Parser;
+ use Blc\Controller\LinkInstance;
 
 
 class blcUrlField extends Parser
@@ -37,7 +38,7 @@ class blcUrlField extends Parser
      * @param string $content The entire content is expected to be a single plaintext URL.
      * @param string $base_url The base URL to use for normalizing relative URLs. If ommitted, the blog's root URL will be used.
      * @param string $default_link_text
-     * @return array An array of new \blcLinkInstance objects.
+     * @return array An array of new LinkInstance objects.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -64,7 +65,7 @@ class blcUrlField extends Parser
         }
 
         // The URL is okay, create and populate a new link instance.
-        $instance = new \blcLinkInstance();
+        $instance = new LinkInstance();
 
         $instance->set_parser($this);
         $instance->raw_url   = $raw_url;

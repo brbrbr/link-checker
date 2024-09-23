@@ -17,8 +17,8 @@
  * ! Security
  * L Language
  * N Note
-2.4.0.6556
- # Improved default settings
+2.4.0.6562
+ # Default settings & activation
 2.4.0.6555
  # improved activation on multisite
  # Resolved issue with implicit conversion from float to int in YouTube links. (from Broken Link Checker 2.4.0)

@@ -16,6 +16,7 @@
 use Blc\Util\Utility;
 use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Parser;
+use Blc\Controller\LinkInstance;
 
 class blcHTMLLink extends Parser
 {
@@ -27,7 +28,7 @@ class blcHTMLLink extends Parser
      * @param string $content The text to parse.
      * @param string $base_url The base URL to use for normalizing relative URLs. If ommitted, the blog's root URL will be used.
      * @param string $default_link_text
-     * @return array An array of new \blcLinkInstance objects. The objects will include info about the links found, but not about the corresponding container entity.
+     * @return array An array of new LinkInstance objects. The objects will include info about the links found, but not about the corresponding container entity.
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -58,7 +59,7 @@ class blcHTMLLink extends Parser
      *
      * @param array $link
      * @param array $params
-     * @return \blcLinkInstance|null
+     * @return LinkInstance|null
      */
     function parser_callback($link, $params)
     {
@@ -107,7 +108,7 @@ class blcHTMLLink extends Parser
         $text = $link['#link_text'];
 
         // The URL is okay, create and populate a new link instance.
-        $instance = new \blcLinkInstance();
+        $instance = new LinkInstance();
 
         $instance->set_parser($this);
         $instance->raw_url   = $raw_url;
@@ -245,7 +246,7 @@ class blcHTMLLink extends Parser
      * Get the link text for printing in the "Broken Links" table.
      * Sub-classes should override this method and display the link text in a way appropriate for the link type.
      *
-     * @param \blcLinkInstance $instance
+     * @param LinkInstance $instance
      * @param string          $context
      * @return string HTML
      */

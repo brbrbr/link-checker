@@ -3,6 +3,7 @@
 namespace Blc\Helper;
 
 use Blc\Controller\ModuleManager;
+use Blc\Util\Utility;
 
 /**
  * An utility class for working with link container types.

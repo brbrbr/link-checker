@@ -305,7 +305,7 @@ class BrokenLinkChecker
         wp_enqueue_script('jquery-ui-dialog');
         wp_enqueue_script('jquery-ui-tabs');
         wp_enqueue_script('jquery-cookie', plugins_url('js/jquery.cookie.js', BLC_PLUGIN_FILE_LEGACY), array(), '1.0.0', false); // Used for storing last widget states, etc.
-        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), '2.3.1.6337', false);
+        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), WPMUDEV_BLC_SCIPTS_VERSION, false);
         wp_set_script_translations('options-page-js', 'broken-link-checker');
     }
 
@@ -750,11 +750,11 @@ class BrokenLinkChecker
             // Logging. The plugin can log various events and results for debugging purposes.
             $this->plugin_config->options['logging_enabled'] = !empty($_POST['logging_enabled']);
             $this->plugin_config->options['cookies_enabled'] = !empty($_POST['cookies_enabled']);
-            $this->plugin_config->options['clear_log_on']    = strval($cleanPost['clear_log_on']);
+            $this->plugin_config->options['clear_log_on']    = strval($cleanPost['clear_log_on']??'');
 
             // process the log snd cookie file option even if logging_enabled is false
             // if the value is changed and then logging_enabled is unchecked the change wouldn't be saved.
-            $log_file = self::checkAndCreateFile($cleanPost['log_file']);
+            $log_file = self::checkAndCreateFile($cleanPost['log_file']??'');
 
             if (!$log_file) {
                 $log_file = self::checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_log_basename());

@@ -333,7 +333,7 @@ class ModuleManager
     function get_active_modules()
     {
        
-        if (isset($this->plugin_conf->options['active_modules'])) {
+        if (!empty($this->plugin_conf->options['active_modules'])) {
             return $this->plugin_conf->options['active_modules'];
         }
 

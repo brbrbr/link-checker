@@ -5,9 +5,12 @@ use Blc\Logger\CachedOptionLogger;
 use Blc\Util\ConfigurationManager;
 use Blc\Database\DatabaseUpgrader;
 use Blc\Controller\ModuleManager;
+
 if (get_option('blc_activation_enabled')) {
    return;
 }
+
+update_option('blc_activation_enabled', true);
 
 require_once BLC_DIRECTORY_LEGACY . '/init.php';
 
@@ -16,8 +19,6 @@ $plugin_config =   ConfigurationManager::getInstance();
 
 global  $wpdb, $blclog;
 $queryCnt = $wpdb->num_queries;
-
-
 
 // Completing the installation/upgrade is required for the plugin to work, so make sure
 // the script doesn't get aborted by (for example) the browser timing out.
@@ -47,8 +48,6 @@ $plugin_config->options['first_installation_timestamp'] ??= time();
 
 $plugin_config->save_options();
 $blclog->info('Installation/update begins.');
-
-
 
 
 // Load the module subsystem
@@ -138,5 +137,5 @@ $blclog->info(
 $blclog->info(sprintf('Total time: %.3f seconds', microtime(true) - $activation_start));
 $blclog->save();
 
-// for multisite support.
-update_option('blc_activation_enabled', true);
+
+

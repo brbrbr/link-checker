@@ -15,12 +15,14 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^https?://(?:([\w\d]+\.)*youtube\.[^/]+/watch\?.*v=[^/#]|youtu\.be/[^/#\?]+|(?:[\w\d]+\.)*?youtube\.[^/]+/(playlist|view_play_list)\?[^/#]{15,}?)@i
 */
+
 use Blc\Util\ConfigurationManager;
+
 class blcYouTubeChecker extends blcChecker
 {
     var $api_grace_period = 0.3; // How long to wait between YouTube API requests.
     var $last_api_request = 0;   // Timestamp of the last request.
-    
+
     function can_check($url, $parsed)
     {
         return true;
@@ -31,7 +33,7 @@ class blcYouTubeChecker extends blcChecker
         // Throttle API requests to avoid getting blocked due to quota violation.
         $delta = microtime(true) - $this->last_api_request;
         if ($delta < $this->api_grace_period) {
-            usleep(( $this->api_grace_period - $delta ) * 1000000);
+            usleep(intval($this->api_grace_period - $delta) * 1000000);
         }
 
         $result = array(
@@ -55,7 +57,7 @@ class blcYouTubeChecker extends blcChecker
         $playlist_id = null;
         if (strtolower($components['host']) === 'youtu.be') {
             $video_id = trim($components['path'], '/');
-        } elseif (( strpos($components['path'], 'watch') !== false ) && isset($query['v'])) {
+        } elseif ((strpos($components['path'], 'watch') !== false) && isset($query['v'])) {
             $video_id = $query['v'];
         } elseif ('/playlist' == $components['path']) {
             $playlist_id = $query['list'];
@@ -77,7 +79,7 @@ class blcYouTubeChecker extends blcChecker
         }
 
         $plugin_config = ConfigurationManager::getInstance();
-        $args = array( 'timeout' => $plugin_config->options['timeout'] );
+        $args = array('timeout' => $plugin_config->options['timeout']);
 
         $start                      = microtime(true);
         $response                   = wp_remote_get($api_url, $args);
@@ -127,9 +129,9 @@ class blcYouTubeChecker extends blcChecker
     protected function check_video($response, $result)
     {
         $api        = json_decode($response['body'], true);
-        $videoFound = ( 200 == $result['http_code'] ) && isset($api['items'], $api['items'][0]);
+        $videoFound = (200 == $result['http_code']) && isset($api['items'], $api['items'][0]);
 
-        if (isset($api['error']) && ( 404 !== $result['http_code'] )) { // 404's are handled later.
+        if (isset($api['error']) && (404 !== $result['http_code'])) { // 404's are handled later.
             $result['status_code'] = BLC_LINK_STATUS_WARNING;
             $result['warning']     = true;
             if (isset($api['error']['errors'])) {
@@ -184,7 +186,7 @@ class blcYouTubeChecker extends blcChecker
             $result['broken']      = true;
             $result['status_text'] = __('Playlist Restricted', 'broken-link-checker');
             $result['status_code'] = BLC_LINK_STATUS_ERROR;
-        } elseif (( 200 === $result['http_code'] ) && isset($api['items']) && is_array($api['items'])) {
+        } elseif ((200 === $result['http_code']) && isset($api['items']) && is_array($api['items'])) {
             // The playlist exists.
             if (empty($api['items'])) {
                 // An empty playlist. It is possible that all of the videos have been deleted.
@@ -196,7 +198,7 @@ class blcYouTubeChecker extends blcChecker
             } else {
                 // Treat the playlist as broken if at least one video is inaccessible.
                 foreach ($api['items'] as $video) {
-                    $is_private = isset($video['status']['privacyStatus']) && ( 'private' == $video['status']['privacyStatus'] );
+                    $is_private = isset($video['status']['privacyStatus']) && ('private' == $video['status']['privacyStatus']);
                     if ($is_private) {
                         $result['log'] .= sprintf(
                             __('Video status : %1$s%2$s', 'broken-link-checker'),
@@ -288,6 +290,6 @@ class blcYouTubeChecker extends blcChecker
     {
         $plugin_config = ConfigurationManager::getInstance();
 
-        return apply_filters('blc_youtube_api_key', $plugin_config->youtube_api_key??'');
+        return apply_filters('blc_youtube_api_key', $plugin_config->youtube_api_key ?? '');
     }
 }

@@ -17,6 +17,11 @@
  * ! Security
  * L Language
  * N Note
+2.4.0.6555
+ # improved activation on multisite
+ # Improved default settings
+ # Resolved issue with implicit conversion from float to int in YouTube links. (from Broken Link Checker 2.4.0)
+ # catch possible empty _POST fields log_file/clear_log_on
 2.3.1.6554
  - removed WPMUDEV_BLC_VERSION not needed anywhere
  # update_plugins_downloads.brokenlinkchecker.dev hook only for this plugin

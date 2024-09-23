@@ -180,25 +180,8 @@ if (defined('BLC_ACTIVE')) {
     if ($plugin_config->installation_complete) {
         if (is_admin() || wp_doing_cron()) {
             // Start up the post overlord and module- must runoutside the 'init' action
-            $blc_module_manager = ModuleManager::getInstance(
-                array(
-                    // List of modules active by default
-                    'http',             // Link checker for the HTTP(s) protocol
-                    'link',             // HTML link parser
-                    'image',            // HTML image parser
-                   // 'metadata',         // Metadata (custom field) parser
-                    'url_field',        // URL field parser
-                    'comment',          // Comment container
-                   // 'custom_field',     // Post metadata container (aka custom fields)
-                   // 'acf_field',        // Post acf container (aka advanced custom fields)
-                   // 'acf',              // acf parser
-                    'post',             // Post content container
-                    'page',             // Page content container
-                    'youtube-checker',  // Video checker using the YouTube API
-                    'youtube-iframe',   // Embedded YouTube video container
-                    'dummy',            // Dummy container used as a fallback
-                )
-            );
+            //defaults are set during activation
+            $blc_module_manager = ModuleManager::getInstance();
 
             // Let other plugins register virtual modules.
             do_action('blc_register_modules', $blc_module_manager);

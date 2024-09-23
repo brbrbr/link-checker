@@ -52,21 +52,27 @@ $blclog->info('Installation/update begins.');
 
 // Load the module subsystem
 
-$moduleManager = ModuleManager::getInstance();
+$moduleManager = ModuleManager::getInstance(
+    [
+        // List of modules active by default
+        'http',             // Link checker for the HTTP(s) protocol
+        'link',             // HTML link parser
+        'image',            // HTML image parser
+       // 'metadata',         // Metadata (custom field) parser
+        'url_field',        // URL field parser
+        'comment',          // Comment container
+       // 'custom_field',     // Post metadata container (aka custom fields)
+       // 'acf_field',        // Post acf container (aka advanced custom fields)
+       // 'acf',              // acf parser
+        'post',             // Post content container
+        'page',             // Page content container
+        'youtube-checker',  // Video checker using the YouTube API
+        'youtube-iframe',   // Embedded YouTube video container
+        'dummy',            // Dummy container used as a fallback
+   ]
 
-// If upgrading, activate/deactivate custom field and comment containers based on old ver. settings
-if (isset($plugin_config->options['check_comment_links'])) {
-    if (!$plugin_config->options['check_comment_links']) {
-        $moduleManager->deactivate('comment');
-    }
-    unset($plugin_config->options['check_comment_links']);
-}
-if (empty($plugin_config->options['custom_fields'])) {
-    $moduleManager->deactivate('custom_field');
-}
-if (empty($plugin_config->options['acf_fields'])) {
-    $moduleManager->deactivate('acf_field');
-}
+);
+
 
 // Prepare the database.
 $blclog->info('Upgrading the database...');

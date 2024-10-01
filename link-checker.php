@@ -12,7 +12,7 @@
  * Donate link:		  https://www.paypal.com/donate/?hosted_button_id=MV4L54K4UUF8W
  * Plugin URI:        https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * Description:       Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version. 
- * Version:           2.4.0.6561
+ * Version:           2.4.1.6561
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Author:            Bram Brambring
@@ -49,39 +49,26 @@ defined('WPINC') || die;
 
 
 
-// Define WPMUDEV_BLC_PLUGIN_FILE.
-if (! defined('WPMUDEV_BLC_PLUGIN_FILE')) {
-	define('WPMUDEV_BLC_PLUGIN_FILE', __FILE__);
+
+if (! defined('BLC_PLUGIN_FILE')) {
+	define('BLC_PLUGIN_FILE', __FILE__);
 }
 
-// Plugin basename.
-if (! defined('WPMUDEV_BLC_BASENAME')) {
-	define('WPMUDEV_BLC_BASENAME', plugin_basename(__FILE__));
+
+if (! defined('BLC_BASENAME')) {
+	define('BLC_BASENAME', plugin_basename(BLC_PLUGIN_FILE));
 }
 
-// Plugin directory.
-if (! defined('WPMUDEV_BLC_DIR')) {
-	define('WPMUDEV_BLC_DIR', plugin_dir_path(__FILE__));
-}
-
-// Plugin url.
-if (! defined('WPMUDEV_BLC_URL')) {
-	define('WPMUDEV_BLC_URL', plugin_dir_url(__FILE__));
-}
-// Assets url.
-if (! defined('WPMUDEV_BLC_ASSETS_URL')) {
-	define('WPMUDEV_BLC_ASSETS_URL', plugin_dir_url(__FILE__) . trailingslashit('assets'));
-}
 
 // Scripts version.
-if (! defined('WPMUDEV_BLC_SCIPTS_VERSION')) {
-	define('WPMUDEV_BLC_SCIPTS_VERSION', '6559');
+if (! defined('BLC_SCIPTS_VERSION')) {
+	define('BLC_SCIPTS_VERSION', '6559');
 }
 
 
 // Path to the plugin's legacy directory.
 if (! defined('BLC_DIRECTORY_LEGACY')) {
-	define('BLC_DIRECTORY_LEGACY', WPMUDEV_BLC_DIR . '/legacy');
+	define('BLC_DIRECTORY_LEGACY', plugin_dir_path(BLC_PLUGIN_FILE) . '/legacy');
 }
 
 // Path to legacy file.
@@ -119,7 +106,7 @@ register_activation_hook(
 	}
 );
 
-register_deactivation_hook(WPMUDEV_BLC_PLUGIN_FILE, ['Blc\Controller\BrokenLinkChecker', 'deactivation']);
+register_deactivation_hook(BLC_PLUGIN_FILE, ['Blc\Controller\BrokenLinkChecker', 'deactivation']);
 
 function blc_on_activate_blog($blog_id)
 {
@@ -128,7 +115,7 @@ function blc_on_activate_blog($blog_id)
 		$blog_id = (int) $blog_id->blog_id;
 	}
 
-	if (is_plugin_active_for_network(WPMUDEV_BLC_BASENAME)) {
+	if (is_plugin_active_for_network(BLC_BASENAME)) {
 		switch_to_blog($blog_id);
 		require BLC_DIRECTORY_LEGACY . '/includes/activation.php';
 		restore_current_blog();

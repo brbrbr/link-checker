@@ -116,7 +116,7 @@ class BrokenLinkChecker
         add_action('admin_menu', array($this, 'admin_menu'));
 
 
-        $this->update = new UpdatePlugin(WPMUDEV_BLC_PLUGIN_FILE);
+        $this->update = new UpdatePlugin(BLC_PLUGIN_FILE);
         $this->is_settings_tab = $this->is_settings_tab();
 
         // Load jQuery on Dashboard pages (probably redundant as WP already does that).
@@ -331,7 +331,7 @@ class BrokenLinkChecker
         wp_enqueue_script('jquery-ui-dialog');
         wp_enqueue_script('jquery-ui-tabs');
         wp_enqueue_script('jquery-cookie', plugins_url('js/jquery.cookie.js', BLC_PLUGIN_FILE_LEGACY), array(), '1.0.0', false); // Used for storing last widget states, etc.
-        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), WPMUDEV_BLC_SCIPTS_VERSION, false);
+        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), BLC_SCIPTS_VERSION, false);
         wp_set_script_translations('options-page-js', 'broken-link-checker');
     }
 
@@ -508,7 +508,7 @@ class BrokenLinkChecker
     public function plugin_action_links($links, $file)
     {
 
-        if ($file === WPMUDEV_BLC_BASENAME) {
+        if ($file === BLC_BASENAME) {
             // $links[] = "<a href='admin.php?page=link-checker-settings'>" . __( 'Settings' ) . '</a>';
             $links[] = "<a href='admin.php?page=blc_local&local-settings=true'>" . __('Settings') . '</a>';
             $links[] = "<a href='admin.php?page=blc_local'>" . __('Broken Links') . '</a>';
@@ -561,8 +561,7 @@ class BrokenLinkChecker
         </div>
 
     <?php
-        // Following Admin Notice is going to be removed.
-        // \WPMUDEV_BLC\App\Admin_Notices\Local\View::instance()->render();
+     
     }
 
     /**
@@ -2551,8 +2550,8 @@ class BrokenLinkChecker
      */
     function links_page_css()
     {
-        wp_enqueue_style('blc-links-page', plugins_url('css/links-page.css', $this->loader), array(), WPMUDEV_BLC_SCIPTS_VERSION);
-        wp_enqueue_style('blc_local_style', plugins_url('css/style-local-nav.css', $this->loader), array(), WPMUDEV_BLC_SCIPTS_VERSION);
+        wp_enqueue_style('blc-links-page', plugins_url('css/links-page.css', $this->loader), array(), BLC_SCIPTS_VERSION);
+        wp_enqueue_style('blc_local_style', plugins_url('css/style-local-nav.css', $this->loader), array(), BLC_SCIPTS_VERSION);
     }
 
     /**

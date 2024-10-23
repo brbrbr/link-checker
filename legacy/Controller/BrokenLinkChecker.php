@@ -79,7 +79,7 @@ class BrokenLinkChecker
         'sedo.com'          => " `final_url` like '%sedo.com%'",
         'buy-domain'        => "`final_url` like '%buy-domain%'",
         '(sedo)parking'     => "`final_url` REGEXP( 'https?://www?[0-9]')",
-        'dan.com'           => "`log` like '%dan.com%'",
+        'dan.com'           => "`log` like '%.dan.com%'",
         'domein.link'       => "`final_url` like '%domein.link%'",
         'gopremium.net'     => "`final_url` like '%gopremium.net%'",
         'koopdomeinnaam.nl' => "`final_url` like '%koopdomeinnaam.nl%'",

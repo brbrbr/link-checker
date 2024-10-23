@@ -26,7 +26,7 @@ function broken_link_checker_acquire_lock_name_example($name)
  * if you  manipulate  them wrong you will break the checker :)
  *
  */
-apply_filters('broken-link-checker-curl-options', $options);
+apply_filters('link-checker-curl-options', $options);
 
 /**
  * Retry with GET after HEAD request
@@ -34,7 +34,7 @@ apply_filters('broken-link-checker-curl-options', $options);
  * not all servers response well to a HEAD request, so in case of a broken (or redirecting) link
  * the request is re-tried with a proper GET request.
  */
-apply_filters('broken-link-checker-retry-with-get-after-head', true, $result);
+apply_filters('link-checker-retry-with-get-after-head', true, $result);
 
 apply_filters('broken-link-checker-curl-before-close', $ch, $content, $this->last_headers);
 apply_filters('blc_youtube_api_key', $conf->options['youtube_api_key']);

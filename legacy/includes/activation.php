@@ -13,7 +13,7 @@ require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
 
 
-error_log("\n\n\n==========\n\n", 3, '/tmp/s.log');
+
 if (get_option('blc_activation_enabled')) {
     return;
 }
@@ -131,7 +131,7 @@ $blclog->info(sprintf('--- Total: %.3f seconds', microtime(true) - $upgrade_star
 // modules to create and update synch. records for all new/modified posts and other items.
 $blclog->info('Notifying modules...');
 $notification_start = microtime(true);
-error_log("\n\n\n=====PRE =====\n\n", 3, '/tmp/s.log');
+
 $moduleManager = ModuleManager::getInstance(
     [
         // List of modules active by default
@@ -152,7 +152,7 @@ $moduleManager = ModuleManager::getInstance(
 // Let other plugins register virtual modules.
 do_action('blc_register_modules', $moduleManager);
 
-error_log("\n\n\n=====POST =====\n\n", 3, '/tmp/s.log');
+
 $moduleManager->plugin_activated();
 
 // Remove invalid DB entries
@@ -211,5 +211,3 @@ $blclog->info(
 );
 $blclog->info(sprintf('Total time: %.3f seconds', microtime(true) - $activation_start));
 $blclog->save();
-
-error_log(var_export($plugin_config, true), 3, '/tmp/s.log');

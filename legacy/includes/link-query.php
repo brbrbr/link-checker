@@ -398,11 +398,11 @@ class blcLinkQuery
                 $exists[] = "instances.container_id = $s_container_id";
             }
         }
-
+     
         // Link type can match either the the parser_type or the container_type.
         if (! empty($params['s_link_type'])) {
             $s_link_type = esc_sql($params['s_link_type']);
-            $exists[]    = "instances.parser_type = '$s_link_type' OR instances.container_type='$s_link_type'";
+            $exists[]    = "(instances.parser_type = '$s_link_type' OR instances.container_type='$s_link_type')";
         }
 
         // HTTP code - the user can provide a list of HTTP response codes and code ranges.
@@ -525,6 +525,7 @@ class blcLinkQuery
         if (! is_array($params)) {
             $params = array();
         }
+ 
 
         $defaults = array(
             'offset'               => 0,
@@ -556,9 +557,10 @@ class blcLinkQuery
         if (\count($criteria['exists']) > 0 || stripos($where_expr, 'instances') !== false) {
             $existsWhere   = $criteria['exists'];
             $existsWhere[] = 'links.link_id = instances.link_id';
-            $exists        = "SELECT * FROM {$wpdb->prefix}blc_instances as instances WHERE (" . join(' AND ', $existsWhere) . ')';
+            $exists        = "SELECT * FROM {$wpdb->prefix}blc_instances as instances WHERE " . join(' AND ', $existsWhere) . '';
             $where_expr   .= " AND EXISTS ( $exists ) ";
         }
+      
 
         // Optional sorting
         if (! empty($criteria['order_exprs'])) {
@@ -589,7 +591,7 @@ class blcLinkQuery
 			  WHERE
 				 $where_expr
 			   {$order_clause}"; // Note: would be a lot faster without GROUP BY
-
+ 
         // Add the LIMIT clause
         if ($params['max_results'] || $params['offset']) {
             $q .= sprintf("\nLIMIT %d, %d", $params['offset'], $params['max_results']);

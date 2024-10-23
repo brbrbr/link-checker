@@ -53,9 +53,6 @@ class ModuleManager
         static $instance = null;
         if (is_null($instance)) {
             $instance = new ModuleManager();
-            error_log("\nModulemanager::getInstance\n",3,'/tmp/s.log');
-        //    debug_print_backtrace();exit;
-            error_log(var_export($default_active_modules,true)."\n",3,'/tmp/s.log');
             $instance->init($default_active_modules);
         }
         return $instance;

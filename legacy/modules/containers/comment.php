@@ -189,14 +189,14 @@ class blcComment extends Container
     {
         // Display a comment icon.
         if ('comment_author_url' == $container_field) {
-            $image = 'font-awesome/font-awesome-user.png';
+            $image =  '/images/font-awesome/font-awesome-user.png';
         } else {
-            $image = 'font-awesome/font-awesome-comment-alt.png';
+            $image = '/images/font-awesome/font-awesome-comment-alt.png';
         }
 
         $image = sprintf(
-            '<img src="%s/broken-link-checker/legacy/images/%s" class="blc-small-image" title="%3$s" alt="%3$s"> ',
-            WP_PLUGIN_URL,
+            '<img src="%s/legacy/images/%s" class="blc-small-image" title="%3$s" alt="%3$s"> ',
+            esc_attr(plugins_url($image, BLC_PLUGIN_FILE_LEGACY)),
             $image,
             __('Comment', 'broken-link-checker')
         );

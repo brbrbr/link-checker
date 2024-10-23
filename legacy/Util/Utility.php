@@ -396,7 +396,10 @@ class Utility
         }
         $parsed  = parse_url($url);
         // Encode only the host.
-        $host = $parsed['host'];
+        $host = $parsed['host']??'';
+        if ( ! $host ) {
+            return $url;
+        }
         if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
             $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
         }

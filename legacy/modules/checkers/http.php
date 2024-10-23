@@ -90,6 +90,9 @@ class blcHttpChecker extends Checker
  */
 class blcHttpCheckerBase extends Checker
 {
+    protected $headers = [];
+    protected $acceptLanguage         = 'en-US,en;q=0.5';
+    protected $userAgent              = "";
     function clean_url($url)
     {
         $url = html_entity_decode($url);
@@ -182,18 +185,94 @@ class blcHttpCheckerBase extends Checker
     protected function loadSignature($browser)
     {
         $file      = BLC_DIRECTORY_LEGACY . "/signatures/{$browser}.json";
-        $signature = array();
+        $signature = [];
         if (is_file($file)) {
             $signature = json_decode(file_get_contents($file), true);
         }
 
+        if (!$signature) {
+            $signature = $this->loadSignature('firefox');
+        }
+
         return $signature;
+    }
+
+    protected function setSignature($signature)
+    {
+
+        $signature = $this->loadSignature($signature);
+        if (isset($signature['Accept-Language'])) {
+            $this->acceptLanguage = $signature['Accept-Language'];
+        }
+        $this->userAgent = $signature['userAgent'] ?? 'Wordpress Link Checker';
+        $this->__set('headers', $signature['headers'] ?? []); //takes care of spliting
+        return $signature;
+    }
+
+
+
+    public function removeHeader(string $header)
+    {
+        $key           = strtok($header, ':');
+        $partialString = "$key:";
+        $this->headers =  array_filter($this->headers, function ($item) use ($partialString) {
+            return stripos($item, $partialString) !== 0;
+        });
+    }
+
+    public function replaceHeader(string $header)
+    {
+        $this->removeHeader($header);
+        $this->addHeader($header);
+    }
+    public function addHeader(string $header)
+    {
+        $this->headers[] = $header;
+    }
+    public function clearHeaders()
+    {
+        $this->headers = [];
+    }
+
+
+    public function __set($name, $value)
+    {
+        $name = strtolower($name);
+
+        switch ($name) {
+            case 'language':
+                if (\is_string($value)) {
+                    $this->acceptLanguage = $value;
+                }
+                break;
+            case 'headers':
+                switch (true) {
+                    case \is_array($value):
+                        $this->headers = $value;
+                        break;
+                    case \is_object($value):
+                        $this->headers = (array)$value;
+                        break;
+                    case \is_string($value):
+                        $this->headers = preg_split($this->splitOption, $value);
+                        break;
+                }
+                break;
+            case 'signature':
+                if (\is_string($value)) {
+                    $this->setSignature($value);
+                }
+
+                break;
+            default:
+        }
     }
 }
 
 class blcCurlHttp extends blcHttpCheckerBase
 {
     var $last_headers = '';
+  
 
     function check($url, $use_get = false)
     {
@@ -214,18 +293,20 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         // Get the BLC configuration. It's used below to set the right timeout values and such.
         $conf = $this->plugin_conf->options;
-
+        
+       
 
 
         // Init curl.
         $ch = curl_init();
 
-
-        $signature = $this->loadSignature('firefox');
+        $this->clearHeaders();
+        $this->setSignature('firefox');
         // Masquerade as a recent version of Firefox
-        $ua                                 = $signature['userAgent'] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.0';
-        $request_headers                    = $signature['headers'] ?? array();
-        $request_headers['Accept-Language'] = 'Accept-Language: ' . $this->getLanguage();
+        $this->replaceHeader('Accept-Language: ' . $this->getLanguage());
+        // Override the Expect header to prevent cURL from confusing itself in its own stupidity.
+        // Link: http://the-stickman.com/web-development/php-and-curl-disabling-100-continue-header/
+        $this->replaceHeader('Expect:');
 
         $options = array(
             CURLOPT_ENCODING       => '',
@@ -233,7 +314,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             CURLOPT_RETURNTRANSFER => true,
             // Set maximum redirects
             CURLOPT_MAXREDIRS      => 5,
-            CURLOPT_USERAGENT      => $ua,
+            CURLOPT_USERAGENT      => $this->userAgent,
             // Set the timeout
             CURLOPT_TIMEOUT        => $conf['timeout'],
             CURLOPT_CONNECTTIMEOUT => $conf['timeout'],
@@ -253,13 +334,13 @@ class blcCurlHttp extends blcHttpCheckerBase
 
 
         if ($conf['cookies_enabled']) {
-            $options[CURLOPT_COOKIEJAR]  = $conf['cookie_jar'];
-            $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
+           $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
+           $options[CURLOPT_COOKIEJAR]  = $conf['cookie_jar'];
         }
 
         // Close the connection after the request (disables keep-alive). The plugin rate-limits requests,
         // so it's likely we'd overrun the keep-alive timeout anyway.
-        $request_headers['Connection'] = 'Connection: close';
+        $this->addHeader('Connection: close');
 
         // Redirects don't work when safe mode or open_basedir is enabled.
         if (!Utility::is_open_basedir()) {
@@ -286,7 +367,6 @@ class blcCurlHttp extends blcHttpCheckerBase
             }
         }
 
-
         // Make CURL return a valid result even if it gets a 404 or other error.
 
         $nobody = !$use_get; // Whether to send a HEAD request (the default) or a GET request
@@ -295,6 +375,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             // Require valid ssl
             $options[CURLOPT_SSL_VERIFYPEER] = true;
             $options[CURLOPT_SSL_VERIFYHOST] = 2;
+            $options[CURLOPT_SSLVERSION]= CURL_SSLVERSION_MAX_TLSv1_3 | CURL_SSLVERSION_TLSv1_3;
         }
 
         if ($nobody) {
@@ -302,16 +383,18 @@ class blcCurlHttp extends blcHttpCheckerBase
             $options[CURLOPT_NOBODY] = true;
         } else {
             // If we must use GET at least limit the amount of downloaded data.
-            $request_headers['Range'] = 'Range: bytes=0-2048'; // 2 KB
+            $this->addHeader('Range: bytes=0-2048'); // 2 KB
         }
 
         // Set request headers.
-        if (!empty($request_headers)) {
-            $options[CURLOPT_HTTPHEADER] = $request_headers;
+        $this->headers=array_filter($this->headers);
+
+        if (!empty(  $this->headers)) {
+            $options[CURLOPT_HTTPHEADER] =   $this->headers;
         }
 
         // Apply filter for additional options
-        curl_setopt_array($ch, apply_filters('broken-link-checker-curl-options', $options));
+        curl_setopt_array($ch, apply_filters('link-checker-curl-options', $options));
 
         // Execute the request
         $start_time                = microtime(true);
@@ -332,6 +415,11 @@ class blcCurlHttp extends blcHttpCheckerBase
         // It is useful to see how long the plugin waited for the server to respond before assuming it timed out.
         if (empty($result['request_duration'])) {
             $result['request_duration'] = $measured_request_duration;
+        }
+
+        if (isset($info['request_header'])) {
+            $log .= "Request headers\n" . str_repeat('=', 16) . "\n";
+            $log .= htmlentities($info['request_header']);
         }
 
         // Determine if the link counts as "broken"
@@ -393,8 +481,11 @@ class blcCurlHttp extends blcHttpCheckerBase
                 isset($result['status_text']) ? $result['status_text'] : 'N/A'
             )
         );
+        $blclog->info(
+        $info['request_header']
+        );
 
-        $retryGet = apply_filters('broken-link-checker-retry-with-get-after-head', true, $result);
+        $retryGet = apply_filters('link-checker-retry-with-get-after-head', true, $result);
 
         if ($nobody && !$result['timeout'] && $retryGet && ($result['broken'] || $result['redirect_count'] == 1)) {
             // The site in question might be expecting GET instead of HEAD, so lets retry the request
@@ -426,11 +517,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         $log .= "Response headers\n" . str_repeat('=', 16) . "\n";
         $log .= htmlentities($this->last_headers);
 
-        if (isset($info['request_header'])) {
-            $log .= "Request headers\n" . str_repeat('=', 16) . "\n";
-            $log .= htmlentities($info['request_header']);
-        }
-
+       
         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
         if (!$nobody && (false !== $content) && $result['broken']) {
@@ -448,7 +535,6 @@ class blcCurlHttp extends blcHttpCheckerBase
         if (!empty($result['broken']) && !empty($result['timeout'])) {
             $log .= "\n(" . __("Most likely the connection timed out or the domain doesn't exist.", 'broken-link-checker') . ')';
         }
-
         $result['log'] = $log;
 
         // The hash should contain info about all pieces of data that pertain to determining if the
@@ -479,9 +565,6 @@ class blcWPHttp extends blcHttpCheckerBase
 {
     function check($url)
     {
-
-        // $url = $this->clean_url( $url );
-        // Note : Snoopy doesn't work too well with HTTPS URLs.
 
         $result = array(
             'broken'  => false,

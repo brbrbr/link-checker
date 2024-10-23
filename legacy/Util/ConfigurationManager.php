@@ -63,11 +63,12 @@ final class ConfigurationManager
     {
 
         $new_options = get_option($this->name);
-
+        
         // Decode JSON (if applicable).
         if (is_string($new_options) && !empty($new_options)) {
             $new_options = json_decode($new_options, true);
         }
+      
 
         if (!is_array($new_options)) {
             $this->options = $this->defaults;
@@ -89,6 +90,7 @@ final class ConfigurationManager
      */
     public function save_options()
     {
+    
         return update_option($this->name, json_encode($this->options));
     }
 

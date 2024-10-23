@@ -105,7 +105,10 @@ class BrokenLinkChecker
         $this->plugin_config = ConfigurationManager::getInstance();
         $this->loader = BLC_PLUGIN_FILE_LEGACY;
 
+
+        //the constructor is called in the in 'init' hook. That's after after_setup_theme 
         $this->load_language();
+
 
         // Unlike the activation hook, the deactivation callback *can* be registered in this file.
 
@@ -279,9 +282,8 @@ class BrokenLinkChecker
      */
     public function dashboard_widget()
     {
-        if ($this->plugin_config->options['show_widget_count_bubble']) {
-            $this->addStatusAssets();
-        }
+
+        $this->addStatusAssets();
     ?>
         <p id="wsblc_activity_box" class="blc_full_status"><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
 
@@ -561,7 +563,7 @@ class BrokenLinkChecker
         </div>
 
     <?php
-     
+
     }
 
     /**
@@ -796,6 +798,7 @@ class BrokenLinkChecker
             }
 
             $cookie_jar = self::checkAndCreateFile($cleanPost['cookie_jar']);
+         
 
             if (!$cookie_jar) {
                 $cookie_jar = self::checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_cookie_basename());
@@ -810,6 +813,7 @@ class BrokenLinkChecker
             // Make settings that affect our Cron events take effect immediately
             $this->setup_cron_events();
             $this->plugin_config->save_options();
+         
 
             /*
                 If the list of custom fields was modified then we MUST resynchronize or
@@ -859,6 +863,8 @@ class BrokenLinkChecker
                     'message',
                 )
             );
+        
+            //exit;
             wp_redirect(
                 add_query_arg(
                     array(
@@ -867,6 +873,8 @@ class BrokenLinkChecker
                     $base_url
                 )
             );
+
+
         }
 
         // Show a confirmation message when settings are saved.
@@ -906,6 +914,8 @@ class BrokenLinkChecker
             'how'      => __('Protocols & APIs', 'broken-link-checker'),
             'advanced' => __('Advanced', 'broken-link-checker'),
         );
+
+
 
     ?>
 
@@ -1035,30 +1045,20 @@ class BrokenLinkChecker
                                     <td>
                                         <p style="margin-top: 0;">
                                             <label for='show_link_count_bubble'>
-                                                <input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php
-                                                                                                                                    if ($this->plugin_config->options['show_link_count_bubble']) {
-                                                                                                                                        echo ' checked="checked"';
-                                                                                                                                    }
-                                                                                                                                    ?> />
+
+                                                <input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php checked($this->plugin_config->options['show_link_count_bubble'] ?? true);?> />
                                                 <?php _e('Show a bubble with number of found broken links in the menu bar', 'broken-link-checker'); ?>
                                             </label><br />
                                         </p>
 
                                         <p>
                                             <label for='show_widget_count_bubble'>
-                                                <input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php
-                                                                                                                                        if ($this->plugin_config->options['show_widget_count_bubble']) {
-                                                                                                                                            echo ' checked="checked"';
-                                                                                                                                        }
-                                                                                                                                        ?> />
+                                                <input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php checked($this->plugin_config->options['show_widget_count_bubble'] ?? true);?> />
                                                 <?php _e('Show a bubble with number of found broken links in the dashboard widget', 'broken-link-checker'); ?>
                                             </label><br />
                                         </p>
                                     </td>
                                 </tr>
-
-
-
 
 
 
@@ -3788,7 +3788,7 @@ class BrokenLinkChecker
         $show_widget = current_user_can($this->plugin_config->get('dashboard_widget_capability', 'edit_others_posts'));
         if (function_exists('wp_add_dashboard_widget') && $show_widget) {
             $title = __('Broken Link Checker', 'broken-link-checker');
-            if ($this->plugin_config->options['show_widget_count_bubble']) {
+            if ($this->plugin_config->options['show_widget_count_bubble'] ?? true) {
                 $title .= ' <span class="blc-broken-count"></span>';
             }
 

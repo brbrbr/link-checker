@@ -66,6 +66,7 @@ if (! defined('BLC_SCIPTS_VERSION')) {
 }
 
 
+
 // Path to the plugin's legacy directory.
 if (! defined('BLC_DIRECTORY_LEGACY')) {
 	define('BLC_DIRECTORY_LEGACY', plugin_dir_path(BLC_PLUGIN_FILE) . '/legacy');

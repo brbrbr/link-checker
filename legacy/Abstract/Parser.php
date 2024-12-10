@@ -1,4 +1,5 @@
 <?php
+
 /**
  * A base class for parsers.
  *
@@ -38,7 +39,7 @@ abstract class Parser extends Module
      *
      * @return void
      */
-    function init()
+    public function init()
     {
         parent::init();
         $this->parser_type = $this->module_id;
@@ -49,7 +50,7 @@ abstract class Parser extends Module
      *
      * @return void
      */
-    function activated()
+    public function activated()
     {
         parent::activated();
         $this->resynch_relevant_containers();
@@ -58,7 +59,7 @@ abstract class Parser extends Module
     /**
      * Called when BLC is activated.
      */
-    function plugin_activated()
+    public function plugin_activated()
     {
         // Intentionally do nothing. BLC can not parse containers while it's inactive, so we can be
         // pretty sure that there are no already-parsed containers that need to be resynchronized.
@@ -72,7 +73,7 @@ abstract class Parser extends Module
      * @param bool $only_return If true, just return the list of formats and container types without actually modifying any synch. records.
      * @return void|array Either nothing or an array in the form [ [format1=>timestamp1, ...], [container_type1=>timestamp1, ...] ]
      */
-    function resynch_relevant_containers($only_return = false)
+    public  function resynch_relevant_containers($only_return = false)
     {
         global $blclog;
         $blclog->log(sprintf('...... Parser "%s" is marking relevant items as unsynched', $this->module_id));
@@ -81,16 +82,16 @@ abstract class Parser extends Module
 
         $formats = array();
         foreach ($this->supported_formats as $format) {
-            $formats[ $format ] = $last_deactivated;
+            $formats[$format] = $last_deactivated;
         }
 
         $container_types = array();
         foreach ($this->supported_containers as $container_type) {
-            $container_types[ $container_type ] = $last_deactivated;
+            $container_types[$container_type] = $last_deactivated;
         }
 
         if ($only_return) {
-            return array( $formats, $container_types );
+            return array($formats, $container_types);
         } else {
             ContainerHelper::mark_as_unsynched_where($formats, $container_types);
         }
@@ -104,7 +105,7 @@ abstract class Parser extends Module
      * @param string $default_link_text
      * @return array An array of new inkInstance objects. The objects will include info about the links found, but not about the corresponding container entity.
      */
-    function parse($content, $base_url = '', $default_link_text = '')
+    public  function parse($content, $base_url = '', $default_link_text = '')
     {
         return array();
     }
@@ -121,7 +122,7 @@ abstract class Parser extends Module
      * keys : 'content' - the modified content, and 'raw_url' - the new raw, non-normalized URL used
      * for the modified links. In most cases, the returned raw_url will be equal to the new_url.
      */
-    function edit($content, $new_url, $old_url, $old_raw_url)
+    public    function edit($content, $new_url, $old_url, $old_raw_url)
     {
         return new WP_Error(
             'not_implemented',
@@ -137,7 +138,7 @@ abstract class Parser extends Module
      * @param string $raw_url The raw, non-normalized version of the URL to look for. Optional.
      * @return string Input string with all matching links removed.
      */
-    function unlink($content, $url, $raw_url)
+    public function unlink($content, $url, $raw_url)
     {
         return new WP_Error(
             'not_implemented',
@@ -153,7 +154,7 @@ abstract class Parser extends Module
      * @param string          $context
      * @return string HTML
      */
-    function ui_get_link_text($instance, $context = 'display')
+    public function ui_get_link_text($instance, $context = 'display')
     {
         return $instance->link_text;
     }
@@ -189,7 +190,7 @@ abstract class Parser extends Module
      * @param string $base_url Base URL. If omitted, the blog's root URL will be used.
      * @return string
      */
-    function relative2absolute($url, $base_url = '')
+    public function relative2absolute($url, $base_url = '')
     {
         if (empty($base_url)) {
             $base_url = home_url();
@@ -206,11 +207,11 @@ abstract class Parser extends Module
 
         // If the relative URL is just a query string or anchor, simply attach it to the absolute URL and return
         $first_char = substr($url, 0, 1);
-        if (( '?' == $first_char ) || ( '#' == $first_char )) {
+        if (('?' == $first_char) || ('#' == $first_char)) {
             return $base_url . $url;
         }
 
-        $parts = ( parse_url($base_url) );
+        $parts = (parse_url($base_url));
 
         // Protocol-relative URLs start with "//". We just need to prepend the right protocol.
         if ('//' === substr($url, 0, 2)) {
@@ -293,7 +294,7 @@ abstract class Parser extends Module
      * @param mixed    $extra If the optional $extra param. is supplied, it will be passed as the second parameter to the function $callback.
      * @return array An array of all detected links after applying $callback to each of them.
      */
-    function map($content, $callback, $extra = null)
+    public function map($content, $callback, $extra = null)
     {
         return array();
     }
@@ -323,10 +324,8 @@ abstract class Parser extends Module
      * @param mixed    $extra If supplied, $extra will be passed as the second parameter to the function $callback.
      * @return string The modified input string.
      */
-    function multi_edit($content, $callback, $extra = null)
+    public function multi_edit($content, $callback, $extra = null)
     {
         return $content; // No-op
     }
 }
-
-

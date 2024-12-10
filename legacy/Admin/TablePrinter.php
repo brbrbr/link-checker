@@ -536,7 +536,7 @@ class TablePrinter
     {
         ?>
         <div class="blc-detail-container">
-            <div class="blc-detail-block" style="float: left; width: 49%;">
+            <div class="blc-detail-block">
                 <ol style='list-style-type: none;'>
                     <?php if (! empty($link->post_date)) { ?>
                         <li><strong><?php _e('Post published on', 'broken-link-checker'); ?>:</strong>
@@ -625,7 +625,7 @@ class TablePrinter
                 </ol>
             </div>
 
-            <div class="blc-detail-block" style="float: right; width: 50%;">
+            <div class="blc-detail-block">
                 <ol style='list-style-type: none;'>
                     <li><strong><?php _e('Log', 'broken-link-checker'); ?>:</strong>
                         <span class='blc_log'>

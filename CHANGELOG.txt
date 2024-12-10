@@ -17,6 +17,11 @@
  * ! Security
  * L Language
  * N Note
+__DEPLOY_VERSION__
+ ^ Reworked broken link css and rel=nofollow to get 'all' links independt of container. Since links might be in a template-part (wp_block)
+2.4.1.6961
+ ^ Tweaked the SSL settings. Some hosts (WAF's) expect the 'browser' to use a specified SSL version.
+ # REmoved the annoying white spaces in <textarea> elements
 2.4.1.6712
  ^ Improved server signature
  # Corrected display of status in widget if menu-bubble is disabled

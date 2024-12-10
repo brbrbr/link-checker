@@ -10,12 +10,14 @@ tr.blc-link-details {
 }
 
 .blc-detail-container {
-    display: block;
-    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .blc-detail-block {
-    width: 50%;
+   min-width:600px;
+   max-width:100%;
+   flex: 1 1 0px;
 }
 
 /* Column headers */

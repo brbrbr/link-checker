@@ -49,7 +49,7 @@ abstract class Logger
 
 	function error($message, $object = null)
 	{
-		$this->log($message, $object, BLC_LEVEL_ERROR);
+		$this->log($message, $object, self::BLC_LEVEL_ERROR);
 	}
 
 	function get_messages($min_level = self::BLC_LEVEL_DEBUG)

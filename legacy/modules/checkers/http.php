@@ -39,7 +39,7 @@ class blcHttpChecker extends Checker
             $conf->get('http_throttle_period', 15),
             $conf->get('http_throttle_min_interval', 2)
         );
-        if (function_exists('curl_init') || is_callable('curl_init')) {
+        if (apply_filters('wpmudev_blc_local_use_curl', function_exists('curl_init') || is_callable('curl_init'))) {
             $this->implementation = new blcCurlHttp(
                 $this->module_id,
                 $this->cached_header,
@@ -272,29 +272,48 @@ class blcHttpCheckerBase extends Checker
 class blcCurlHttp extends blcHttpCheckerBase
 {
     var $last_headers = '';
-  
+
 
     function check($url, $use_get = false)
     {
         global $blclog;
+        $blclog->info( __CLASS__ . ' Checking link', $url );
 
+        $log                = '';
         $this->last_headers = '';
+        $url                = wp_http_validate_url( $url );
+      
 
-        $url = $this->clean_url($url);
-        $blclog->debug(__CLASS__ . ' Clean URL:', $url);
+        if ( empty( $url ) ) {
+                $blclog->error( __CLASS__ . ' Invalid URL:', $url );
 
-        $result  = array(
+                $result = array(
+                        'warning'     => true,
+                        'log'         => "Invalid URL.\nURL fails to pass validation for safe use in the HTTP API.",
+                        'status_text' => __( 'Invalid URL', 'broken-link-checker' ),
+                        'error_code'  => 'invalid_url',
+                        'status_code' => BLC_LINK_STATUS_WARNING,
+                );
+
+                return $result;
+        }
+
+        $url = wp_kses_bad_protocol( $this->clean_url( $url ), array( 'http', 'https', 'ssl' ) );
+
+        $result             = array(
             'broken'  => false,
             'timeout' => false,
             'warning' => false,
-        );
-        $log     = '';
+    );
+
+        $blclog->debug( __CLASS__ . ' Clean URL:', $url );
+
         $options = array();
 
         // Get the BLC configuration. It's used below to set the right timeout values and such.
         $conf = $this->plugin_conf->options;
-        
-       
+
+
 
 
         // Init curl.
@@ -334,8 +353,8 @@ class blcCurlHttp extends blcHttpCheckerBase
 
 
         if ($conf['cookies_enabled']) {
-           $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
-           $options[CURLOPT_COOKIEJAR]  = $conf['cookie_jar'];
+            $options[CURLOPT_COOKIEFILE] = $conf['cookie_jar'];
+            $options[CURLOPT_COOKIEJAR]  = $conf['cookie_jar'];
         }
 
         // Close the connection after the request (disables keep-alive). The plugin rate-limits requests,
@@ -371,11 +390,11 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         $nobody = !$use_get; // Whether to send a HEAD request (the default) or a GET request
 
-        if ('https' === strtolower(parse_url($url, PHP_URL_SCHEME))) {
+        if ('https' === strtolower(parse_url($url, PHP_URL_SCHEME)??'')) {
             // Require valid ssl
             $options[CURLOPT_SSL_VERIFYPEER] = true;
             $options[CURLOPT_SSL_VERIFYHOST] = 2;
-            $options[CURLOPT_SSLVERSION]= CURL_SSLVERSION_MAX_TLSv1_3 | CURL_SSLVERSION_TLSv1_3;
+            $options[CURLOPT_SSLVERSION] = CURL_SSLVERSION_TLSv1_2 | CURL_SSLVERSION_MAX_DEFAULT; // | CURL_SSLVERSION_MAX_DEFAULT;
         }
 
         if ($nobody) {
@@ -387,9 +406,9 @@ class blcCurlHttp extends blcHttpCheckerBase
         }
 
         // Set request headers.
-        $this->headers=array_filter($this->headers);
+        $this->headers = array_filter($this->headers);
 
-        if (!empty(  $this->headers)) {
+        if (!empty($this->headers)) {
             $options[CURLOPT_HTTPHEADER] =   $this->headers;
         }
 
@@ -482,7 +501,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             )
         );
         $blclog->info(
-        $info['request_header']
+            $info['request_header']
         );
 
         $retryGet = apply_filters('link-checker-retry-with-get-after-head', true, $result);
@@ -517,7 +536,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         $log .= "Response headers\n" . str_repeat('=', 16) . "\n";
         $log .= htmlentities($this->last_headers);
 
-       
+
         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
         if (!$nobody && (false !== $content) && $result['broken']) {
@@ -591,9 +610,10 @@ class blcWPHttp extends blcHttpCheckerBase
             $result['timeout']   = true;
             $result['message']   = $request->get_error_message();
         } else {
-            $http_resp           = $request['http_response'];
-            $result['http_code'] = $http_resp->get_status(); //$request['response']['status']; // HTTP status code
-            $result['message']   = $request['response']['message'];
+          //  $http_resp           = wp_remote_retrieve_body( $request ); from broken-link-checker - failty or unused??
+            $result['http_code'] = wp_remote_retrieve_response_code( $request ); // HTTP status code
+            $result['message']   = wp_remote_retrieve_response_message( $request );
+
         }
 
         // Build the log

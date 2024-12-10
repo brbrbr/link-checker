@@ -27,22 +27,12 @@ class blcPostTypeOverlord
     var $resynch_already_done = false;
 
     /**
-     * Class "constructor". Can't use an actual constructor due to how PHP4 handles object references.
-     *
-     * Specifically, this class is a singleton. The function needs to pass $this to several other
-     * functions (to set up hooks), which will store the reference for later use. However, it appears
-     * that in PHP4 the actual value of $this is thrown away right after the constructor finishes, and
-     * `new` returns a *copy* of $this. The result is that getInstance() won't be returning a ref.
-     * to the same object as is used for hook callbacks. And that's horrible.
-     *
-     * Sets up hooks that monitor added/modified/deleted posts and registers
-     * virtual modules for all post types.
      *
      * @return void
      */
-    function init()
+    final private function __construct()
     {
-      
+    
         $this->plugin_conf = ConfigurationManager::getInstance();
 
         if (isset($this->plugin_conf->options['enabled_post_statuses'])) {
@@ -79,16 +69,20 @@ class blcPostTypeOverlord
         // We also treat post trashing/untrashing as delete/save.
         add_action('trashed_post', array( &$this, 'post_deleted' ));
         add_action('untrash_post', array( &$this, 'post_saved' ));
-
-        // Highlight and nofollow broken links in posts & pages
-        if ($this->plugin_conf->options['mark_broken_links'] || $this->plugin_conf->options['nofollow_broken_links']) {
-            add_filter('the_content', array( &$this, 'hook_the_content' ));
-            if ($this->plugin_conf->options['mark_broken_links'] && ! empty($this->plugin_conf->options['broken_link_css'])) {
-                add_action('wp_head', array( &$this, 'hook_wp_head' ));
-            }
-        }
+    
+    
     }
 
+
+    public function __clone()/*: void*/
+    {
+        throw new \Error('Class singleton cant be cloned. (' . \get_class($this) . ' )');
+    }
+
+    public function __wakeup(): void
+    {
+        throw new \Error('Class singleton cant be serialized. (' . \get_class($this) . ' )');
+    }
     /**
      * Retrieve an instance of the overlord class.
      *
@@ -99,7 +93,7 @@ class blcPostTypeOverlord
         static $instance = null;
         if (is_null($instance)) {
             $instance = new blcPostTypeOverlord();
-            $instance->init();
+         
         }
         return $instance;
     }
@@ -353,109 +347,10 @@ class blcPostTypeOverlord
         $this->resynch_already_done = true;
     }
 
-    /**
-     * Hook for the 'the_content' filter. Scans the current post and adds the 'broken_link'
-     * CSS class to all links that are known to be broken. Currently works only on standard
-     * HTML links (i.e. the '<a href=...' kind).
-     *
-     * @param string $content Post content
-     * @return string Modified post content.
-     */
-    function hook_the_content($content)
-    {
-        global $post, $wpdb; /** @var wpdb $wpdb */
-        if (empty($post) || ! in_array($post->post_type, $this->enabled_post_types)) {
-            return $content;
-        }
 
-        // Retrieve info about all occurrences of broken links in the current post
-        $q     = "
-			SELECT instances.raw_url
-			FROM {$wpdb->prefix}blc_instances AS instances JOIN {$wpdb->prefix}blc_links AS links
-				ON instances.link_id = links.link_id
-			WHERE
-				instances.container_type = %s
-				AND instances.container_id = %d
-				AND links.broken = 1
-				AND parser_type = 'link'
-		";
-        $q     = $wpdb->prepare($q, $post->post_type, $post->ID);
-        $links = $wpdb->get_results($q, ARRAY_A);
 
-        // Return the content unmodified if there are no broken links in this post.
-        if (empty($links) || ! is_array($links)) {
-            return $content;
-        }
 
-        // Put the broken link URLs in an array
-        $broken_link_urls = array();
-        foreach ($links as $link) {
-            $broken_link_urls[] = $link['raw_url'];
-        }
 
-        // Iterate over all HTML links and modify the broken ones
-        $parser = ModuleManager::getInstance()->get_parser('link');
-        if ($parser) {
-            $content = $parser->multi_edit($content, array( &$this, 'highlight_broken_link' ), $broken_link_urls);
-        }
-
-        return $content;
-    }
-
-    /**
-     * Analyse a link and add 'broken_link' CSS class if the link is broken.
-     *
-     * @see blcHtmlLink::multi_edit()
-     *
-     * @param array $link Associative array of link data.
-     * @param array $broken_link_urls List of broken link URLs present in the current post.
-     * @return array|string The modified link
-     */
-    function highlight_broken_link($link, $broken_link_urls)
-    {
-        if (! in_array($link['href'], $broken_link_urls)) {
-            // Link not broken = return the original link tag
-            return $link['#raw'];
-        }
-
-        // Add 'broken_link' to the 'class' attribute (unless already present).
-        if ($this->plugin_conf->options['mark_broken_links']) {
-            if (isset($link['class'])) {
-                $classes = explode(' ', $link['class']);
-                if (! in_array('broken_link', $classes)) {
-                    $classes[]     = 'broken_link';
-                    $link['class'] = implode(' ', $classes);
-                }
-            } else {
-                $link['class'] = 'broken_link';
-            }
-        }
-
-        // Nofollow the link (unless it's already nofollow'ed)
-        if ($this->plugin_conf->options['nofollow_broken_links']) {
-            if (isset($link['rel'])) {
-                $relations = explode(' ', $link['rel']);
-                if (! in_array('nofollow', $relations)) {
-                    $relations[] = 'nofollow';
-                    $link['rel'] = implode(' ', $relations);
-                }
-            } else {
-                $link['rel'] = 'nofollow';
-            }
-        }
-
-        return $link;
-    }
-
-    /**
-     * A hook for the 'wp_head' action. Outputs the user-defined broken link CSS.
-     *
-     * @return void
-     */
-    function hook_wp_head()
-    {
-        echo '<style type="text/css">', $this->plugin_conf->options['broken_link_css'], '</style>';
-    }
 }
 
 
@@ -631,7 +526,9 @@ class blcAnyPostContainer extends Container
         $post                        = $this->wrapped_object;
         $post->blc_post_modified     = $post->post_modified;
         $post->blc_post_modified_gmt = $post->post_modified_gmt;
+        kses_remove_filters();
         $post_id                     = wp_update_post($post, true);
+        kses_init_filters();
 
         if (is_wp_error($post_id)) {
             return $post_id;

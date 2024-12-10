@@ -30,12 +30,7 @@ use Blc\Util\UpdatePlugin;
  */
 class BrokenLinkChecker
 {
-    /**
-     * Plugin configuration.
-     *
-     * @var object
-     */
-    protected $conf;
+
 
     /**
      * Loader script path.
@@ -83,8 +78,6 @@ class BrokenLinkChecker
         'domein.link'       => "`final_url` like '%domein.link%'",
         'gopremium.net'     => "`final_url` like '%gopremium.net%'",
         'koopdomeinnaam.nl' => "`final_url` like '%koopdomeinnaam.nl%'",
-
-
     );
     protected $plugin_config;
 
@@ -101,6 +94,17 @@ class BrokenLinkChecker
             return;
         }
         $method_called = true;
+
+        // Start up the post overlord and module- must runoutside the 'init' action
+        //defaults are set during activation
+        $moduleManager = ModuleManager::getInstance();
+        \blcPostTypeOverlord::getInstance();
+        // Let other plugins register virtual modules.
+        do_action('blc_register_modules', $moduleManager);
+        // Load the modules that want to be executed in all contexts
+        if (is_object($moduleManager) && method_exists($moduleManager, 'load_modules')) {
+            $moduleManager->load_modules();
+        }
 
         $this->plugin_config = ConfigurationManager::getInstance();
         $this->loader = BLC_PLUGIN_FILE_LEGACY;
@@ -269,7 +273,7 @@ class BrokenLinkChecker
             return false;
         }
         foreach ($this->plugin_config->options['exclusion_list'] as $excluded_word) {
-            if (stristr($url, $excluded_word)) {
+            if (str_contains($url, $excluded_word)) {
                 return true;
             }
         }
@@ -798,7 +802,7 @@ class BrokenLinkChecker
             }
 
             $cookie_jar = self::checkAndCreateFile($cleanPost['cookie_jar']);
-         
+
 
             if (!$cookie_jar) {
                 $cookie_jar = self::checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_cookie_basename());
@@ -813,7 +817,7 @@ class BrokenLinkChecker
             // Make settings that affect our Cron events take effect immediately
             $this->setup_cron_events();
             $this->plugin_config->save_options();
-         
+
 
             /*
                 If the list of custom fields was modified then we MUST resynchronize or
@@ -863,7 +867,7 @@ class BrokenLinkChecker
                     'message',
                 )
             );
-        
+
             //exit;
             wp_redirect(
                 add_query_arg(
@@ -873,8 +877,6 @@ class BrokenLinkChecker
                     $base_url
                 )
             );
-
-
         }
 
         // Show a confirmation message when settings are saved.
@@ -1046,14 +1048,14 @@ class BrokenLinkChecker
                                         <p style="margin-top: 0;">
                                             <label for='show_link_count_bubble'>
 
-                                                <input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php checked($this->plugin_config->options['show_link_count_bubble'] ?? true);?> />
+                                                <input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php checked($this->plugin_config->options['show_link_count_bubble'] ?? true); ?> />
                                                 <?php _e('Show a bubble with number of found broken links in the menu bar', 'broken-link-checker'); ?>
                                             </label><br />
                                         </p>
 
                                         <p>
                                             <label for='show_widget_count_bubble'>
-                                                <input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php checked($this->plugin_config->options['show_widget_count_bubble'] ?? true);?> />
+                                                <input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php checked($this->plugin_config->options['show_widget_count_bubble'] ?? true); ?> />
                                                 <?php _e('Show a bubble with number of found broken links in the dashboard widget', 'broken-link-checker'); ?>
                                             </label><br />
                                         </p>
@@ -1101,13 +1103,15 @@ class BrokenLinkChecker
                                                                             echo ' class="hidden"';
                                                                         }
                                                                         ?>>
-                                            <textarea name="broken_link_css" id="broken_link_css" cols='45' rows='4'>
+
                                             <?php
                                             if (isset($this->plugin_config->options['broken_link_css']) && current_user_can('unfiltered_html')) {
-                                                echo $this->plugin_config->options['broken_link_css'];
+                                                $textarea = $this->plugin_config->options['broken_link_css'];
+                                            } else {
+                                                $textarea = '';
                                             }
                                             ?>
-                    </textarea>
+                                            <textarea name="broken_link_css" id="broken_link_css" cols='45' rows='4'><?= $textarea ?></textarea>
                                             <p class="description">
                                                 <?php
                                                 printf(
@@ -1141,13 +1145,14 @@ class BrokenLinkChecker
                                                                             echo ' class="hidden"';
                                                                         }
                                                                         ?>>
-                                            <textarea name="removed_link_css" id="removed_link_css" cols='45' rows='4'>
                                             <?php
                                             if (isset($this->plugin_config->options['removed_link_css']) && current_user_can('unfiltered_html')) {
-                                                echo $this->plugin_config->options['removed_link_css'];
+                                                $textarea = $this->plugin_config->options['removed_link_css'];
+                                            } else {
+                                                $textarea = '';
                                             }
                                             ?>
-                    </textarea>
+                                            <textarea name="removed_link_css" id="removed_link_css" cols='45' rows='4'><?= $textarea ?></textarea>
 
                                             <p class="description">
                                                 <?php
@@ -1300,13 +1305,14 @@ class BrokenLinkChecker
                                     <th scope="row"><?php _e('Exclusion list', 'broken-link-checker'); ?></th>
                                     <td><?php _e("Don't check links where the URL contains any of these words (one per line) :", 'broken-link-checker'); ?>
                                         <br />
-                                        <textarea name="exclusion_list" id="exclusion_list" cols='45' rows='4'>
                                         <?php
                                         if (isset($this->plugin_config->options['exclusion_list'])) {
-                                            echo esc_textarea(implode("\n", $this->plugin_config->options['exclusion_list']));
+                                            $textarea = esc_textarea(implode("\n", $this->plugin_config->options['exclusion_list']));
+                                        } else {
+                                            $textarea = '';
                                         }
                                         ?>
-                                                                                                                </textarea>
+                                        <textarea name="exclusion_list" id="exclusion_list" cols='45' rows='4'><?= $textarea ?></textarea>
 
                                     </td>
                                 </tr>
@@ -3092,9 +3098,9 @@ class BrokenLinkChecker
 
         // Only check links that have at least one valid instance (i.e. an instance exists and
         // it corresponds to one of the currently loaded container/parser types).
-        $manager           = ModuleManager::getInstance();
-        $loaded_containers = $manager->get_escaped_ids('container');
-        $loaded_parsers    = $manager->get_escaped_ids('parser');
+        $moduleManager           = ModuleManager::getInstance();
+        $loaded_containers = $moduleManager->get_escaped_ids('container');
+        $loaded_parsers    = $moduleManager->get_escaped_ids('parser');
 
         // Note : This is a slow query, but AFAIK there is no way to speed it up.
         // I could put an index on last_check_attempt, but that value is almost

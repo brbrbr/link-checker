@@ -184,8 +184,6 @@ class BrokenLinkCheckerSite
         return $content;
     }
 
-
-
     public   function blc_print_removed_link_css()
     {
         echo '<style type="text/css">', $this->plugin_config->options['removed_link_css'], '</style>';

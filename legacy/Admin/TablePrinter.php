@@ -8,6 +8,7 @@
  */
 namespace Blc\Admin;
 
+use Blc\Controller\Link;
 use Blc\Util\Utility;
 use Blc\Util\ConfigurationManager;
 
@@ -390,7 +391,7 @@ class TablePrinter
     /**
      * Print the link row.
      *
-     * @param blcLink $link The link to display.
+     * @param Link $link The link to display.
      * @param array   $layout List of columns to output.
      * @param array   $visible_columns List of visible columns.
      * @param integer $rownum Table row number.
@@ -510,7 +511,7 @@ class TablePrinter
      *
      * @uses TablePrinter::details_row_contents()
      *
-     * @param blcLink $link The link to display.
+     * @param Link $link The link to display.
      * @param array   $visible_columns List of visible columns.
      * @param integer $rownum Table row number.
      * @return void
@@ -529,7 +530,7 @@ class TablePrinter
     /**
      * Print the contents of the details row for a specific link.
      *
-     * @param blcLink $link
+     * @param Link $link
      * @return void
      */
     public static function details_row_contents($link)
@@ -650,7 +651,7 @@ class TablePrinter
     }
 
     /**
-     * @param blcLink           $link
+     * @param Link           $link
      * @param LinkInstance[] $instances
      */
     function column_status($link, $instances)
@@ -709,7 +710,7 @@ class TablePrinter
 
 
     /**
-     * @param blcLink $link
+     * @param Link $link
      */
     function column_new_url($link)
     {
@@ -797,7 +798,7 @@ class TablePrinter
     }
 
     /**
-     * @param blcLink           $link
+     * @param Link           $link
      * @param LinkInstance[] $instances
      */
     function column_used_in($link, $instances)
@@ -822,7 +823,7 @@ class TablePrinter
     }
 
     /**
-     * @param blcLink           $link
+     * @param Link           $link
      * @param LinkInstance[] $instances
      */
     function column_new_link_text($link, $instances)

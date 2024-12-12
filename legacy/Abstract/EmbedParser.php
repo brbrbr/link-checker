@@ -7,7 +7,9 @@
 namespace Blc\Abstract;
 use Blc\Util\Utility;
 use Blc\Abstract\Parser;
+use Blc\Controller\Link;
 use Blc\Controller\LinkInstance;
+
 
 /**
  * Base class for embedded video/audio parsers.
@@ -60,7 +62,7 @@ abstract class EmbedParser extends Parser
             $instance->raw_url   = $embed['embed_code'];
             $instance->link_text = '[' . $this->short_title . ']';
 
-            $link_obj = new blcLink($url); // Creates or loads the link
+            $link_obj = new Link($url); // Creates or loads the link
             $instance->set_link($link_obj);
 
             $instances[] = $instance;

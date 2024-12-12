@@ -1,8 +1,9 @@
 <?php
+namespace Blc\Controller;
 
 use Blc\Util\ConfigurationManager;
 use Blc\Util\Utility;
-use Blc\Controller\ModuleManager;
+
 
 /**
  * Class for querying, sorting and filtering links.
@@ -11,7 +12,7 @@ use Blc\Controller\ModuleManager;
  * @package Broken Link Checker
  * @access public
  */
-class blcLinkQuery
+class LinkQuery
 {
     var $native_filters;
     var $search_filter;
@@ -122,7 +123,7 @@ class blcLinkQuery
     {
         static $instance = null;
         if (is_null($instance)) {
-            $instance = new blcLinkQuery();
+            $instance = new LinkQuery();
         }
         return $instance;
     }
@@ -243,7 +244,7 @@ class blcLinkQuery
      * Get link search parameters from the specified filter.
      *
      * @param array $filter
-     * @return array An array of parameters suitable for use with blcLinkQuery::get_links()
+     * @return array An array of parameters suitable for use with LinkQuery::get_links()
      */
     function get_search_params($filter = null)
     {
@@ -285,7 +286,7 @@ class blcLinkQuery
     /**
      * A helper method for parsing a list of search criteria and generating the parts of the SQL query.
      *
-     * @see blcLinkQuery::get_links()
+     * @see LinkQuery::get_links()
      *
      * @param array $params An array of search criteria.
      * @return array 'where_exprs' - an array of search expressions, 'join_instances' - whether joining the instance table is required.
@@ -510,9 +511,9 @@ class blcLinkQuery
     }
 
     /**
-     * blcLinkQuery::get_links()
+     * LinkQuery::get_links()
      *
-     * @see blc_get_links()
+     * @see      LinkQuery::blc_get_links()
      *
      * @param array $params
      * @return array|int
@@ -606,7 +607,7 @@ class blcLinkQuery
         $links = array();
 
         foreach ($results as $result) {
-            $link                    = new blcLink($result);
+            $link                    = new Link($result);
             $links[ $link->link_id ] = $link;
         }
 
@@ -661,11 +662,11 @@ class blcLinkQuery
     /**
      * Retrieve a list of links matching a filter.
      *
-     * @uses blcLinkQuery::get_links()
+     * @uses LinkQuery::get_links()
      *
      * @param string|array $filter Either a filter ID or an array containing filter data.
-     * @param array        $extra_params Optional extra criteria that will override those set by the filter. See blc_get_links() for details.
-     * @return array|int Either an array of blcLink objects, or an integer indicating the number of links that match the filter.
+     * @param array        $extra_params Optional extra criteria that will override those set by the filter. See      LinkQuery::blc_get_links() for details.
+     * @return array|int Either an array of Link objects, or an integer indicating the number of links that match the filter.
      */
     function get_filter_links($filter, $extra_params = null)
     {
@@ -755,7 +756,7 @@ class blcLinkQuery
      *  'per_page'      - How many results per page the method tried to retrieve.
      *  'page'          - Which page of results was retrieved.
      *  'max_pages'     - The total number of results pages, calculated using the above 'per_page' value.
-     *  'links'         - An array of retrieved links (blcLink objects).
+     *  'links'         - An array of retrieved links (Link objects).
      *  'search_params' - An associative array of the current search parameters as extracted either from the current URL or the filter itself.
      *  'is_broken_filter' - TRUE if the filter was set to retrieve only broken links, FALSE otherwise.
      *
@@ -847,9 +848,8 @@ class blcLinkQuery
 
         return $current_filter;
     }
-}
 
-/**
+    /**
  * Retrieve a list of links matching some criteria.
  *
  * The function argument should be an associative array describing the criteria.
@@ -875,13 +875,16 @@ class blcLinkQuery
  *
  * All keys are optional.
  *
- * @uses blcLinkQuery::get_links();
+ * @uses LinkQuery::get_links();
  *
  * @param array $params
- * @return int|blcLink[] Either an array of blcLink objects, or the number of results for the query.
+ * @return int|Link[] Either an array of Link objects, or the number of results for the query.
  */
-function blc_get_links($params = null)
-{
-    $instance = blcLinkQuery::getInstance();
-    return $instance->get_links($params);
+    
+    public static function blc_get_links($params) {
+    return     LinkQuery::getInstance()->blc_get_links($params);
+    }
 }
+
+
+

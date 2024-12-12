@@ -4,12 +4,11 @@
  * @author W-Shadow
  * @copyright 2010
  */
+namespace Blc\Controller;
 
 use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
-use Blc\Controller\BrokenLinkChecker;
 use Blc\Util\ConfigurationManager;
-use Blc\Controller\LinkInstance;
 use Blc\Helper\CheckerHelper;
 
 
@@ -19,7 +18,7 @@ define('BLC_LINK_STATUS_INFO', 'info');
 define('BLC_LINK_STATUS_WARNING', 'warning');
 define('BLC_LINK_STATUS_ERROR', 'error');
 
-class blcLink
+class Link
 {
     // Object state
     var $is_new = false;
@@ -182,13 +181,10 @@ class blcLink
         }
     }
 
-    function blcLink($arg = null)
-    {
-        $this->__construct($arg);
-    }
+
 
     /**
-     * blcLink::set_values()
+     * Link::set_values()
      * Set the internal values to the ones provided in an array (doesn't sanitize).
      *
      * @param array $arr An associative array of values
@@ -307,7 +303,7 @@ class blcLink
         // Filter the returned array to leave only the restricted set of keys that we're interested in.
         $results = array_intersect_key($results, $defaults);
 
-        // The result hash is special - see blcLink::status_changed()
+        // The result hash is special - see Link::status_changed()
         $new_result_hash = $results['result_hash'];
         unset($results['result_hash']);
 
@@ -529,7 +525,7 @@ class blcLink
     }
 
     /**
-     * blcLink::save()
+     * Link::save()
      * Save link data to DB.
      *
      * @return bool True if saved successfully, false otherwise.
@@ -737,7 +733,7 @@ class blcLink
     }
 
     /**
-     * blcLink::edit()
+     * Link::edit()
      * Edit all instances of the link by changing the URL.
      *
      * Here's how this really works : create a new link with the new URL. Then edit()
@@ -749,7 +745,7 @@ class blcLink
      * @param string $new_text Optional.
      * @return array An associative array with these keys :
      *   new_link_id - the database ID of the new link.
-     *   new_link - the new link (an instance of blcLink).
+     *   new_link - the new link (an instance of Link).
      *   cnt_okay - the number of successfully edited link instances.
      *   cnt_error - the number of instances that caused problems.
      *   errors - an array of WP_Error objects corresponding to the failed edits.
@@ -783,7 +779,7 @@ class blcLink
         }
 
         // Load or create a link with the URL = $new_url
-        $new_link = new blcLink($new_url);
+        $new_link = new Link($new_url);
         $was_new  = $new_link->is_new;
         if ($new_link->is_new) {
             // FB::log($new_link, 'Saving a new link');
@@ -854,7 +850,7 @@ class blcLink
      * Edit all of of this link's instances and replace the URL with the URL that it redirects to.
      * This method does nothing if the link isn't a redirect.
      *
-     * @see blcLink::edit()
+     * @see Link::edit()
      *
      * @return array|WP_Error
      */

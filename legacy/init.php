@@ -90,9 +90,8 @@ if (defined('BLC_ACTIVE')) {
             }
             if (is_admin() || wp_doing_cron()) {
                 require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
-                require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
-                require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-                require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
+       
+    
                 new BrokenLinkChecker();
             } else {
                 new BrokenLinkCheckerSite();

@@ -6,13 +6,7 @@ use Blc\Util\ConfigurationManager;
 use Blc\Database\DatabaseUpgrader;
 use Blc\Controller\ModuleManager;
 
-
 require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/links.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-require_once BLC_DIRECTORY_LEGACY . '/includes/link-query.php';
-
-
 
 if (get_option('blc_activation_enabled')) {
     return;

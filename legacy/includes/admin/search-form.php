@@ -1,6 +1,6 @@
 <?php
 use Blc\Controller\ModuleManager;
-
+use Blc\Controller\LinkQuery;
 
 
     $search_params = $current_filter['search_params'];
@@ -61,7 +61,7 @@ use Blc\Controller\ModuleManager;
             $search_subfilter = 'all';
         }
 
-        $linkQuery = blcLinkQuery::getInstance();
+        $linkQuery = LinkQuery::getInstance();
         foreach ($linkQuery->native_filters as $filter => $data) {
             $selected = ( $search_subfilter == $filter ) ? ' selected="selected"' : '';
             printf('<option value="%s"%s>%s</option>', $filter, $selected, $data['name']);

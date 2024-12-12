@@ -21,7 +21,7 @@ use Blc\Logger\CachedOptionLogger;
 use Blc\Controller\ModuleManager;
 use Blc\Helper\ContainerHelper;
 use Blc\Util\UpdatePlugin;
-
+use Blc\Controller\LinkQuery;
 
 
 
@@ -1862,7 +1862,7 @@ class BrokenLinkChecker
         global $wpdb;
         /* @var wpdb $wpdb */
 
-        $blc_link_query = \blcLinkQuery::getInstance();
+        $blc_link_query = LinkQuery::getInstance();
 
         // Cull invalid and missing modules so that we don't get dummy links/instances showing up.
         $moduleManager = ModuleManager::getInstance();
@@ -2035,7 +2035,7 @@ class BrokenLinkChecker
         } else {
             // Save the new filter
             $name           = strip_tags(strval($_POST['name']));
-            $blc_link_query = \blcLinkQuery::getInstance();
+            $blc_link_query = LinkQuery::getInstance();
             $filter_id      = $blc_link_query->create_custom_filter($name, $_POST['params']);
 
             if ($filter_id) {
@@ -2071,7 +2071,7 @@ class BrokenLinkChecker
             $msg_class = 'error';
         } else {
             // Try to delete the filter
-            $blc_link_query = \blcLinkQuery::getInstance();
+            $blc_link_query = LinkQuery::getInstance();
             if ($blc_link_query->delete_custom_filter($_POST['filter_id'])) {
                 // Success
                 $message = __('Filter deleted', 'broken-link-checker');
@@ -2103,7 +2103,7 @@ class BrokenLinkChecker
 
         if (count($selected_links) > 0) {
             // Fetch all the selected links
-            $links = blc_get_links(
+            $links = LinkQuery::blc_get_links(
                 array(
                     'link_ids' => $selected_links,
                     'purpose'  => BLC_FOR_EDITING,
@@ -2200,7 +2200,7 @@ class BrokenLinkChecker
             }
 
             // Fetch all the selected links
-            $links = blc_get_links(
+            $links = LinkQuery::blc_get_links(
                 array(
                     'link_ids' => $selected_links,
                     'purpose'  => BLC_FOR_EDITING,
@@ -2313,7 +2313,7 @@ class BrokenLinkChecker
 
         if (count($selected_links) > 0) {
             // Fetch all the selected links
-            $links = blc_get_links(
+            $links = LinkQuery::blc_get_links(
                 array(
                     'link_ids' => $selected_links,
                     'purpose'  => BLC_FOR_EDITING,
@@ -2432,7 +2432,7 @@ class BrokenLinkChecker
             $transactionManager->start();
             foreach ($selected_links as $link_id) {
                 // Load the link
-                $link = new \blcLink(intval($link_id));
+                $link = new Link(intval($link_id));
 
                 // Skip links that don't actually exist
                 if (!$link->valid()) {
@@ -2503,7 +2503,7 @@ class BrokenLinkChecker
             $transactionManager->start();
             foreach ($selected_links as $link_id) {
                 // Load the link
-                $link = new \blcLink(intval($link_id));
+                $link = new Link(intval($link_id));
 
                 // Skip links that don't actually exist
                 if (!$link->valid()) {
@@ -3078,7 +3078,7 @@ class BrokenLinkChecker
      * @param integer $max_results The maximum number of links to return. Defaults to 0 = no limit.
      * @param bool    $count_only If true, only the number of found links will be returned, not the links themselves.
      *
-     * @return int|\blcLink[]
+     * @return int|Link[]
      */
     function get_links_to_check($max_results = 0, $count_only = false)
     {
@@ -3156,10 +3156,10 @@ class BrokenLinkChecker
             return array();
         }
 
-        // Instantiate \blcLink objects for all fetched links
+        // Instantiate Link objects for all fetched links
         $links = array();
         foreach ($link_data as $data) {
-            $links[] = new \blcLink($data);
+            $links[] = new Link($data);
         }
 
         return $links;
@@ -3286,12 +3286,13 @@ class BrokenLinkChecker
      */
     function get_status()
     {
-        $blc_link_query = \blcLinkQuery::getInstance();
+        $blc_link_query = LinkQuery::getInstance();
+   
 
         $check_threshold   = date('Y-m-d H:i:s', strtotime('-' . $this->plugin_config->options['check_threshold'] . ' hours')); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
         $recheck_threshold = date('Y-m-d H:i:s', time() - $this->plugin_config->options['recheck_threshold']); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 
-        $known_links     = blc_get_links(array('count_only' => true));
+        $known_links     = $blc_link_query->get_links(array('count_only' => true));
         $known_instances = Utility::blc_get_usable_instance_count();
 
         $broken_links = $blc_link_query->get_filter_links('broken', array('count_only' => true));
@@ -3331,7 +3332,7 @@ class BrokenLinkChecker
 
         if (isset($_POST['link_id'])) {
             // Load the link
-            $link = new \blcLink(intval($_POST['link_id']));
+            $link = new Link(intval($_POST['link_id']));
 
             if (!$link->valid()) {
                 printf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id']));
@@ -3381,7 +3382,7 @@ class BrokenLinkChecker
 
         if (isset($_POST['link_id'])) {
             // Load the link
-            $link = new \blcLink(intval($_POST['link_id']));
+            $link = new Link(intval($_POST['link_id']));
 
             if (!$link->valid()) {
                 printf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id']));
@@ -3429,7 +3430,7 @@ class BrokenLinkChecker
         }
 
         // Load the link
-        $link = new \blcLink(intval($_POST['link_id']));
+        $link = new Link(intval($_POST['link_id']));
 
         if (!$link->valid()) {
             die(json_encode(
@@ -3480,7 +3481,7 @@ class BrokenLinkChecker
             ));
         } else {
             $new_link = $rez['new_link'];
-            /** @var \blcLink $new_link */
+            /** @var Link $new_link */
             $new_status   = $new_link->analyse_status();
             $ui_link_text = null;
             if (isset($new_text)) {
@@ -3537,7 +3538,7 @@ class BrokenLinkChecker
 
         if (isset($_POST['link_id'])) {
             // Load the link
-            $link = new \blcLink(intval($_POST['link_id']));
+            $link = new Link(intval($_POST['link_id']));
 
             if (!$link->valid()) {
                 die(json_encode(
@@ -3597,7 +3598,7 @@ class BrokenLinkChecker
         }
 
         $id   = intval($_POST['link_id']);
-        $link = new \blcLink($id);
+        $link = new Link($id);
 
         if (!$link->valid()) {
             die(json_encode(
@@ -3618,7 +3619,7 @@ class BrokenLinkChecker
         }
 
         $link = $result['new_link'];
-        /** @var \blcLink $link */
+        /** @var Link $link */
 
         $status   = $link->analyse_status();
         $response = array(
@@ -3670,7 +3671,7 @@ class BrokenLinkChecker
         }
 
         $id   = intval($_POST['link_id']);
-        $link = new \blcLink($id);
+        $link = new Link($id);
 
         if (!$link->valid()) {
             die(json_encode(
@@ -3730,7 +3731,7 @@ class BrokenLinkChecker
         }
 
         // Load the link.
-        $link = new \blcLink($link_id);
+        $link = new Link($link_id);
 
         if (!$link->is_new) {
             // FB::info($link, 'Link loaded');
@@ -3992,7 +3993,7 @@ class BrokenLinkChecker
         // Find links that have been detected as broken since the last sent notification.
         $last_notification = date('Y-m-d H:i:s', $this->plugin_config->options['last_notification_sent']); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
         $where             = $wpdb->prepare('( first_failure >= %s )', $last_notification);
-        $links             = blc_get_links(
+        $links             =      LinkQuery::blc_get_links(
             array(
                 's_filter'             => 'broken',
                 'where_expr'           => $where,
@@ -4047,7 +4048,7 @@ class BrokenLinkChecker
 
         $instances = array();
         foreach ($links as $link) {
-            /* @var \blcLink $link */
+            /* @var Link $link */
             $instances = array_merge($instances, $link->get_instances());
         }
         $body .= $this->build_instance_list_for_email($instances);
@@ -4139,7 +4140,7 @@ class BrokenLinkChecker
     {
         $authorInstances = array();
         foreach ($links as $link) {
-            /* @var \blcLink $link */
+            /* @var Link $link */
             foreach ($link->get_instances() as $instance) {
 
                 $container = $instance->get_container();

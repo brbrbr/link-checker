@@ -16,6 +16,7 @@
 
 use Blc\Abstract\Parser;
 use Blc\Controller\LinkInstance;
+use Blc\Controller\Link;
 
 class blcACFParser extends Parser
 {
@@ -72,7 +73,7 @@ class blcACFParser extends Parser
             $instance->raw_url   = $raw_url;
             $instance->link_text = $default_link_text;
 
-            $link_obj = new blcLink($url); // Creates or loads the link
+            $link_obj = new Link($url); // Creates or loads the link
             $instance->set_link($link_obj);
 
             $instances[] = $instance;

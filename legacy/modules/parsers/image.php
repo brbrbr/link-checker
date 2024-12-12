@@ -16,6 +16,7 @@
 // TODO: Update image parser to use the same HTML tag parsing routine as the HTML link parser.
 
 use Blc\Abstract\Parser;
+use Blc\Controller\Link;
 use Blc\Controller\LinkInstance;
 
 class blcHTMLImage extends Parser
@@ -108,7 +109,7 @@ class blcHTMLImage extends Parser
                 $instance->raw_url   = $raw_url;
                 $instance->link_text = '';
 
-                $link_obj = new blcLink($url); // Creates or loads the link
+                $link_obj = new Link($url); // Creates or loads the link
                 $instance->set_link($link_obj);
 
                 $instances[] = $instance;

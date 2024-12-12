@@ -2,7 +2,7 @@
 namespace Blc\Abstract;
 
 use Blc\Abstract\Parser;
-
+use Blc\Controller\Link;
 use Blc\Controller\LinkInstance;
 
 abstract class PlaintextUrlParser extends Parser
@@ -62,7 +62,7 @@ abstract class PlaintextUrlParser extends Parser
                 $instance->raw_url   = $match;
                 $instance->link_text = $match;
 
-                $link_obj = new blcLink($url); // Creates or loads the link
+                $link_obj = new Link($url); // Creates or loads the link
                 $instance->set_link($link_obj);
 
                 $instances[] = $instance;

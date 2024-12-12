@@ -4,7 +4,7 @@ namespace Blc\Abstract;
 
 use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
-use Blc\Abstract\Module;
+use Blc\Controller\LinkQuery;
 use Blc\Abstract\Parser;
 use Blc\Controller\ModuleManager;
 
@@ -461,7 +461,7 @@ abstract class Container
      *
      * @access public
      *
-     * @return array of blcLink
+     * @return array of Link
      */
     function get_links()
     {
@@ -469,7 +469,7 @@ abstract class Container
             's_container_type' => $this->container_type,
             's_container_id'   => $this->container_id,
         );
-        return blc_get_links($params);
+        return LinkQuery::blc_get_links($params);
     }
 
 

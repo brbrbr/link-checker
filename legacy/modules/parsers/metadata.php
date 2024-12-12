@@ -15,6 +15,7 @@
  */
 
  use Blc\Abstract\Parser;
+ use Blc\Controller\Link;
  use Blc\Controller\LinkInstance;
 
 class blcMetadataParser extends Parser
@@ -98,7 +99,7 @@ class blcMetadataParser extends Parser
         $instance->raw_url   = $raw_url;
         $instance->link_text = $default_link_text;
 
-        $link_obj = new blcLink($url); // Creates or loads the link
+        $link_obj = new Link($url); // Creates or loads the link
         $instance->set_link($link_obj);
 
         return $instance;

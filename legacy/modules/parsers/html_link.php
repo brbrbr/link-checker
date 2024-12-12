@@ -16,7 +16,9 @@
 use Blc\Util\Utility;
 use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Parser;
+use Blc\Controller\Link;
 use Blc\Controller\LinkInstance;
+
 
 class blcHTMLLink extends Parser
 {
@@ -114,7 +116,7 @@ class blcHTMLLink extends Parser
         $instance->raw_url   = $raw_url;
         $instance->link_text = $text;
 
-        $link_obj = new blcLink($url); // Creates or loads the link
+        $link_obj = new Link($url); // Creates or loads the link
         $instance->set_link($link_obj);
 
         return $instance;

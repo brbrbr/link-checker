@@ -17,7 +17,7 @@ ModulePriority: -1
 use Blc\Util\Utility;
 use Blc\Util\TokenBucketList;
 use Blc\Abstract\Checker;
-
+use Blc\Controller\Link;
 
 
 // TODO: Rewrite sub-classes as transports, not stand-alone checkers
@@ -648,7 +648,7 @@ class blcWPHttp extends blcHttpCheckerBase
             '|',
             array(
                 $result['http_code'],
-                blcLink::remove_query_string($result['final_url']),
+                Link::remove_query_string($result['final_url']),
             )
         );
 

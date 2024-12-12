@@ -57,7 +57,7 @@ abstract class Checker extends Module
      *    'log' (string) - Free-form log of the performed check. It will be displayed in the "Details" section of the checked link.
      *    'result_hash' (string) - A free-form hash or code uniquely identifying the detected link status. See sub-classes for examples. Max 200 characters.
      *
-     * @see blcLink:check()
+     * @see Link:check()
      *
      * @param string $url
      * @return array

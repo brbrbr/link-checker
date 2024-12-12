@@ -31,7 +31,7 @@ class LinkInstance
     /** @var Container */
     var $_container = null;
     var $_parser    = null;
-    /** @var blcLink|null */
+    /** @var Link|null */
     var $_link = null;
 
     /**
@@ -87,7 +87,7 @@ class LinkInstance
 
     /**
      * Replace this instance's URL with a new one.
-     * Warning : this shouldn't be called directly. Use blcLink->edit() instead.
+     * Warning : this shouldn't be called directly. Use Link->edit() instead.
      *
      * @param string $new_url
      * @param string $old_url
@@ -378,9 +378,9 @@ class LinkInstance
     /**
      * Get the link object associated with this link intance.
      *
-     * @return blcLink|null
+     * @return Link|null
      */
-    function get_link()
+    function get_link() : Link | Null
     {
         if (! is_null($this->_link)) {
             return $this->_link;
@@ -390,14 +390,14 @@ class LinkInstance
             return null;
         }
 
-        $this->_link = new blcLink($this->link_id);
+        $this->_link = new Link($this->link_id);
         return $this->_link;
     }
 
     /**
      * Set the link associated with this link instance.
      *
-     * @param blcLink $new_link
+     * @param Link $new_link
      * @return void
      */
     function set_link($new_link)
@@ -497,7 +497,5 @@ class LinkInstance
         }
         return $parser->is_url_editable();
     }
-
-
 
 }

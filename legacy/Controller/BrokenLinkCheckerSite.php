@@ -10,17 +10,8 @@ namespace Blc\Controller;
  * @package broken-link-checker
  */
 
-use Blc\Database\WPMutex;
 
-use Blc\Database\TransactionManager;
-use Blc\Util\Utility;
-use Blc\Admin\TablePrinter;
-use Blc\Admin\ScreenOptions;
 use Blc\Util\ConfigurationManager;
-use Blc\Logger\CachedOptionLogger;
-use Blc\Controller\ModuleManager;
-use Blc\Helper\ContainerHelper;
-use Blc\Util\UpdatePlugin;
 
 
 
@@ -38,8 +29,7 @@ class BrokenLinkCheckerSite
      * @var string
      */
     public $my_basename = '';
-    private $loader     = '';
-    private $blcPostTypeOverlord;
+
 
 
 
@@ -72,64 +62,22 @@ class BrokenLinkCheckerSite
         $this->plugin_config = ConfigurationManager::getInstance();
 
         if ($this->plugin_config->options['mark_removed_links'] && !empty($this->plugin_config->options['removed_link_css'])) {
-            add_action('wp_head', [$this, 'blc_print_removed_link_css']);
+            add_action('wp_footer', [$this, 'blc_print_removed_link_css']);
         }
 
         // Highlight and nofollow broken links in posts & pages
         if ($this->plugin_config->options['mark_broken_links'] || $this->plugin_config->options['nofollow_broken_links']) {
             add_filter('the_content', array($this, 'hook_the_content'));
+
             if ($this->plugin_config->options['mark_broken_links'] && ! empty($this->plugin_config->options['broken_link_css'])) {
-                add_action('wp_head', array($this, 'blc_print_broken_link_css'));
+                add_action('wp_footer', array($this, 'blc_print_broken_link_css'));
             }
         }
     }
 
-    /**
-     * Analyse a link and add 'broken_link' CSS class if the link is broken.
-     *
-     * @see blcHtmlLink::multi_edit()
-     *
-     * @param array $link Associative array of link data.
-     * @param array $broken_link_urls List of broken link URLs present in the current post.
-     * @return array|string The modified link
-     */
-    function highlight_broken_link($link, $broken_link_urls)
-    {
-        if (! in_array($link['href'], $broken_link_urls)) {
-            // Link not broken = return the original link tag
-            return $link['#raw'];
-        }
 
-        // Add 'broken_link' to the 'class' attribute (unless already present).
-        if ($this->plugin_config->options['mark_broken_links']) {
-            if (isset($link['class'])) {
-                $classes = explode(' ', $link['class']);
-                if (! in_array('broken_link', $classes)) {
-                    $classes[]     = 'broken_link';
-                    $link['class'] = implode(' ', $classes);
-                }
-            } else {
-                $link['class'] = 'broken_link';
-            }
-        }
 
-        // Nofollow the link (unless it's already nofollow'ed)
-        if ($this->plugin_config->options['nofollow_broken_links']) {
-            if (isset($link['rel'])) {
-                $relations = explode(' ', $link['rel']);
-                if (! in_array('nofollow', $relations)) {
-                    $relations[] = 'nofollow';
-                    $link['rel'] = implode(' ', $relations);
-                }
-            } else {
-                $link['rel'] = 'nofollow';
-            }
-        }
-
-        return $link;
-    }
-
-    private function get_current_broken_links()
+    private function load_broken_links()
     {
         global  $wpdb;
         /** @var wpdb $wpdb */
@@ -144,7 +92,6 @@ class BrokenLinkCheckerSite
 
             $this->current_broken_links = $wpdb->get_col($q, 0);
         }
-        return $this->current_broken_links;
     }
 
     /**
@@ -158,7 +105,10 @@ class BrokenLinkCheckerSite
     public function hook_the_content($content)
     {
 
-        $broken_link_urls = $this->get_current_broken_links();
+        $this->load_broken_links();
+        if (empty($this->current_broken_links)) {
+            return;
+        }
         $tags = new \WP_HTML_Tag_Processor($content);
         //no point in checking images
         while ($tags->next_tag('a')) {
@@ -166,14 +116,14 @@ class BrokenLinkCheckerSite
             if (!$href) {
                 continue;
             }
-            if (!in_array($href, $broken_link_urls)) {
+            if (!in_array($href, $this->current_broken_links)) {
                 continue;
             }
             if ($this->plugin_config->options['mark_broken_links']) {
                 $tags->add_class('broken_link');
             }
             if ($this->plugin_config->options['nofollow_broken_links']) {
-                $rel = $tags->get_attribute('rel')??'';
+                $rel = $tags->get_attribute('rel') ?? '';
                 $rels = explode(' ', $rel);
                 $rels[] = 'nofollow';
                 $rel = join(' ', array_filter(array_unique($rels)));
@@ -183,10 +133,29 @@ class BrokenLinkCheckerSite
         $content = (string)$tags;
         return $content;
     }
+    private function remove_selectors($css)
+    {
+        if (preg_match_all('#{([^}]+)}#ms', $css, $m)) {
+            $css = trim(join("\n", $m[1]));
+        }
+        return $css;
+    }
+
+    private function add_css($selector, $css)
+    {
+        $css = $this->remove_selectors($css);
+        $css = trim($css);
+        if ($css == '') {
+            return;
+        }
+        $style = "$selector { $css }";
+
+        echo "<style>$style</style>";
+    }
 
     public   function blc_print_removed_link_css()
     {
-        echo '<style type="text/css">', $this->plugin_config->options['removed_link_css'], '</style>';
+        $this->add_css('.removed_link', $this->plugin_config->options['removed_link_css']);
     }
 
     /**
@@ -196,9 +165,11 @@ class BrokenLinkCheckerSite
      */
     function blc_print_broken_link_css()
     {
-        $broken_link_urls = $this->get_current_broken_links();
-        if ($broken_link_urls) {
-            echo '<style type="text/css">', $this->plugin_config->options['broken_link_css'], '</style>';
+        $this->load_broken_links();
+        if (empty($this->current_broken_links)) {
+            return;
         }
+
+        $this->add_css('.broken_link', $this->plugin_config->options['broken_link_css']);
     }
 } //class ends here

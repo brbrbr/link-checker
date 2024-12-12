@@ -8,6 +8,11 @@ use Blc\Controller\ModuleManager;
 
 require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
 
+
+
+
+
+
 if (get_option('blc_activation_enabled')) {
     return;
 }
@@ -28,10 +33,10 @@ $plugin_config =   ConfigurationManager::getInstance(
         'run_in_dashboard'                 => true, // Run the link checker algo. continuously while the Dashboard is open.
         'run_via_cron'                     => true, // Run it hourly via WordPress pseudo-cron.
         'mark_broken_links'                => true, // Whether to add the broken_link class to broken links in posts.
-        'broken_link_css'                  => ".broken_link, a.broken_link {\n\ttext-decoration: line-through;\n}",
+        'broken_link_css'                  => "text-decoration: none;cursor: default;",
         'nofollow_broken_links'            => false, // Whether to add rel="nofollow" to broken links in posts.
         'mark_removed_links'               => false, // Whether to add the removed_link class when un-linking a link.
-        'removed_link_css'                 => ".removed_link, a.removed_link {\n\ttext-decoration: line-through;\n}",
+        'removed_link_css'                 => "text-decoration: none;cursor: default;",
         'exclusion_list'                   => array(), // Links that contain a substring listed in this array won't be checked.
         'send_email_notifications'         => true, // Whether to send the admin email notifications about broken links
         'send_authors_email_notifications' => false, // Whether to send post authors notifications about broken links in their posts.
@@ -142,6 +147,7 @@ $moduleManager = ModuleManager::getInstance(
     ]
 
 );
+//Start up the post overlord
 \blcPostTypeOverlord::getInstance();
 // Let other plugins register virtual modules.
 do_action('blc_register_modules', $moduleManager);

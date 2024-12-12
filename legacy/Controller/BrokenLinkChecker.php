@@ -49,6 +49,7 @@ class BrokenLinkChecker
     public $my_basename = '';
     private $loader     = '';
 
+    private ?array $current_broken_links = Null;
 
     /**
      * Execution start time.
@@ -98,7 +99,10 @@ class BrokenLinkChecker
         // Start up the post overlord and module- must runoutside the 'init' action
         //defaults are set during activation
         $moduleManager = ModuleManager::getInstance();
+
+        //Start up the post overlord
         \blcPostTypeOverlord::getInstance();
+
         // Let other plugins register virtual modules.
         do_action('blc_register_modules', $moduleManager);
         // Load the modules that want to be executed in all contexts
@@ -118,10 +122,7 @@ class BrokenLinkChecker
 
         // because deactivation happens after this class has already been instantiated (during the 'init' action).
 
-
-
         add_action('admin_menu', array($this, 'admin_menu'));
-
 
         $this->update = new UpdatePlugin(BLC_PLUGIN_FILE);
         $this->is_settings_tab = $this->is_settings_tab();
@@ -662,9 +663,20 @@ class BrokenLinkChecker
             $this->plugin_config->options['mark_broken_links'] = !empty($_POST['mark_broken_links']);
 
             $new_broken_link_css = trim($cleanPost['broken_link_css']);
+            /* remove selectors */
+            if (preg_match_all('#{([^}]+)}#ms', $new_broken_link_css, $m)) {
+                $new_broken_link_css = trim(join("\n", $m[1]));
+            }
+
+
 
             $this->plugin_config->options['mark_removed_links'] = !empty($_POST['mark_removed_links']);
             $new_removed_link_css                      = trim($cleanPost['removed_link_css']);
+
+            /* remove selectors */
+            if (preg_match_all('#{([^}]+)}#ms', $new_removed_link_css, $m)) {
+                $new_removed_link_css = trim(join("\n", $m[1]));
+            }
 
             if (current_user_can('unfiltered_html')) {
                 $this->plugin_config->options['broken_link_css']  = $new_broken_link_css;
@@ -3255,6 +3267,7 @@ class BrokenLinkChecker
 
 
 
+
     /**
      * Output the current average server load (over the last one-minute period).
      * Called via AJAX.
@@ -3287,7 +3300,7 @@ class BrokenLinkChecker
     function get_status()
     {
         $blc_link_query = LinkQuery::getInstance();
-   
+
 
         $check_threshold   = date('Y-m-d H:i:s', strtotime('-' . $this->plugin_config->options['check_threshold'] . ' hours')); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
         $recheck_threshold = date('Y-m-d H:i:s', time() - $this->plugin_config->options['recheck_threshold']); //phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date

@@ -521,7 +521,7 @@ class blcPostMetaManager extends ContainerManager
         // Only check custom fields on selected post types. By default, that's "post" and "page".
         $post_types = array( 'post', 'page' );
        
-            $overlord   = blcPostTypeOverlord::getInstance();
+            $overlord   = \blcPostTypeOverlord::getInstance();
             $post_types = array_merge($post_types, $overlord->enabled_post_types);
             $post_types = array_unique($post_types);
         

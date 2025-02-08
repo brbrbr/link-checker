@@ -413,8 +413,9 @@ class blcCurlHttp extends blcHttpCheckerBase
         }
 
         // Apply filter for additional options
+    
         curl_setopt_array($ch, apply_filters('link-checker-curl-options', $options));
-
+     
         // Execute the request
         $start_time                = microtime(true);
         $content                   = curl_exec($ch);
@@ -437,6 +438,9 @@ class blcCurlHttp extends blcHttpCheckerBase
         }
 
         if (isset($info['request_header'])) {
+            $blclog->info(
+                $info['request_header']
+            );
             $log .= "Request headers\n" . str_repeat('=', 16) . "\n";
             $log .= htmlentities($info['request_header']);
         }
@@ -500,9 +504,7 @@ class blcCurlHttp extends blcHttpCheckerBase
                 isset($result['status_text']) ? $result['status_text'] : 'N/A'
             )
         );
-        $blclog->info(
-            $info['request_header']
-        );
+    
 
         $retryGet = apply_filters('link-checker-retry-with-get-after-head', true, $result);
 

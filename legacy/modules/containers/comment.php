@@ -73,7 +73,7 @@ class blcComment extends Container
         if (EMPTY_TRASH_DAYS) {
             return $this->trash_wrapped_object();
         } elseif (wp_delete_comment($this->container_id, true)) {
-                return true;
+            return true;
         } else {
             return new WP_Error(
                 'delete_failed',
@@ -202,18 +202,22 @@ class blcComment extends Container
         );
 
         $comment = $this->get_wrapped_object();
+        if (! $comment) {
+            $html  = __('Comment not found', 'broken-link-checker');
+        } else {
 
-        // Display a small text sample from the comment
-        $text_sample = strip_tags($comment->comment_content);
-        $text_sample = Utility::truncate($text_sample, 65);
+            // Display a small text sample from the comment
+            $text_sample = strip_tags($comment->comment_content);
+            $text_sample = Utility::truncate($text_sample, 65);
 
-        $html = sprintf(
-            '<a href="%s" title="%s"><b>%s</b> &mdash; %s</a>',
-            $this->get_edit_url(),
-            esc_attr__('Edit comment'),
-            esc_attr($comment->comment_author),
-            $text_sample
-        );
+            $html = sprintf(
+                '<a href="%s" title="%s"><b>%s</b> &mdash; %s</a>',
+                $this->get_edit_url(),
+                esc_attr__('Edit comment'),
+                esc_attr($comment->comment_author),
+                $text_sample
+            );
+        }
 
         // Don't show the image in email notifications.
         if ('email' != $context) {
@@ -248,18 +252,18 @@ class blcCommentManager extends ContainerManager
     {
         parent::init();
 
-        add_action('post_comment', array( $this, 'hook_post_comment' ), 10, 2);
-        add_action('edit_comment', array( $this, 'hook_edit_comment' ));
-        add_action('transition_comment_status', array( $this, 'hook_comment_status' ), 10, 3);
+        add_action('post_comment', array($this, 'hook_post_comment'), 10, 2);
+        add_action('edit_comment', array($this, 'hook_edit_comment'));
+        add_action('transition_comment_status', array($this, 'hook_comment_status'), 10, 3);
 
-        add_action('trashed_post_comments', array( $this, 'hook_trashed_post_comments' ), 10, 2);
-        add_action('untrash_post_comments', array( $this, 'hook_untrash_post_comments' ));
+        add_action('trashed_post_comments', array($this, 'hook_trashed_post_comments'), 10, 2);
+        add_action('untrash_post_comments', array($this, 'hook_untrash_post_comments'));
     }
 
     function hook_post_comment($comment_id, $comment_status)
     {
         if ('1' == $comment_status) {
-            $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
+            $container = ContainerHelper::get_container(array($this->container_type, $comment_id));
             $container->mark_as_unsynched();
         }
     }
@@ -267,7 +271,7 @@ class blcCommentManager extends ContainerManager
     function hook_edit_comment($comment_id)
     {
         if ('approved' == wp_get_comment_status($comment_id)) {
-            $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
+            $container = ContainerHelper::get_container(array($this->container_type, $comment_id));
             $container->mark_as_unsynched();
         }
     }
@@ -275,8 +279,8 @@ class blcCommentManager extends ContainerManager
     function hook_comment_status($new_status, $old_status, $comment)
     {
         // We only care about approved comments.
-        if (( 'approved' == $new_status ) || ( 'approved' == $old_status )) {
-            $container = ContainerHelper::get_container(array( $this->container_type, $comment->comment_ID ));
+        if (('approved' == $new_status) || ('approved' == $old_status)) {
+            $container = ContainerHelper::get_container(array($this->container_type, $comment->comment_ID));
             if ('approved' == $new_status) {
                 $container->mark_as_unsynched();
             } else {
@@ -286,11 +290,13 @@ class blcCommentManager extends ContainerManager
         }
     }
 
-    function hook_trashed_post_comments(/** @noinspection PhpUnusedParameterInspection */$post_id, $statuses)
+    function hook_trashed_post_comments(
+    /** @noinspection PhpUnusedParameterInspection */
+    $post_id, $statuses)
     {
         foreach ($statuses as $comment_id => $comment_status) {
             if ('1' == $comment_status) {
-                $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
+                $container = ContainerHelper::get_container(array($this->container_type, $comment_id));
                 $container->delete();
             }
         }
@@ -309,7 +315,7 @@ class blcCommentManager extends ContainerManager
 
         foreach ($statuses as $comment_id => $comment_status) {
             if ('1' == $comment_status) { // if approved
-                $container = ContainerHelper::get_container(array( $this->container_type, $comment_id ));
+                $container = ContainerHelper::get_container(array($this->container_type, $comment_id));
                 $container->mark_as_unsynched();
             }
         }
@@ -393,7 +399,7 @@ class blcCommentManager extends ContainerManager
         $containers = $this->make_containers($containers);
 
         // Preload comment data if it is likely to be useful later
-        $preload = $load_wrapped_objects || in_array($purpose, array( BLC_FOR_DISPLAY, BLC_FOR_PARSING ));
+        $preload = $load_wrapped_objects || in_array($purpose, array(BLC_FOR_DISPLAY, BLC_FOR_PARSING));
         if ($preload) {
             $comment_ids = array();
             foreach ($containers as $container) { /* @var Container $container */
@@ -411,8 +417,8 @@ class blcCommentManager extends ContainerManager
 
                 // Attach it to the container
                 $key = $this->container_type . '|' . $comment->comment_ID;
-                if (isset($containers[ $key ])) {
-                    $containers[ $key ]->wrapped_object = $comment;
+                if (isset($containers[$key])) {
+                    $containers[$key]->wrapped_object = $comment;
                 }
             }
         }

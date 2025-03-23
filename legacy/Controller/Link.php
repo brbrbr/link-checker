@@ -172,7 +172,6 @@ class Link
                 // $blclog->debug(__CLASS__ .':' . __FUNCTION__ . ' Link not found.');
                 $this->url    = $arg;
                 $this->is_new = true;
-           
             }
         } elseif (is_array($arg)) {
             $this->set_values($arg);
@@ -274,6 +273,9 @@ class Link
         $this->set_values($results);
         if ($this->final_url && $this->url != $this->final_url) {
             $this->final_url = Utility::idn_to_utf8($this->final_url);
+            if ($this->redirect_conut == 0 ) {
+                $this->redirect_conut == 1;
+            }
         }
 
         // Update timestamps & state-dependent fields

@@ -118,7 +118,7 @@ class BrokenLinkCheckerSite
                     $username = $_SERVER['PHP_AUTH_USER'];
                     $password = $_SERVER['PHP_AUTH_PW'];
                     $user = wp_authenticate($username, $password);
-                    return user_can($user,'blc-rest');
+                    return $user->id && user_can($user,'blc-rest');
                  
                 },
                 "show_in_index" => false,
@@ -164,7 +164,7 @@ class BrokenLinkCheckerSite
             array(
 
                 'http_code'        => $request->get_param('http_code'),
-                'redirect_count'   => 0,
+                'redirect_count'   =>$request->get_param('redirect_count'),
                 'final_url'        => $request->get_param('final_url'),
                 'request_duration' => $request->get_param('request_duration'),
 

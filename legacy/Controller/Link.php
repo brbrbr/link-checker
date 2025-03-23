@@ -4,6 +4,7 @@
  * @author W-Shadow
  * @copyright 2010
  */
+
 namespace Blc\Controller;
 
 use Blc\Database\TransactionManager;
@@ -57,12 +58,12 @@ class Link
 
 
     // A list of DB fields and their storage formats
-    var $field_format;
+    private  $field_format;
 
     // A cached list of the link's instances
-    var $_instances = null;
+    public  $_instances = null;
 
-    var $http_status_codes   = array(
+    private  $http_status_codes   = array(
         // [Informational 1xx]
         100 => 'Continue',
         101 => 'Switching Protocols',
@@ -143,14 +144,14 @@ class Link
             'dismissed'          => 'bool',
             'parked'             => '%d',
         );
-      
-      
+
+
         if (is_numeric($arg)) {
             // Load a link with ID = $arg from the DB.
             $q   = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}blc_links WHERE link_id=%d LIMIT 1", $arg);
-         
+
             $arr = $wpdb->get_row($q, ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-     
+
             if (is_array($arr)) { // Loaded successfully
                 $this->set_values($arr);
             } else {
@@ -209,6 +210,82 @@ class Link
         return !empty($this->url) && (!empty($this->link_id) || $this->is_new);
     }
 
+
+
+    /**
+     * Check if the link is working.
+     *
+     * @param bool $save_results Automatically save the results of the check.
+     * @return bool
+     */
+    function manual($results)
+    {
+        if (!$this->valid()) {
+            return false;
+        }
+
+        $this->last_check_attempt = time();
+
+        /*
+            If the link is still marked as in the process of being checked, that probably means
+            that the last time the plugin tried to check it the script got terminated by PHP for
+            running over the execution time limit or causing a fatal error.
+
+            This problem is likely to be temporary for most links, so we leave it be and treat it
+            as any other link (i.e. check it again later using the default recheck periodicity).
+            */
+
+
+
+
+        $defaults = array(
+            'broken'           => false,
+            'warning'          => false,
+            'http_code'        => 0,
+            'redirect_count'   => 0,
+            'final_url'        => $this->url,
+            'request_duration' => 0,
+            'timeout'          => false,
+            'may_recheck'      => true,
+            'log'              => '',
+            'result_hash'      => '',
+            'status_text'      => '',
+            'status_code'      => '',
+            'parked'           => BrokenLinkChecker::BLC_PARKED_UNCHECKED,
+        );
+
+
+        // FB::info($rez, "Check results");
+
+        $results = array_merge($defaults, $results);
+
+        // Some HTTP errors can be treated as warnings.
+        $results = $this->decide_warning_state($results);
+
+        // Filter the returned array to leave only the restricted set of keys that we're interested in.
+        $results = array_intersect_key($results, $defaults);
+
+        // The result hash is special - see Link::status_changed()
+        $new_result_hash = $results['result_hash'];
+        unset($results['result_hash']);
+
+        // Update the object's fields with the new results
+        $this->set_values($results);
+        if ($this->final_url && $this->url != $this->final_url) {
+            $this->final_url = Utility::idn_to_utf8($this->final_url);
+        }
+
+        // Update timestamps & state-dependent fields
+        $this->status_changed($results['broken'], $new_result_hash);
+        $this->being_checked = false;
+
+
+        $this->save();
+
+
+        return $this->broken;
+    }
+
     /**
      * Check if the link is working.
      *
@@ -220,7 +297,7 @@ class Link
         if (!$this->valid()) {
             return false;
         }
-       
+
         $this->last_check_attempt = time();
 
         /*
@@ -244,10 +321,10 @@ class Link
                 $this->save();
             }
 
-         //   return false;
+            //   return false;
         }
 
-     
+
         $this->being_checked = true;
         ++$this->check_count;
 
@@ -290,7 +367,7 @@ class Link
 
             return true;
         }
-    
+
         // Check the link
         $rez = $checker->check($this->get_ascii_url());
         // FB::info($rez, "Check results");
@@ -617,7 +694,7 @@ class Link
             );
             // FB::log($q, 'Link update query');
             // $blclog->debug( __CLASS__ . ':' . __FUNCTION__ . ' Updating a link. SQL query:' . "\n", $q );
-        //    $blclog->debug(__CLASS__ . ':' . __FUNCTION__ . ' Updating a link. Values:' . "\n", $values);
+            //    $blclog->debug(__CLASS__ . ':' . __FUNCTION__ . ' Updating a link. Values:' . "\n", $values);
 
             $rez = false !== $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             if ($rez) {
@@ -1129,6 +1206,3 @@ class Link
         return preg_replace('@\?[^#]*?(#|$)@', '$1', $url);
     }
 }
-
-
-

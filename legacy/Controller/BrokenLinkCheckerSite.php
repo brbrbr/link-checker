@@ -12,7 +12,7 @@ namespace Blc\Controller;
 
 
 use Blc\Util\ConfigurationManager;
-
+use Blc\Controller\LinkQuery;
 
 
 
@@ -73,9 +73,116 @@ class BrokenLinkCheckerSite
                 add_action('wp_footer', array($this, 'blc_print_broken_link_css'));
             }
         }
+        add_action('rest_api_init',  array($this, 'rest_api_init'));
     }
 
+    public function rest_api_init()
+    {
+        register_rest_route(
+            "link-checker/v1",
+            "/report",
+            [
+                'methods'             => \WP_REST_Server::READABLE,
+                'permission_callback' => '__return_true',
+                'callback'            => [$this, 'rest_report'],
+                "show_in_index" => false,
+                'args' => [
+                    "http_code" => [
+                        "description" => "Reutrn links with there HTTP cpdes",
+                        "type" => "array",
+                        "default" => [],
+                        //todo  "sanitize_callback" => "wp_parse_id_list",
 
+                    ],
+                    "max_results" => [
+                        "description" => "Reutrn links with there HTTP cpdes",
+                        "type" => "integer",
+                        "default" => 10,
+                        "minimum" => 1,
+                        "maximum" => 100,
+                        "sanitize_callback" => "absint",
+                        "validate_callback" => "rest_validate_request_arg"
+
+                    ],
+                ]
+            ]
+        );
+        register_rest_route(
+            "link-checker/v1",
+            "/update",
+            [
+                'methods'             => \WP_REST_Server::CREATABLE,
+                'permission_callback' => '__return_true',
+                'callback'            => [$this, 'rest_update'],
+                'permission_callback' => function () {
+                    $username = $_SERVER['PHP_AUTH_USER'];
+                    $password = $_SERVER['PHP_AUTH_PW'];
+                    $user = wp_authenticate($username, $password);
+                    return user_can($user,'blc-rest');
+                 
+                },
+                "show_in_index" => false,
+                'args' => [
+                    "http_code" => [
+                        "type" => "integer",
+                        "default" => 0,
+                    ],
+                    "url" => [
+
+                        "type" => "string",
+                        "default" => '',
+                    ],
+                    "final_url" => [
+
+                        "type" => "string",
+                        "default" => '',
+                    ],
+                    "redirect_count" => [
+
+                        "type" => "integer",
+                        "default" => 0,
+                    ],
+                    "request_duration" => [
+                        "type" => "float",
+                        "default" => 0,
+                    ],
+                ]
+            ]
+        );
+    }
+
+    public function rest_update(\WP_REST_Request $request)
+    {
+
+        $url = $request->get_param('url');
+        $link = new Link($url);
+        $link->manual(
+            array(
+
+                'http_code'        => $request->get_param('http_code'),
+                'redirect_count'   => 0,
+                'final_url'        => $request->get_param('final_url'),
+                'request_duration' => $request->get_param('request_duration'),
+
+            )
+
+        );
+        return $link;
+    }
+
+    public function rest_report(\WP_REST_Request $request)
+    {
+        $http_code = $request->get_param('http_code');
+        $max_results = $request->get_param('max_results');
+        $links = LinkQuery::blc_get_links(
+            [
+                's_http_code' => $http_code,
+                'max_results' => $max_results,
+                'load_instances' => 0,
+            ]
+        );
+        return $links;
+    }
 
     private function load_broken_links()
     {

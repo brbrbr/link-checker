@@ -1,4 +1,5 @@
 <?php
+
 namespace Blc\Controller;
 
 use Blc\Util\ConfigurationManager;
@@ -118,7 +119,7 @@ class LinkQuery
         );
     }
 
-	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+    //phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
     static function getInstance()
     {
         static $instance = null;
@@ -145,7 +146,7 @@ class LinkQuery
             foreach ($filter_data as $data) {
                 wp_parse_str($data['params'], $params);
 
-                $filters[ 'f' . $data['id'] ] = array(
+                $filters['f' . $data['id']] = array(
                     'name'         => $data['name'],
                     'params'       => $params,
                     'heading'      => ucwords($data['name']),
@@ -233,8 +234,8 @@ class LinkQuery
     function get_filter($filter_id)
     {
         $filters = $this->get_filters();
-        if (isset($filters[ $filter_id ])) {
-            return $filters[ $filter_id ];
+        if (isset($filters[$filter_id])) {
+            return $filters[$filter_id];
         } else {
             return null;
         }
@@ -275,7 +276,7 @@ class LinkQuery
         $url_params = array();
         foreach ($_GET as $param => $value) {
             if (in_array($param, $this->valid_url_params)) {
-                $url_params[ $param ] = esc_html($value);
+                $url_params[$param] = esc_html($value);
             }
         }
         return $url_params;
@@ -399,7 +400,7 @@ class LinkQuery
                 $exists[] = "instances.container_id = $s_container_id";
             }
         }
-     
+
         // Link type can match either the the parser_type or the container_type.
         if (! empty($params['s_link_type'])) {
             $s_link_type = esc_sql($params['s_link_type']);
@@ -410,9 +411,13 @@ class LinkQuery
         // Example : 201,400-410,500
         if (! empty($params['s_http_code'])) {
             // Strip spaces.
-            $params['s_http_code'] = str_replace(' ', '', $params['s_http_code']);
+            $codes = $params['s_http_code'];
+
             // Split by comma
-            $codes = explode(',', $params['s_http_code']);
+            if (\is_string($codes)) {
+                $codes = str_replace(' ', '', $codes);
+                $codes = explode(',', $params['s_http_code']);
+            }
 
             $individual_codes = array();
             $ranges           = array();
@@ -425,10 +430,10 @@ class LinkQuery
                 } elseif (strpos($code, '-') !== false) {
                     // Try to parse it as a range
                     $range = explode('-', $code, 2);
-                    if (( count($range) == 2 ) && is_numeric($range[0]) && is_numeric($range[0])) {
+                    if ((count($range) == 2) && is_numeric($range[0]) && is_numeric($range[0])) {
                         // Make sure the smaller code comes first
-                        $range    = array( intval($range[0]), intval($range[1]) );
-                        $ranges[] = array( min($range), max($range) );
+                        $range    = array(intval($range[0]), intval($range[1]));
+                        $ranges[] = array(min($range), max($range));
                     }
                 }
             }
@@ -473,7 +478,7 @@ class LinkQuery
             $column          = $params['orderby'];
 
             $direction = ! empty($params['order']) ? strtolower($params['order']) : 'asc';
-            if (! in_array($direction, array( 'asc', 'desc' ))) {
+            if (! in_array($direction, array('asc', 'desc'))) {
                 $direction = 'asc';
             }
 
@@ -483,14 +488,14 @@ class LinkQuery
                     $order_exprs[] = '(links.redirect_count > 0) DESC';
                 }
 
-                $order_exprs[] = $allowed_columns[ $column ] . ' ' . $direction;
+                $order_exprs[] = $allowed_columns[$column] . ' ' . $direction;
             }
         }
 
         // Custom filters can optionally call one of the native filters
         // to narrow down the result set.
-        if (! empty($params['s_filter']) && isset($this->native_filters[ $params['s_filter'] ])) {
-            $the_filter     = $this->native_filters[ $params['s_filter'] ];
+        if (! empty($params['s_filter']) && isset($this->native_filters[$params['s_filter']])) {
+            $the_filter     = $this->native_filters[$params['s_filter']];
             $extra_criteria = $this->compile_search_params($the_filter['params']);
             $pieces         = array_merge($extra_criteria['where_exprs'], $pieces);
         }
@@ -526,7 +531,7 @@ class LinkQuery
         if (! is_array($params)) {
             $params = array();
         }
- 
+
 
         $defaults = array(
             'offset'               => 0,
@@ -561,7 +566,7 @@ class LinkQuery
             $exists        = "SELECT * FROM {$wpdb->prefix}blc_instances as instances WHERE " . join(' AND ', $existsWhere) . '';
             $where_expr   .= " AND EXISTS ( $exists ) ";
         }
-      
+
 
         // Optional sorting
         if (! empty($criteria['order_exprs'])) {
@@ -592,7 +597,7 @@ class LinkQuery
 			  WHERE
 				 $where_expr
 			   {$order_clause}"; // Note: would be a lot faster without GROUP BY
- 
+
         // Add the LIMIT clause
         if ($params['max_results'] || $params['offset']) {
             $q .= sprintf("\nLIMIT %d, %d", $params['offset'], $params['max_results']);
@@ -608,7 +613,7 @@ class LinkQuery
 
         foreach ($results as $result) {
             $link                    = new Link($result);
-            $links[ $link->link_id ] = $link;
+            $links[$link->link_id] = $link;
         }
 
         $purpose = $params['purpose'];
@@ -617,7 +622,7 @@ class LinkQuery
             * It has been requested via the 'load_instances' argument.
             * The links are going to be displayed or edited, which involves instances.
         */
-        $load_instances = $params['load_instances'] || in_array($purpose, array( BLC_FOR_DISPLAY, BLC_FOR_EDITING ));
+        $load_instances = $params['load_instances'] || in_array($purpose, array(BLC_FOR_DISPLAY, BLC_FOR_EDITING));
 
         if ($load_instances) {
             $link_ids      = array_keys($links);
@@ -625,10 +630,10 @@ class LinkQuery
             // Assign each batch of instances to the right link
             foreach ($all_instances as $link_id => $instances) {
                 foreach ($instances as $instance) {
-                  
-                    $instance->_link = $links[ $link_id ];
+
+                    $instance->_link = $links[$link_id];
                 }
-                $links[ $link_id ]->_instances = $instances;
+                $links[$link_id]->_instances = $instances;
             }
         }
 
@@ -643,20 +648,20 @@ class LinkQuery
     function count_filter_results()
     {
         foreach ($this->native_filters as $filter_id => $filter) {
-            $this->native_filters[ $filter_id ]['count'] = $this->get_filter_links(
+            $this->native_filters[$filter_id]['count'] = $this->get_filter_links(
                 $filter,
-                array( 'count_only' => true )
+                array('count_only' => true)
             );
         }
 
         foreach ($this->custom_filters as $filter_id => $filter) {
-            $this->custom_filters[ $filter_id ]['count'] = $this->get_filter_links(
+            $this->custom_filters[$filter_id]['count'] = $this->get_filter_links(
                 $filter,
-                array( 'count_only' => true )
+                array('count_only' => true)
             );
         }
 
-        $this->search_filter['count'] = $this->get_filter_links($this->search_filter, array( 'count_only' => true ));
+        $this->search_filter['count'] = $this->get_filter_links($this->search_filter, array('count_only' => true));
     }
 
     /**
@@ -734,7 +739,7 @@ class LinkQuery
     function print_filter_heading($current_filter)
     {
 
-            $brokenClass = $current_filter['is_broken_filter'] ? ' filter-broken-link-count' : '';
+        $brokenClass = $current_filter['is_broken_filter'] ? ' filter-broken-link-count' : '';
 
         echo '<h2>';
         // Output a header matching the current filter
@@ -771,7 +776,7 @@ class LinkQuery
     function exec_filter($filter_id, $page = 1, $per_page = 30, $fallback = 'broken', $orderby = '', $order = 'asc')
     {
         // The only valid sort directions are 'asc' and 'desc'.
-        if (! in_array($order, array( 'asc', 'desc' ))) {
+        if (! in_array($order, array('asc', 'desc'))) {
             $order = 'asc';
         }
 
@@ -799,7 +804,7 @@ class LinkQuery
 
         // Select the required links
         $extra_params = array(
-            'offset'      => ( ( $page - 1 ) * $per_page ),
+            'offset'      => (($page - 1) * $per_page),
             'max_results' => $per_page,
             'purpose'     => BLC_FOR_DISPLAY,
             'orderby'     => $orderby,
@@ -811,7 +816,7 @@ class LinkQuery
         // via a custom filter), save the search params. They can later be used to pre-fill
         // the search form or build a new/modified custom filter.
         $search_params = array();
-        if (! empty($current_filter['custom']) || ( 'search' == $filter_id )) {
+        if (! empty($current_filter['custom']) || ('search' == $filter_id)) {
             $search_params = $this->get_search_params($current_filter);
         }
 
@@ -828,7 +833,7 @@ class LinkQuery
             }
         }
 
-        $is_broken_filter = ( 'broken' == $base_filter );
+        $is_broken_filter = ('broken' == $base_filter);
 
         // Save the effective filter data in the filter array.
         // It can be used later to print the link table.
@@ -850,41 +855,39 @@ class LinkQuery
     }
 
     /**
- * Retrieve a list of links matching some criteria.
- *
- * The function argument should be an associative array describing the criteria.
- * The supported keys are :
- *     'offset' - Skip the first X results. Default is 0.
- *     'max_results' - The maximum number of links to return. Defaults to returning all results.
- *     'link_ids' - Retrieve only links with these IDs. This should either be a comma-separated list or an array.
- *     's_link_text' - Link text must match this keyphrase (performs a fulltext search).
- *     's_link_url' - Link URL must contain this string. You can use "*" as a wildcard.
- *     's_parser_type' - Filter links by the type of link parser that was used to find them.
- *     's_container_type' - Filter links by where they were found, e.g. 'post'.
- *     's_container_id' - Find links that belong to a container with this ID (should be used together with s_container_type).
- *     's_link_type' - Either parser type or container type must match this.
- *     's_http_code' - Filter by HTTP code. Example : 201,400-410,500
- *     's_filter' - Use a built-in filter. Available filters : 'broken', 'redirects', 'all'
- *     'where_expr' - Advanced. Lets you directly specify a part of the WHERE clause.
- *     'load_instances' - Pre-load all link instance data for each link. Default is false.
- *     'load_containers' - Pre-load container data for each instance. Default is false.
- *     'load_wrapped_objects' - Pre-load wrapped object data (e.g. posts, comments, etc) for each container. Default is false.
- *     'count_only' - Only return the number of results (int), not the whole result set. 'offset' and 'max_results' will be ignored if this is set. Default is false.
- *     'purpose' -  An optional code indicating how the links will be used.
- *     'include_invalid' - Include links that have no instances and links that only have instances that reference not-loaded containers or parsers. Defaults to false.
- *
- * All keys are optional.
- *
- * @uses LinkQuery::get_links();
- *
- * @param array $params
- * @return int|Link[] Either an array of Link objects, or the number of results for the query.
- */
-    
-    public static function blc_get_links($params) {
-    return     LinkQuery::getInstance()->blc_get_links($params);
+     * Retrieve a list of links matching some criteria.
+     *
+     * The function argument should be an associative array describing the criteria.
+     * The supported keys are :
+     *     'offset' - Skip the first X results. Default is 0.
+     *     'max_results' - The maximum number of links to return. Defaults to returning all results.
+     *     'link_ids' - Retrieve only links with these IDs. This should either be a comma-separated list or an array.
+     *     's_link_text' - Link text must match this keyphrase (performs a fulltext search).
+     *     's_link_url' - Link URL must contain this string. You can use "*" as a wildcard.
+     *     's_parser_type' - Filter links by the type of link parser that was used to find them.
+     *     's_container_type' - Filter links by where they were found, e.g. 'post'.
+     *     's_container_id' - Find links that belong to a container with this ID (should be used together with s_container_type).
+     *     's_link_type' - Either parser type or container type must match this.
+     *     's_http_code' - Filter by HTTP code. Example : 201,400-410,500
+     *     's_filter' - Use a built-in filter. Available filters : 'broken', 'redirects', 'all'
+     *     'where_expr' - Advanced. Lets you directly specify a part of the WHERE clause.
+     *     'load_instances' - Pre-load all link instance data for each link. Default is false.
+     *     'load_containers' - Pre-load container data for each instance. Default is false.
+     *     'load_wrapped_objects' - Pre-load wrapped object data (e.g. posts, comments, etc) for each container. Default is false.
+     *     'count_only' - Only return the number of results (int), not the whole result set. 'offset' and 'max_results' will be ignored if this is set. Default is false.
+     *     'purpose' -  An optional code indicating how the links will be used.
+     *     'include_invalid' - Include links that have no instances and links that only have instances that reference not-loaded containers or parsers. Defaults to false.
+     *
+     * All keys are optional.
+     *
+     * @uses LinkQuery::get_links();
+     *
+     * @param array $params
+     * @return int|Link[] Either an array of Link objects, or the number of results for the query.
+     */
+
+    public static function blc_get_links($params)
+    {
+        return     LinkQuery::getInstance()->get_links($params);
     }
 }
-
-
-

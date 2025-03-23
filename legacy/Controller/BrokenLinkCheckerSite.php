@@ -118,8 +118,7 @@ class BrokenLinkCheckerSite
                     $username = $_SERVER['PHP_AUTH_USER'];
                     $password = $_SERVER['PHP_AUTH_PW'];
                     $user = wp_authenticate($username, $password);
-                    return $user->id && user_can($user,'blc-rest');
-                 
+                    return  is_wp_error($user) ? false : user_can($user, 'blc-rest');
                 },
                 "show_in_index" => false,
                 'args' => [
@@ -155,16 +154,16 @@ class BrokenLinkCheckerSite
     {
         $url = $request->get_param('url');
         $link = new Link($url);
-        if ( empty($link)  || $link->is_new === true) {
+        if (empty($link)  || $link->is_new === true) {
             http_response_code(406);
             exit;
         }
-      
+
         $link->manual(
             array(
 
                 'http_code'        => $request->get_param('http_code'),
-                'redirect_count'   =>$request->get_param('redirect_count'),
+                'redirect_count'   => $request->get_param('redirect_count'),
                 'final_url'        => $request->get_param('final_url'),
                 'request_duration' => $request->get_param('request_duration'),
 

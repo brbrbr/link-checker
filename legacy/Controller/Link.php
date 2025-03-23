@@ -273,8 +273,8 @@ class Link
         $this->set_values($results);
         if ($this->final_url && $this->url != $this->final_url) {
             $this->final_url = Utility::idn_to_utf8($this->final_url);
-            if ($this->redirect_conut == 0 ) {
-                $this->redirect_conut == 1;
+            if ($this->redirect_count == 0 ) {
+                $this->redirect_count == 1;
             }
         }
 

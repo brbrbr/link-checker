@@ -153,9 +153,13 @@ class BrokenLinkCheckerSite
 
     public function rest_update(\WP_REST_Request $request)
     {
-
         $url = $request->get_param('url');
         $link = new Link($url);
+        if ( empty($link)  || $link->is_new === true) {
+            http_response_code(406);
+            exit;
+        }
+      
         $link->manual(
             array(
 

@@ -172,6 +172,7 @@ class Link
                 // $blclog->debug(__CLASS__ .':' . __FUNCTION__ . ' Link not found.');
                 $this->url    = $arg;
                 $this->is_new = true;
+           
             }
         } elseif (is_array($arg)) {
             $this->set_values($arg);

@@ -1,2 +1,13 @@
 .svn
 ruleset.xml
+vendor/algo26-matthias/idna-convert/tests
+vendor/jakeasmith/http_build_url/tests
+vendor/algo26-matthias/idna-convert/composer.json
+vendor/algo26-matthias/idna-convert/compose.yml
+vendor/composer
+vendor/jakeasmith/http_build_url/composer.json
+vendor/bin
+vendor/algo26-matthias/idna-convert/.github
+vendor/algo26-matthias/idna-convert/.gitignore
+vendor/algo26-matthias/idna-convert/.gitattributes
+vendor/jakeasmith/http_build_url/.gitignore

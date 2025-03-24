@@ -7,8 +7,9 @@
 
 namespace Blc\Util;
 
+use Algo26\IdnaConvert\ToIdn;
+use Algo26\IdnaConvert\ToUnicode;
 use Blc\Util\ConfigurationManager;
-use Blc\Util\IdnaConvert;
 use Blc\Helper\ContainerHelper;
 use Blc\Controller\LinkInstance;
 use Blc\Controller\ModuleManager;
@@ -381,70 +382,7 @@ class Utility
         return $load;
     }
 
-    /**
-     * Convert an internationalized domain name or URL to ASCII-compatible encoding.
-     *
-     * @param string $url Either a domain name or a complete URL.
-     * @param string $charset The character encoding of the $url parameter. Defaults to the encoding set in Settings -> Reading.
-     * @return string
-     */
-    static function idn_to_ascii($url, $charset = '')
-    {
-        $idn = new IdnaConvert();
-        if (empty($charset)) {
-            $charset = get_bloginfo('charset');
-        }
-        $parsed  = parse_url($url);
-        // Encode only the host.
-        $host = $parsed['host']??'';
-        if ( ! $host ) {
-            return $url;
-        }
-        if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
-            $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
-        }
-        $host = $idn->hostToAscii($host);
 
-        $parsed['host'] =  $host;
-        $url  = self::parsedToUrl($parsed);
-
-
-        return $url;
-    }
-
-
-    /**
-     * Convert an internationalized domain name (or URL) from ASCII-compatible encoding to UTF8.
-     *
-     * @param string $url
-     * @return string
-     */
-    static function idn_to_utf8($url)
-    {
-        $idn = new IdnaConvert();
-
-        $parsed  = parse_url($url);
-        // Encode only the host.
-        $host = $parsed['host'];
-        $host = $idn->hostToUTF8($host);
-        $parsed['host'] =  $host;
-        $url  = self::parsedToUrl($parsed);
-
-
-        return $url;
-    }
-
-    static function parsedToUrl($parsed)
-    {
-
-        return (empty($parsed['scheme']) ? '' : $parsed['scheme'] . (strtolower($parsed['scheme']) == 'mailto' ? ':' : '://'))
-            . (empty($parsed['user']) ? '' : $parsed['user'] . (empty($parsed['pass']) ? '' : ':' . $parsed['pass']) . '@')
-            . $parsed['host']
-            . (empty($parsed['port']) ? '' : ':' . $parsed['port'])
-            . (empty($parsed['path']) ? '' : $parsed['path'])
-            . (empty($parsed['query']) ? '' : '?' . $parsed['query'])
-            . (empty($parsed['fragment']) ? '' : '#' . $parsed['fragment']);
-    }
 
     /**
      * Generate a numeric hash from a string. The result will be constrained to the specified interval.

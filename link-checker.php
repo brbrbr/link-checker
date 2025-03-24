@@ -50,13 +50,12 @@ defined('WPINC') || die;
 
 
 
-if (! defined('BLC_PLUGIN_FILE')) {
-	define('BLC_PLUGIN_FILE', __FILE__);
-}
-
 
 if (! defined('BLC_BASENAME')) {
-	define('BLC_BASENAME', plugin_basename(BLC_PLUGIN_FILE));
+	define('BLC_BASENAME', plugin_basename(__FILE__));
+}
+if (! defined('BLC_BASENAME_DIR')) {
+	define('BLC_BASENAME_DIR', plugin_dir_path(__FILE__));
 }
 
 
@@ -69,7 +68,7 @@ if (! defined('BLC_SCIPTS_VERSION')) {
 
 // Path to the plugin's legacy directory.
 if (! defined('BLC_DIRECTORY_LEGACY')) {
-	define('BLC_DIRECTORY_LEGACY', plugin_dir_path(BLC_PLUGIN_FILE) . '/legacy');
+	define('BLC_DIRECTORY_LEGACY', BLC_BASENAME_DIR . '/legacy');
 }
 
 // Path to legacy file.
@@ -83,9 +82,7 @@ if (! defined('BLC_DATABASE_VERSION')) {
 	define('BLC_DATABASE_VERSION', 20);
 }
 
-require_once 'autoloader.php';
-
-$autoloaded = new Autoloader();
+require_once BLC_BASENAME_DIR . '/vendor/autoload.php';
 
 add_action(
 	'plugins_loaded',
@@ -107,7 +104,7 @@ register_activation_hook(
 	}
 );
 
-register_deactivation_hook(BLC_PLUGIN_FILE, ['Blc\Controller\BrokenLinkChecker', 'deactivation']);
+register_deactivation_hook(__FILE__, ['Blc\Controller\BrokenLinkChecker', 'deactivation']);
 
 function blc_on_activate_blog($blog_id)
 {

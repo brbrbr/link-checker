@@ -25,7 +25,7 @@ class UpdatePlugin
         }
 
         $url = $plugin_data['UpdateURI'];
-        $thisPlugin = get_plugin_data(BLC_PLUGIN_FILE);
+        $thisPlugin = get_plugin_data(BLC_BASENAME);
         if ($url == $thisPlugin['UpdateURI']) {
             return $this->fetchUpdate($url);
         }

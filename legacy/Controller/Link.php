@@ -276,7 +276,7 @@ class Link
         // Update the object's fields with the new results
         $this->set_values($results);
         if ($this->final_url && $this->url != $this->final_url) {
-            $this->final_url = Utility::idn_to_utf8($this->final_url);
+            $this->final_url = self::idn_to_utf8($this->final_url);
             if ($this->redirect_count == 0) {
                 $this->redirect_count == 1;
             }
@@ -360,7 +360,7 @@ class Link
             'parked'           => BrokenLinkChecker::BLC_PARKED_UNCHECKED,
         );
 
-        $checker = CheckerHelper::get_checker_for($this->get_ascii_url());
+        $checker = CheckerHelper::get_checker_for(self::idn_to_ascii($this->url));
 
         if (is_null($checker)) {
             // Oops, there are no checker implementations that can handle this link.
@@ -377,7 +377,7 @@ class Link
         }
 
         // Check the link
-        $rez = $checker->check($this->get_ascii_url());
+        $rez = $checker->check(self::idn_to_ascii($this->url));
         // FB::info($rez, "Check results");
 
         $results = array_merge($defaults, $rez);
@@ -395,7 +395,7 @@ class Link
         // Update the object's fields with the new results
         $this->set_values($results);
         if ($this->final_url && $this->url != $this->final_url) {
-            $this->final_url = Utility::idn_to_utf8($this->final_url);
+            $this->final_url = self::idn_to_utf8($this->final_url);
         }
 
         // Update timestamps & state-dependent fields
@@ -1164,19 +1164,6 @@ class Link
     }
 
     /**
-     * Get the link URL in ASCII-compatible encoding.
-     *
-     * @return string
-     */
-    function get_ascii_url()
-    {
-        return Utility::idn_to_ascii($this->url);
-    }
-
-
-
-
-    /**
      * Check if this link points to a page on the same domain as the current site.
      *
      * Note: Only checks the domain name, not subdirectory. If there are two separate WP sites A and B installed
@@ -1212,5 +1199,72 @@ class Link
     public static function remove_query_string($url)
     {
         return preg_replace('@\?[^#]*?(#|$)@', '$1', $url);
+    }
+
+
+        /**
+     * Convert an internationalized domain name or URL to ASCII-compatible encoding.
+     *
+     * @param string $url Either a domain name or a complete URL.
+     * @param string $charset The character encoding of the $url parameter. Defaults to the encoding set in Settings -> Reading.
+     * @return string
+     */
+    public static function idn_to_ascii($url, $charset = '')
+    {
+        
+        if (empty($charset)) {
+            $charset = get_bloginfo('charset');
+        }
+        $parsed  = parse_url($url);
+        // Encode only the host.
+        $host = $parsed['host']??'';
+        if ( ! $host ) {
+            return $url;
+        }
+        if ((strtoupper($charset) != 'UTF-8') && (strtoupper($charset) != 'UTF8')) {
+            $host = @mb_convert_encoding($parsed['host'], 'UTF-8', $charset);
+        }
+        $IDN = new ToIdn();
+        $host = $IDN->convert($host);
+
+        $parsed['host'] =  $host;
+        $url  = self::parsedToUrl($parsed);
+
+
+        return $url;
+    }
+
+
+    /**
+     * Convert an internationalized domain name (or URL) from ASCII-compatible encoding to UTF8.
+     *
+     * @param string $url
+     * @return string
+     */
+    public static function idn_to_utf8($url)
+    {
+        $IDN = new ToUnicode();
+
+        $parsed  = parse_url($url);
+        // Encode only the host.
+        $host = $parsed['host'];
+        $host = $IDN->convert($host);
+        $parsed['host'] =  $host;
+        $url  = self::parsedToUrl($parsed);
+
+
+        return $url;
+    }
+
+    public static function parsedToUrl($parsed)
+    {
+
+        return (empty($parsed['scheme']) ? '' : $parsed['scheme'] . (strtolower($parsed['scheme']) == 'mailto' ? ':' : '://'))
+            . (empty($parsed['user']) ? '' : $parsed['user'] . (empty($parsed['pass']) ? '' : ':' . $parsed['pass']) . '@')
+            . $parsed['host']
+            . (empty($parsed['port']) ? '' : ':' . $parsed['port'])
+            . (empty($parsed['path']) ? '' : $parsed['path'])
+            . (empty($parsed['query']) ? '' : '?' . $parsed['query'])
+            . (empty($parsed['fragment']) ? '' : '#' . $parsed['fragment']);
     }
 }

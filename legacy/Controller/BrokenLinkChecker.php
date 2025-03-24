@@ -124,7 +124,7 @@ class BrokenLinkChecker
 
         add_action('admin_menu', array($this, 'admin_menu'));
 
-        $this->update = new UpdatePlugin(BLC_PLUGIN_FILE);
+        $this->update = new UpdatePlugin();
         $this->is_settings_tab = $this->is_settings_tab();
 
         // Load jQuery on Dashboard pages (probably redundant as WP already does that).

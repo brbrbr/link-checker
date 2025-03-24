@@ -1,0 +1,19 @@
+{
+    "name": "brbrbr/link-checker",
+    "type": "plugin",
+    "license": "GPL v3",
+    "autoload": {
+        "psr-4": {
+            "Blc\\": "legacy/"
+        }
+    },
+    "authors": [
+        {
+            "name": "bram",
+            "email": "wordpress@bbrokenlinkchecker.dev"
+        }
+    ],
+    "require": {
+        "algo26-matthias/idna-convert": "^4.1"
+    }
+}

@@ -7,8 +7,7 @@
 
 namespace Blc\Util;
 
-use Algo26\IdnaConvert\ToIdn;
-use Algo26\IdnaConvert\ToUnicode;
+
 use Blc\Util\ConfigurationManager;
 use Blc\Helper\ContainerHelper;
 use Blc\Controller\LinkInstance;

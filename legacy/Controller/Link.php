@@ -7,11 +7,13 @@
 
 namespace Blc\Controller;
 
+use Algo26\IdnaConvert\ToIdn;
+use Algo26\IdnaConvert\ToUnicode;
 use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
 use Blc\Util\ConfigurationManager;
 use Blc\Helper\CheckerHelper;
-use blcHttpCheckerBase;
+
 
 
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
@@ -282,7 +284,7 @@ class Link
             }
         }
         require_once BLC_DIRECTORY_LEGACY . '/modules/checkers/http.php';
-        $this->broken = blcHttpCheckerBase::is_error_code($this->http_code);
+        $this->broken = \blcHttpCheckerBase::is_error_code($this->http_code);
         // Update timestamps & state-dependent fields
         $this->status_changed($results['broken'], $new_result_hash);
         $this->being_checked = false;
@@ -1228,7 +1230,7 @@ class Link
         $host = $IDN->convert($host);
 
         $parsed['host'] =  $host;
-        $url  = self::parsedToUrl($parsed);
+        $url  = http_build_url($parsed);
 
 
         return $url;
@@ -1250,21 +1252,11 @@ class Link
         $host = $parsed['host'];
         $host = $IDN->convert($host);
         $parsed['host'] =  $host;
-        $url  = self::parsedToUrl($parsed);
+        $url  = http_build_url($parsed);
 
 
         return $url;
     }
 
-    public static function parsedToUrl($parsed)
-    {
 
-        return (empty($parsed['scheme']) ? '' : $parsed['scheme'] . (strtolower($parsed['scheme']) == 'mailto' ? ':' : '://'))
-            . (empty($parsed['user']) ? '' : $parsed['user'] . (empty($parsed['pass']) ? '' : ':' . $parsed['pass']) . '@')
-            . $parsed['host']
-            . (empty($parsed['port']) ? '' : ':' . $parsed['port'])
-            . (empty($parsed['path']) ? '' : $parsed['path'])
-            . (empty($parsed['query']) ? '' : '?' . $parsed['query'])
-            . (empty($parsed['fragment']) ? '' : '#' . $parsed['fragment']);
-    }
 }

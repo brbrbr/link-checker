@@ -9,4 +9,5 @@ use Blc\Abstract\Logger;
  */
 class DummyLogger extends Logger
 {
+    function log($message, $object = null, $level = self::BLC_LEVEL_DEBUG) {}
 }

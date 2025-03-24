@@ -112,7 +112,6 @@ class BrokenLinkCheckerSite
             "/update",
             [
                 'methods'             => \WP_REST_Server::CREATABLE,
-                'permission_callback' => '__return_true',
                 'callback'            => [$this, 'rest_update'],
                 'permission_callback' => function () {
                     $username = $_SERVER['PHP_AUTH_USER'];
@@ -168,7 +167,7 @@ class BrokenLinkCheckerSite
     {
         $url = $request->get_param('url');
         $link = new Link($url);
-        if (empty($link)  || $link->is_new === true) {
+        if ( $link->link_id  == 0 || $link->is_new === true) {
             http_response_code(406);
             exit;
         }

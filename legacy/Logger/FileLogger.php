@@ -10,11 +10,11 @@ use Blc\Abstract\Logger;
  */
 class FileLogger extends Logger
 {
-    protected $fileName; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+ 
 
-    public function __construct($fileName = '')
+    public function __construct(protected $fileName = '')
     {
-        $this->fileName = $fileName;
+     
     }
 
     function log($message, $object = null, $level = self::BLC_LEVEL_INFO)

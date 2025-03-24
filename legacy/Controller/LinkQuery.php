@@ -196,18 +196,21 @@ class LinkQuery
      * Delete a custom filter
      *
      * @param string $filter_id
-     * @return bool True on success, False if a database error occured.
+     * @return bool True on success, False if a database error occured or no filter_id is present
      */
-    function delete_custom_filter($filter_id)
+    function delete_custom_filter(?string $filter_id =  null)
     {
         global $wpdb;
         /** @var wpdb $wpdb */
 
-        if (! isset($filter_id)) {
-            $filter_id = $_POST['filter_id'];
-        }
+
+        $filter_id ??= $_POST['filter_id'];
+
         // Remove the "f" character from the filter ID to get its database key
         $filter_id = intval(ltrim($filter_id, 'f'));
+        if (! $filter_id) {
+            return false;
+        }
 
         // Try to delete the filter
         $q = $wpdb->prepare("DELETE FROM {$wpdb->prefix}blc_filters WHERE id = %d", $filter_id);

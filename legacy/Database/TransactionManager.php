@@ -29,7 +29,7 @@ class TransactionManager
             $wpdb->query('COMMIT');
             $blclog->debug('Commit executed.');
             $this->isTransactionStarted = false;
-        } catch (Exception $e) {
+        } catch (\Exception ) {
             $wpdb->query('ROLLBACK');
             $blclog->debug('Commit failed; rollback.');
             $this->isTransactionStarted = false;

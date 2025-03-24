@@ -132,7 +132,7 @@ class BrokenLinkChecker
 
         // The dashboard widget.
         add_action('wp_dashboard_setup', array($this, 'hook_wp_dashboard_setup'));
-     
+
         // AJAXy hooks.
         add_action('wp_ajax_blc_full_status', array($this, 'ajax_full_status'));
         add_action('wp_ajax_blc_work', array($this, 'ajax_work'));
@@ -178,9 +178,9 @@ class BrokenLinkChecker
         // Restore post date updated with the update link.
         add_filter('wp_insert_post_data', array($this, 'disable_post_date_update'), 10, 2);
     }
- 
 
-  
+
+
     public function blc_cron_schedules($schedules)
     {
         $schedules['10min'] ??= array(
@@ -459,9 +459,9 @@ class BrokenLinkChecker
      * Create the plugin's menu items and enqueue their scripts and CSS.
      * Callback for the 'admin_menu' action.
      *
-     * @return void
+     * @return string
      */
-    protected function icon_url()
+    protected function icon_url(): string
     {
         $data = file_get_contents(BLC_DIRECTORY_LEGACY . '/images/icon.svg');
         return 'data:image/svg+xml;base64,' . base64_encode(
@@ -2086,7 +2086,7 @@ class BrokenLinkChecker
         } else {
             // Try to delete the filter
             $blc_link_query = LinkQuery::getInstance();
-            if ($blc_link_query->delete_custom_filter($_POST['filter_id'])) {
+            if ($blc_link_query->delete_custom_filter()) {
                 // Success
                 $message = __('Filter deleted', 'broken-link-checker');
             } else {
@@ -2439,9 +2439,10 @@ class BrokenLinkChecker
 
         $messages        = array();
         $msg_class       = 'updated';
-        $processed_links = 0;
+
 
         if (count($selected_links) > 0) {
+            $processed_links = 0;
             $transactionManager = TransactionManager::getInstance();
             $transactionManager->start();
             foreach ($selected_links as $link_id) {
@@ -2477,21 +2478,24 @@ class BrokenLinkChecker
                     $msg_class  = 'error';
                 }
             }
-        }
 
-        if ($processed_links > 0) {
-            $transactionManager->commit();
-            $messages[] = sprintf(
-                _n(
-                    '%d link marked as not broken',
-                    '%d links marked as not broken',
-                    $processed_links,
-                    'broken-link-checker'
-                ),
-                $processed_links
-            );
+
+            if ($processed_links > 0) {
+                $transactionManager->commit();
+                $messages[] = sprintf(
+                    _n(
+                        '%d link marked as not broken',
+                        '%d links marked as not broken',
+                        $processed_links,
+                        'broken-link-checker'
+                    ),
+                    $processed_links
+                );
+            } else {
+                $messages[] = __('No links marked as not broken');
+            }
         } else {
-            $messages[] = __('No links marked as not broken');
+            $messages[] = __('No links selected to mark as not broken');
         }
 
         return array(implode('<br>', $messages), $msg_class);
@@ -2510,9 +2514,10 @@ class BrokenLinkChecker
 
         $messages        = array();
         $msg_class       = 'updated';
-        $processed_links = 0;
+
 
         if (count($selected_links) > 0) {
+            $processed_links = 0;
             $transactionManager = TransactionManager::getInstance();
             $transactionManager->start();
             foreach ($selected_links as $link_id) {
@@ -2544,21 +2549,25 @@ class BrokenLinkChecker
                     $msg_class  = 'error';
                 }
             }
-        }
 
-        if ($processed_links > 0) {
-            $transactionManager->commit();
-            $messages[] = sprintf(
-                _n(
-                    '%d link dismissed',
-                    '%d links dismissed',
-                    $processed_links,
-                    'broken-link-checker'
-                ),
-                $processed_links
-            );
-        }
 
+            if ($processed_links > 0) {
+                $transactionManager->commit();
+                $messages[] = sprintf(
+                    _n(
+                        '%d link dismissed',
+                        '%d links dismissed',
+                        $processed_links,
+                        'broken-link-checker'
+                    ),
+                    $processed_links
+                );
+            } else {
+                $messages[] = __('No links dismissed');
+            }
+        } else {
+            $messages[] = __('No links selected to dismiss');
+        }
         return array(implode('<br>', $messages), $msg_class);
     }
 

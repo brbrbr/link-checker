@@ -15,13 +15,13 @@ use Blc\Abstract\Logger;
  */
 class CachedOptionLogger extends Logger
 {
-    var $option_name = '';
-    var $log;
-    var $filter_level = self::BLC_LEVEL_DEBUG;
 
-    function __construct($option_name = '')
+    protected $log;
+    protected $filter_level = self::BLC_LEVEL_DEBUG;
+
+    function __construct(protected $option_name = '')
     {
-        $this->option_name = $option_name;
+
         $oldLog            = get_option($this->option_name);
         if (is_array($oldLog) && ! empty($oldLog)) {
             $this->log = $oldLog;
@@ -33,25 +33,25 @@ class CachedOptionLogger extends Logger
     function log($message, $object = null, $level = self::BLC_LEVEL_DEBUG)
     {
 
-        $new_entry = array( $level, $message, $object );
+        $new_entry = array($level, $message, $object);
         array_push($this->log, $new_entry);
     }
 
     function get_log($min_level = self::BLC_LEVEL_DEBUG)
     {
         $this->filter_level = $min_level;
-        return array_filter($this->log, array( $this, '_filter_log' ));
+        return array_filter($this->log, array($this, '_filter_log'));
     }
 
     function _filter_log($entry)
     {
-        return ( $entry[0] >= $this->filter_level );
+        return ($entry[0] >= $this->filter_level);
     }
 
     function get_messages($min_level = self::BLC_LEVEL_DEBUG)
     {
         $messages = $this->get_log($min_level);
-        return array_map(array( $this, '_get_log_message' ), $messages);
+        return array_map(array($this, '_get_log_message'), $messages);
     }
 
     function _get_log_message($entry)
@@ -70,4 +70,3 @@ class CachedOptionLogger extends Logger
         update_option($this->option_name, $this->log);
     }
 }
-

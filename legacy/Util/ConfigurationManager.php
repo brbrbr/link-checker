@@ -57,9 +57,8 @@ final class ConfigurationManager
      * if this function fails.
      *
      * @param string $name
-     * @return bool True if options were loaded, false otherwise.
      */
-    private function load_options()
+    private function load_options() : void
     {
 
         $new_options = get_option($this->name);

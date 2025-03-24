@@ -18,6 +18,7 @@ use Blc\Abstract\Parser;
 use Blc\Controller\LinkInstance;
 use Blc\Controller\Link;
 
+
 class blcACFParser extends Parser
 {
     var $supported_formats    = array('acf_field');
@@ -97,7 +98,7 @@ class blcACFParser extends Parser
      * @param string $old_url Ignored.
      * @param string $old_raw_url The current meta value.
      *
-     * @return array|WP_Error
+     * @return array|\WP_Error
      */
     function edit($content, $new_url, $old_url, $old_raw_url)
     {

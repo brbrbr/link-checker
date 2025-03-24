@@ -20,8 +20,8 @@ ModuleHidden: true
  * @access public
  */
 
- use Blc\Abstract\ContainerManager;
- use Blc\Abstract\Container;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
 
 
 class blcDummyContainer extends Container
@@ -34,7 +34,7 @@ class blcDummyContainer extends Container
 
     function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
     {
-        return new WP_Error(
+        return new \WP_Error(
             'container_not_found',
             sprintf(
                 __("I don't know how to edit a '%1\$s' [%2\$d].", 'broken-link-checker'),
@@ -46,7 +46,7 @@ class blcDummyContainer extends Container
 
     function unlink($field_name, $parser, $url, $raw_url = '')
     {
-        return new WP_Error(
+        return new \WP_Error(
             'container_not_found',
             sprintf(
                 __("I don't know how to edit a '%1\$s' [%2\$d].", 'broken-link-checker'),

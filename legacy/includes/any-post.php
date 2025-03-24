@@ -7,6 +7,7 @@ use Blc\Abstract\Container;
 use Blc\Helper\ContainerHelper;
 use Blc\Util\Utility;
 
+
 /**
  * The manager to rule all (post) managers.
  *
@@ -495,12 +496,12 @@ class blcAnyPostContainer extends Container
      *
      * @access protected
      *
-     * @return bool|WP_Error True on success, an error if something went wrong.
+     * @return bool|\WP_Error True on success, an error if something went wrong.
      */
     function update_wrapped_object()
     {
         if (is_null($this->wrapped_object)) {
-            return new WP_Error(
+            return new \WP_Error(
                 'no_wrapped_object',
                 __('Nothing to update', 'broken-link-checker')
             );
@@ -516,7 +517,7 @@ class blcAnyPostContainer extends Container
         if (is_wp_error($post_id)) {
             return $post_id;
         } elseif ($post_id == 0) {
-            return new WP_Error(
+            return new \WP_Error(
                 'update_failed',
                 sprintf(__('Updating post %d failed', 'broken-link-checker'), $this->container_id)
             );

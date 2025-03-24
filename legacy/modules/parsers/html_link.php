@@ -20,6 +20,7 @@ use Blc\Controller\Link;
 use Blc\Controller\LinkInstance;
 
 
+
 class blcHTMLLink extends Parser
 {
     var $supported_formats = array( 'html' );
@@ -131,7 +132,7 @@ class blcHTMLLink extends Parser
      * @param string $old_raw_url The raw, not-normalized URL of the links to look for. Optional.
      * @param string $new_text New link text. Optional.
      *
-     * @return array|WP_Error If successful, the return value will be an associative array with two
+     * @return array|\WP_Error If successful, the return value will be an associative array with two
      * keys : 'content' - the modified content, and 'raw_url' - the new raw, non-normalized URL used
      * for the modified links. In most cases, the returned raw_url will be equal to the new_url.
      */

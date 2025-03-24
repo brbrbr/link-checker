@@ -16,6 +16,7 @@ ModulePriority: 100
 
 use Blc\Abstract\PlaintextUrlParser;
 
+
 class blcSmartYouTubeURL extends PlaintextUrlParser
 {
     protected function validate_url($url)
@@ -50,7 +51,7 @@ class blcSmartYouTubeURL extends PlaintextUrlParser
      * @param string $old_url The URL to look for.
      * @param string $old_raw_url The raw, not-normalized URL. Optional.
      *
-     * @return array|WP_Error If successful, the return value will be an associative array with two
+     * @return array|\WP_Error If successful, the return value will be an associative array with two
      * keys : 'content' - the modified content, and 'raw_url' - the new raw, non-normalized URL used
      * for the modified links. In most cases, the returned raw_url will be equal to the new_url.
      */

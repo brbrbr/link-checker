@@ -1,10 +1,4 @@
 <?php
-use Blc\Abstract\Parser;
-use Blc\Helper\ContainerHelper;
-use Blc\Abstract\ContainerManager;
-use Blc\Abstract\Container;
-use Blc\Util\Utility;
-
 /*
 Plugin Name: Acf fields
 Description: Container module for acf fields.
@@ -15,6 +9,14 @@ ModuleID: acf_field
 ModuleCategory: container
 ModuleClassName: blcAcfMetaManager
 */
+use Blc\Abstract\Parser;
+use Blc\Helper\ContainerHelper;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
+use Blc\Util\Utility;
+
+
+
 
 // Note : If it ever becomes necessary to check metadata on objects other than posts, it will
 // be fairly easy to extract a more general metadata container class from blcAcfMeta.
@@ -101,7 +103,7 @@ class blcAcfMeta extends Container
      * @param string $new_value New meta value.
      * @param string $old_value old meta value.
      *
-     * @return bool|WP_Error True on success, an error object if something went wrong.
+     * @return bool|\WP_Error True on success, an error object if something went wrong.
      */
     function update_field($field, $new_value, $old_value = '')
     {
@@ -109,7 +111,7 @@ class blcAcfMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new WP_Error('metadata_update_failed', sprintf(__("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'), $field, $this->meta_type, $this->container_id));
+            return new \WP_Error('metadata_update_failed', sprintf(__("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'), $field, $this->meta_type, $this->container_id));
         }
     }
 
@@ -121,7 +123,7 @@ class blcAcfMeta extends Container
      * @param string    $url
      * @param string    $raw_url
      *
-     * @return bool|WP_Error True on success, or an error object if something went wrong.
+     * @return bool|\WP_Error True on success, or an error object if something went wrong.
      */
     function unlink($field_name, $parser, $url, $raw_url = '')
     {
@@ -140,7 +142,7 @@ class blcAcfMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new WP_Error('metadata_delete_failed', sprintf(__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'), $field_name, $this->meta_type, $this->container_id));
+            return new \WP_Error('metadata_delete_failed', sprintf(__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'), $field_name, $this->meta_type, $this->container_id));
         }
     }
 
@@ -154,7 +156,7 @@ class blcAcfMeta extends Container
      * @param string    $old_raw_url Old meta value.
      * @param null      $new_text
      *
-     * @return string|WP_Error The new value of raw_url on success, or an error object if something went wrong.
+     * @return string|\WP_Error The new value of raw_url on success, or an error object if something went wrong.
      */
     function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
     {

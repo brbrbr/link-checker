@@ -15,8 +15,11 @@ ModulePriority: 100
 
 ModuleCheckerUrlPattern: @^http://(?:www\.)?mediafire\.com/(?:(?:download\.php)?\?|download/)([0-9a-zA-Z]{11,20})(?:$|[^0-9a-zA-Z])@
 */
+
 use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Checker;
+
+
 /**
  * MediaFire link checker.
  *
@@ -150,7 +153,7 @@ class blcMediaFireChecker extends Checker
      * its first run. Therefore, we must pick the best transport manually.
      *
      * @param string $url
-     * @return array|WP_Error
+     * @return array|\WP_Error
      */
     function head($url)
     {

@@ -833,12 +833,12 @@ class Link
      *   new_link - the new link (an instance of Link).
      *   cnt_okay - the number of successfully edited link instances.
      *   cnt_error - the number of instances that caused problems.
-     *   errors - an array of WP_Error objects corresponding to the failed edits.
+     *   errors - an array of \WP_Error objects corresponding to the failed edits.
      */
     function edit($new_url, $new_text = null)
     {
         if (!$this->valid()) {
-            return new WP_Error(
+            return new \WP_Error(
                 'link_invalid',
                 __('Link is not valid', 'broken-link-checker')
             );
@@ -855,7 +855,7 @@ class Link
                 'cnt_okay'    => 0,
                 'cnt_error'   => 0,
                 'errors'      => array(
-                    new WP_Error(
+                    new \WP_Error(
                         'no_instances_found',
                         __('This link can not be edited because it is not used anywhere on this site.', 'broken-link-checker')
                     ),
@@ -881,7 +881,7 @@ class Link
                 'cnt_okay'    => 0,
                 'cnt_error'   => 0,
                 'errors'      => array(
-                    new WP_Error(
+                    new \WP_Error(
                         'link_creation_failed',
                         __('Failed to create a DB entry for the new URL.', 'broken-link-checker')
                     ),
@@ -937,19 +937,19 @@ class Link
      *
      * @see Link::edit()
      *
-     * @return array|WP_Error
+     * @return array|\WP_Error
      */
     function deredirect()
     {
         if (!$this->valid()) {
-            return new WP_Error(
+            return new \WP_Error(
                 'link_invalid',
                 __('Link is not valid', 'broken-link-checker')
             );
         }
 
         if (($this->redirect_count <= 0) || empty($this->final_url)) {
-            return new WP_Error(
+            return new \WP_Error(
                 'not_redirect',
                 __('This link is not a redirect', 'broken-link-checker')
             );
@@ -968,16 +968,16 @@ class Link
     /**
      * Unlink all instances and delete the link record.
      *
-     * @return array|WP_Error An associative array with these keys :
+     * @return array|\WP_Error An associative array with these keys :
      *    cnt_okay - the number of successfully removed instances.
      *    cnt_error - the number of instances that couldn't be removed.
      *    link_deleted - true if the link record was deleted.
-     *    errors - an array of WP_Error objects describing the errors that were encountered, if any.
+     *    errors - an array of \WP_Error objects describing the errors that were encountered, if any.
      */
     function unlink()
     {
         if (!$this->valid()) {
-            return new WP_Error(
+            return new \WP_Error(
                 'link_invalid',
                 __('Link is not valid', 'broken-link-checker')
             );
@@ -1004,7 +1004,7 @@ class Link
                     'cnt_error'    => 0,
                     'link_deleted' => false,
                     'errors'       => array(
-                        new WP_Error(
+                        new \WP_Error(
                             'deletion_failed',
                             __("Couldn't delete the link's database record", 'broken-link-checker')
                         ),
@@ -1041,7 +1041,7 @@ class Link
             if (!$link_deleted) {
                 array_push(
                     $errors,
-                    new WP_Error(
+                    new \WP_Error(
                         'deletion_failed',
                         __("Couldn't delete the link's database record", 'broken-link-checker')
                     )

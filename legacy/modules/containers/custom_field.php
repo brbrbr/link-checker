@@ -30,11 +30,12 @@ ModuleClassName: blcPostMetaManager
  * @access public
  */
 
- use Blc\Abstract\Parser;
- use Blc\Helper\ContainerHelper;
- use Blc\Abstract\ContainerManager;
- use Blc\Abstract\Container;
+use Blc\Abstract\Parser;
+use Blc\Helper\ContainerHelper;
+use Blc\Abstract\ContainerManager;
+use Blc\Abstract\Container;
 use Blc\Util\Utility;
+
 
 class blcPostMeta extends Container
 {
@@ -72,7 +73,7 @@ class blcPostMeta extends Container
      */
     function get_field($field = '', $single = false)
     {
-        $get_only_first_field = ( 'metadata' !== $this->fields[ $field ] );
+        $get_only_first_field = ('metadata' !== $this->fields[$field]);
 
         // override the get only first by a param
         if ($single) {
@@ -90,7 +91,7 @@ class blcPostMeta extends Container
      * @param string $field Meta name.
      * @param string $new_value New meta value.
      * @param string $old_value old meta value.
-     * @return bool|WP_Error True on success, an error object if something went wrong.
+     * @return bool|\WP_Error True on success, an error object if something went wrong.
      */
     function update_field($field, $new_value, $old_value = '')
     {
@@ -101,7 +102,7 @@ class blcPostMeta extends Container
         if (is_array($meta_value)) {
             foreach ($meta_value as $key => $meta) {
                 if ($meta === $old_value) {
-                    $new_meta_value[ $key ] = $new_value;
+                    $new_meta_value[$key] = $new_value;
                 }
             }
             $new_value = $new_meta_value;
@@ -113,7 +114,7 @@ class blcPostMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new WP_Error(
+            return new \WP_Error(
                 'metadata_update_failed',
                 sprintf(
                     __("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'),
@@ -132,11 +133,11 @@ class blcPostMeta extends Container
      * @param Parser $parser
      * @param string    $url
      * @param string    $raw_url
-     * @return bool|WP_Error True on success, or an error object if something went wrong.
+     * @return bool|\WP_Error True on success, or an error object if something went wrong.
      */
     function unlink($field_name, $parser, $url, $raw_url = '')
     {
-        if ('metadata' !== $this->fields[ $field_name ]) {
+        if ('metadata' !== $this->fields[$field_name]) {
             return parent::unlink($field_name, $parser, $url, $raw_url);
         }
 
@@ -144,7 +145,7 @@ class blcPostMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new WP_Error(
+            return new \WP_Error(
                 'metadata_delete_failed',
                 sprintf(
                     __("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'),
@@ -165,7 +166,7 @@ class blcPostMeta extends Container
      * @param string    $old_url
      * @param string    $old_raw_url Old meta value.
      * @param null      $new_text
-     * @return string|WP_Error The new value of raw_url on success, or an error object if something went wrong.
+     * @return string|\WP_Error The new value of raw_url on success, or an error object if something went wrong.
      */
     function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
     {
@@ -180,7 +181,7 @@ class blcPostMeta extends Container
         ));
         */
 
-        if ('metadata' !== $this->fields[ $field_name ]) {
+        if ('metadata' !== $this->fields[$field_name]) {
             return parent::edit_link($field_name, $parser, $new_url, $old_url, $old_raw_url, $new_text);
         }
 
@@ -267,8 +268,6 @@ class blcPostMeta extends Container
 
         if (current_user_can('edit_post', $this->container_id)) {
             $actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr(__('Edit this item')) . '">' . __('Edit') . '</a>';
-
-           
         }
         $actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'broken-link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
 
@@ -324,11 +323,6 @@ class blcPostMeta extends Container
     {
         return get_permalink($this->container_id);
     }
-
-
-
-
-
 }
 
 class blcPostMetaManager extends ContainerManager
@@ -352,24 +346,24 @@ class blcPostMetaManager extends ContainerManager
                 $parts = explode(':', $meta_name, 2);
                 if (count($parts) == 2) {
                     $type                               = strtolower($parts[0]);
-                    $this->selected_fields[ $parts[1] ] = $prefix_formats[ $type ] ?? 'metadata';
+                    $this->selected_fields[$parts[1]] = $prefix_formats[$type] ?? 'metadata';
                 } else {
-                    $this->selected_fields[ $meta_name ] = 'metadata';
+                    $this->selected_fields[$meta_name] = 'metadata';
                 }
             }
         }
 
         // Intercept 2.9+ style metadata modification actions
-        add_action("added_{$this->meta_type}_meta", array( $this, 'meta_modified' ), 10, 4);
-        add_action("updated_{$this->meta_type}_meta", array( $this, 'meta_modified' ), 10, 4);
-        add_action("deleted_{$this->meta_type}_meta", array( $this, 'meta_modified' ), 10, 4);
+        add_action("added_{$this->meta_type}_meta", array($this, 'meta_modified'), 10, 4);
+        add_action("updated_{$this->meta_type}_meta", array($this, 'meta_modified'), 10, 4);
+        add_action("deleted_{$this->meta_type}_meta", array($this, 'meta_modified'), 10, 4);
 
         // When a post is deleted, also delete the custom field container associated with it.
-        add_action('delete_post', array( $this, 'post_deleted' ));
-        add_action('trash_post', array( $this, 'post_deleted' ));
+        add_action('delete_post', array($this, 'post_deleted'));
+        add_action('trash_post', array($this, 'post_deleted'));
 
         // Re-parse custom fields when a post is restored from trash
-        add_action('untrashed_post', array( $this, 'post_untrashed' ));
+        add_action('untrashed_post', array($this, 'post_untrashed'));
     }
 
 
@@ -408,14 +402,14 @@ class blcPostMetaManager extends ContainerManager
         Calling get_posts() will automatically populate the post cache, so we
         don't need to actually store the results anywhere in the container object().
         */
-        $preload = $load_wrapped_objects || in_array($purpose, array( BLC_FOR_DISPLAY ));
+        $preload = $load_wrapped_objects || in_array($purpose, array(BLC_FOR_DISPLAY));
         if ($preload) {
             $post_ids = array();
             foreach ($containers as $container) {
                 $post_ids[] = $container->container_id;
             }
 
-            $args = array( 'include' => implode(',', $post_ids) );
+            $args = array('include' => implode(',', $post_ids));
             get_posts($args);
         }
 
@@ -435,12 +429,12 @@ class blcPostMetaManager extends ContainerManager
         global $blclog;
 
         // Only check custom fields on selected post types. By default, that's "post" and "page".
-        $post_types = array( 'post', 'page' );
-       
-            $overlord   = \blcPostTypeOverlord::getInstance();
-            $post_types = array_merge($post_types, $overlord->enabled_post_types);
-            $post_types = array_unique($post_types);
-        
+        $post_types = array('post', 'page');
+
+        $overlord   = \blcPostTypeOverlord::getInstance();
+        $post_types = array_merge($post_types, $overlord->enabled_post_types);
+        $post_types = array_unique($post_types);
+
 
         $escaped_post_types = "'" . implode("', '", array_map('esc_sql', $post_types)) . "'";
 
@@ -542,11 +536,11 @@ class blcPostMetaManager extends ContainerManager
 
         // Skip revisions. We only care about custom fields on the main post.
         $post = get_post($object_id);
-        if (empty($post) || ! isset($post->post_type) || ( 'revision' === $post->post_type )) {
+        if (empty($post) || ! isset($post->post_type) || ('revision' === $post->post_type)) {
             return;
         }
 
-        $container = ContainerHelper::get_container(array( $this->container_type, intval($object_id) ));
+        $container = ContainerHelper::get_container(array($this->container_type, intval($object_id)));
         $container->mark_as_unsynched();
     }
 
@@ -560,7 +554,7 @@ class blcPostMetaManager extends ContainerManager
     {
         // Get the associated container object
 
-        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
         if (null != $container) {
             // Delete it
             $container->delete();
@@ -579,7 +573,7 @@ class blcPostMetaManager extends ContainerManager
     function post_untrashed($post_id)
     {
         // Get the associated container object
-        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
         $container->mark_as_unsynched();
     }
 }

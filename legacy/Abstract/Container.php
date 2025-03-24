@@ -74,7 +74,7 @@ abstract class Container
      * @param string $field Field name.
      * @param string $new_value Set the field to this value.
      * @param string $old_value The previous value of the field. Optional, but can be useful for container that need the old value to distinguish between several instances of the same field (e.g. post metadata).
-     * @return bool|WP_Error True on success, an error object if something went wrong.
+     * @return bool|\WP_Error True on success, an error object if something went wrong.
      */
     function update_field($field, $new_value, $old_value = '')
     {
@@ -87,7 +87,7 @@ abstract class Container
         // delete the container and sync data. This will trigger a rescan.
         $this->delete();
         Utility::blc_cleanup_links();
-        return WP_Error('container_not_found', "Container not found while updating $field to $new_value");
+        return \WP_Error('container_not_found', "Container not found while updating $field to $new_value");
     }
 
     /**
@@ -109,7 +109,7 @@ abstract class Container
      *
      * @access protected
      *
-     * @return bool|WP_Error True on success, an error if something went wrong.
+     * @return bool|\WP_Error True on success, an error if something went wrong.
      */
     function update_wrapped_object()
     {
@@ -335,7 +335,7 @@ abstract class Container
      * @param string    $old_raw_url
      * @param string    $new_text Optional.
      *
-     * @return array|WP_Error The new value of raw_url on success, or an error object if something went wrong.
+     * @return array|\WP_Error The new value of raw_url on success, or an error object if something went wrong.
      */
     function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
     {
@@ -369,7 +369,7 @@ abstract class Container
 
         // Have the parser modify the specified link. If successful, the parser will
         // return an associative array with two keys - 'content' and 'raw_url'.
-        // Otherwise we'll get an instance of WP_Error.
+        // Otherwise we'll get an instance of \WP_Error.
         if ($parser->is_link_text_editable()) {
             $edit_result = $parser->edit($old_value, $new_url, $old_url, $old_raw_url, $new_text);
         } else {
@@ -397,7 +397,7 @@ abstract class Container
      * @param Parser $parser
      * @param string    $url
      * @param string    $raw_url
-     * @return bool|WP_Error True on success, or an error object if something went wrong.
+     * @return bool|\WP_Error True on success, or an error object if something went wrong.
      */
     function unlink($field_name, $parser, $url, $raw_url = '')
     {

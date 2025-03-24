@@ -132,7 +132,7 @@ class BrokenLinkChecker
 
         // The dashboard widget.
         add_action('wp_dashboard_setup', array($this, 'hook_wp_dashboard_setup'));
-
+     
         // AJAXy hooks.
         add_action('wp_ajax_blc_full_status', array($this, 'ajax_full_status'));
         add_action('wp_ajax_blc_work', array($this, 'ajax_work'));
@@ -178,7 +178,9 @@ class BrokenLinkChecker
         // Restore post date updated with the update link.
         add_filter('wp_insert_post_data', array($this, 'disable_post_date_update'), 10, 2);
     }
+ 
 
+  
     public function blc_cron_schedules($schedules)
     {
         $schedules['10min'] ??= array(
@@ -1916,7 +1918,7 @@ class BrokenLinkChecker
                 list($message, $msg_class) = $this->do_delete_custom_filter();
                 break;
 
-                // @noinspection PhpMissingBreakStatementInspection Deliberate fall-through.
+            // @noinspection PhpMissingBreakStatementInspection Deliberate fall-through.
 
             case 'bulk-unlink':
                 list($message, $msg_class) = $this->do_bulk_unlink($selected_links);
@@ -3526,7 +3528,7 @@ class BrokenLinkChecker
             // url, status text, status code, link text, editable link text
 
             foreach ($rez['errors'] as $error) {
-                /** @var $error WP_Error */
+                /** @var $error \WP_Error */
                 array_push($response['errors'], implode(', ', $error->get_error_messages()));
             }
             die(json_encode($response));
@@ -3577,7 +3579,7 @@ class BrokenLinkChecker
                     'errors'    => array(),
                 );
                 foreach ($rez['errors'] as $error) {
-                    /** @var WP_Error $error */
+                    /** @var \WP_Error $error */
                     array_push($response['errors'], implode(', ', $error->get_error_messages()));
                 }
 
@@ -3651,10 +3653,10 @@ class BrokenLinkChecker
             'errors'         => array(),
         );
 
-        // Convert WP_Error's to simple strings.
+        // Convert \WP_Error's to simple strings.
         if (!empty($result['errors'])) {
             foreach ($result['errors'] as $error) {
-                /** @var WP_Error $error */
+                /** @var \WP_Error $error */
                 $response['errors'][] = $error->get_error_message();
             }
         }

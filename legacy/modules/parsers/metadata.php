@@ -120,7 +120,7 @@ class blcMetadataParser extends Parser
      * @param string $old_url Ignored.
      * @param string $old_raw_url The current meta value.
      *
-     * @return array|WP_Error
+     * @return array|\WP_Error
      */
     function edit($content, $new_url, $old_url, $old_raw_url)
     {

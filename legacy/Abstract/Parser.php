@@ -28,6 +28,7 @@ namespace Blc\Abstract;
 use Blc\Abstract\Module;
 use Blc\Helper\ContainerHelper;
 
+
 abstract class Parser extends Module
 {
     var $parser_type;
@@ -118,13 +119,13 @@ abstract class Parser extends Module
      * @param string $old_url The URL to look for.
      * @param string $old_raw_url The raw, not-normalized URL of the links to look for. Optional.
      *
-     * @return array|WP_Error If successful, the return value will be an associative array with two
+     * @return array|\WP_Error If successful, the return value will be an associative array with two
      * keys : 'content' - the modified content, and 'raw_url' - the new raw, non-normalized URL used
      * for the modified links. In most cases, the returned raw_url will be equal to the new_url.
      */
     public    function edit($content, $new_url, $old_url, $old_raw_url)
     {
-        return new WP_Error(
+        return new \WP_Error(
             'not_implemented',
             sprintf(__("Editing is not implemented in the '%s' parser", 'broken-link-checker'), $this->parser_type)
         );
@@ -140,7 +141,7 @@ abstract class Parser extends Module
      */
     public function unlink($content, $url, $raw_url)
     {
-        return new WP_Error(
+        return new \WP_Error(
             'not_implemented',
             sprintf(__("Unlinking is not implemented in the '%s' parser", 'broken-link-checker'), $this->parser_type)
         );

@@ -195,17 +195,17 @@ abstract class EmbedParser extends Parser
     }
 
     /**
-     * Editing is disabled in embed parsers. Calling this function will yield an instance of WP_Error.
+     * Editing is disabled in embed parsers. Calling this function will yield an instance of \WP_Error.
      *
      * @param string $content
      * @param string $new_url
      * @param string $old_url
      * @param string $old_raw_url
-     * @return WP_Error
+     * @return \WP_Error
      */
     function edit($content, $new_url, $old_url, $old_raw_url)
     {
-        return new WP_Error(
+        return new \WP_Error(
             'not_implemented',
             sprintf(__("Embedded videos can't be edited using Broken Link Checker. Please edit or replace the video in question manually.", 'broken-link-checker'), $this->parser_type)
         );

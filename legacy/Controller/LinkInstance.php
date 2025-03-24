@@ -92,7 +92,7 @@ class LinkInstance
      * @param string $new_url
      * @param string $old_url
      * @param string $new_text
-     * @return bool|WP_Error True on success, or an instance of WP_Error if something went wrong.
+     * @return bool|\WP_Error True on success, or an instance of \WP_Error if something went wrong.
      */
     function edit($new_url, $old_url = '', $new_text = null)
     {
@@ -100,7 +100,7 @@ class LinkInstance
         // Get the container that contains this link
         $container = $this->get_container();
         if (is_null($container)) {
-            return new WP_Error(
+            return new \WP_Error(
                 'container_not_found',
                 sprintf(__('Container %1$s[%2$d] not found', 'broken-link-checker'), $this->container_type, $this->container_id)
             );
@@ -109,7 +109,7 @@ class LinkInstance
         // Get the parser.
         $parser = $this->get_parser();
         if (is_null($parser)) {
-            return new WP_Error(
+            return new \WP_Error(
                 'parser_not_found',
                 sprintf(__("Parser '%s' not found.", 'broken-link-checker'), $this->parser_type)
             );
@@ -148,7 +148,7 @@ class LinkInstance
     /**
      * Remove this instance from the post/blogroll/etc. Also deletes the appropriate DB record(s).
      *
-     * @return bool|WP_Error
+     * @return bool|\WP_Error
      */
     function unlink($url = null)
     {
@@ -156,7 +156,7 @@ class LinkInstance
         // Get the container that contains this link
         $container = $this->get_container();
         if (is_null($container)) {
-            return new WP_Error(
+            return new \WP_Error(
                 'container_not_found',
                 sprintf(__('Container %1$s[%2$d] not found', 'broken-link-checker'), $this->container_type, $this->container_id)
             );
@@ -165,7 +165,7 @@ class LinkInstance
         // Get the parser.
         $parser = $this->get_parser();
         if (is_null($parser)) {
-            return new WP_Error(
+            return new \WP_Error(
                 'parser_not_found',
                 sprintf(__("Parser '%s' not found.", 'broken-link-checker'), $this->parser_type)
             );

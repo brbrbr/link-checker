@@ -88,7 +88,7 @@ class blcUrlField extends Parser
      * @param string $old_url Ignored.
      * @param string $old_raw_url Ignored.
      *
-     * @return array|WP_Error
+     * @return array|\WP_Error
      */
     function edit($content, $new_url, $old_url, $old_raw_url)
     {

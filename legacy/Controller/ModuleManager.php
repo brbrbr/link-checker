@@ -5,6 +5,7 @@ namespace Blc\Controller;
 use Blc\Util\ConfigurationManager;
 use Blc\Abstract\Parser;
 
+
 class ModuleManager
 {
     /* @var ConfigurationManager */
@@ -743,23 +744,23 @@ class ModuleManager
      * is a currently registered virtual module.
      *
      * @param array $module_data Associative array of module data.
-     * @return bool|WP_Error True on success, an error object if the module fails validation
+     * @return bool|\WP_Error True on success, an error object if the module fails validation
      */
     function validate_module($module_data)
     {
         if (empty($module_data['ModuleID'])) {
-            return new WP_Error('invalid_cached_header', 'The cached module header is invalid');
+            return new \WP_Error('invalid_cached_header', 'The cached module header is invalid');
         }
 
         if (empty($module_data['virtual'])) {
             // Normal modules must have a valid filename
             if (empty($module_data['file'])) {
-                return new WP_Error('module_not_found', 'Invalid module file');
+                return new \WP_Error('module_not_found', 'Invalid module file');
             }
 
             $filename = $this->module_dir . '/' . $module_data['file'];
             if (! file_exists($filename)) {
-                return new WP_Error('module_not_found', 'Module file not found');
+                return new \WP_Error('module_not_found', 'Module file not found');
             }
 
             // The module file header must be in the proper format. While $module_data comes
@@ -767,12 +768,12 @@ class ModuleManager
             // the current headers and only return modules with semi-valid headers.
             $installed = $this->get_modules();
             if (! array_key_exists($module_data['ModuleID'], $installed)) {
-                return new WP_Error('invalid_module_header', 'Invalid module header');
+                return new \WP_Error('invalid_module_header', 'Invalid module header');
             }
         } else {
             // Virtual modules need to be currently registered
             if (! array_key_exists($module_data['ModuleID'], $this->_virtual_modules)) {
-                return new WP_Error('module_not_registered', 'The virtual module is not registered');
+                return new \WP_Error('module_not_registered', 'The virtual module is not registered');
             }
         }
 

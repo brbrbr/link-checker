@@ -18,6 +18,10 @@
  * L Language
  * N Note
 __DEPLOY_VERSION__
+2.4.2.7325
+ - Removed Trash option for container
+ - Removed blogroll -- really
+2.4.2.7324
  ^ Reworked broken link css and rel=nofollow to get 'all' links independt of container. Since links might be in a template-part (wp_block)
 2.4.1.6961
  ^ Tweaked the SSL settings. Some hosts (WAF's) expect the 'browser' to use a specified SSL version.

@@ -245,13 +245,7 @@ class blcAcfMeta extends Container
         if (current_user_can('edit_post', $this->container_id)) {
             $actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr(__('Edit this item')) . '">' . __('Edit') . '</a>';
 
-            if ($this->current_user_can_delete()) {
-                if ($this->can_be_trashed()) {
-                    $actions['trash'] = sprintf("<span><a class='submitdelete' title='%s' href='%s'>%s</a>", esc_attr(__('Move this item to the Trash')), get_delete_post_link($this->container_id, '', false), __('Trash'));
-                } else {
-                    $actions['delete'] = sprintf("<span><a class='submitdelete' title='%s' href='%s'>%s</a>", esc_attr(__('Delete this item permanently')), get_delete_post_link($this->container_id, '', true), __('Delete'));
-                }
-            }
+          
         }
         $actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'broken-link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
 
@@ -309,61 +303,6 @@ class blcAcfMeta extends Container
         return get_permalink($this->container_id);
     }
 
-    /**
-     * Delete or trash the post corresponding to this container. If trash is enabled,
-     * will always move the post to the trash instead of deleting.
-     *
-     * @return bool|WP_error
-     */
-    function delete_wrapped_object()
-    {
-     
-        if (EMPTY_TRASH_DAYS) {
-            return $this->trash_wrapped_object();
-        } elseif (wp_delete_post($this->container_id)) {
-                return true;
-        } else {
-            return new WP_Error('delete_failed', sprintf(__('Failed to delete post "%1$s" (%2$d)', 'broken-link-checker'), get_the_title($this->container_id), $this->container_id));
-        }
-    }
-
-    /**
-     * Move the post corresponding to this custom field to the Trash.
-     *
-     * @return bool|WP_Error
-     */
-    function trash_wrapped_object()
-    {
-     
-        if (! EMPTY_TRASH_DAYS) {
-            return new WP_Error('trash_disabled', sprintf(__('Can\'t move post "%1$s" (%2$d) to the trash because the trash feature is disabled', 'broken-link-checker'), get_the_title($this->container_id), $this->container_id));
-        }
-
-        $post = &get_post($this->container_id);
-        if ('trash' === $post->post_status) {
-            // Prevent conflicts between post and custom field containers trying to trash the same post.
-            return true;
-        }
-
-        if (wp_trash_post($this->container_id)) {
-            return true;
-        } else {
-            return new WP_Error('trash_failed', sprintf(__('Failed to move post "%1$s" (%2$d) to the trash', 'broken-link-checker'), get_the_title($this->container_id), $this->container_id));
-        }
-    }
-
-    function current_user_can_delete()
-    {
-        $post             = get_post($this->container_id);
-        $post_type_object = get_post_type_object($post->post_type);
-
-        return current_user_can($post_type_object->cap->delete_post, $this->container_id);
-    }
-
-    function can_be_trashed()
-    {
-        return defined('EMPTY_TRASH_DAYS') && EMPTY_TRASH_DAYS;
-    }
 }
 
 class blcAcfExtractedFieldWalker

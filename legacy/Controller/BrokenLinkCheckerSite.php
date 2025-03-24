@@ -141,6 +141,20 @@ class BrokenLinkCheckerSite
                         "type" => "integer",
                         "default" => 0,
                     ],
+                    "broken" => [
+
+                        "type" => "integer",
+                        "default" => 0,
+                        "min" => 0,
+                        "max" => 1,
+                    ],
+                    "timeout" => [
+
+                        "type" => "integer",
+                        "default" => 0,
+                        "min" => 0,
+                        "max" => 1,
+                    ],
                     "request_duration" => [
                         "type" => "float",
                         "default" => 0,
@@ -165,6 +179,7 @@ class BrokenLinkCheckerSite
                 'http_code'        => $request->get_param('http_code'),
                 'redirect_count'   => $request->get_param('redirect_count'),
                 'final_url'        => $request->get_param('final_url'),
+                'broken'        => $request->get_param('broken'),
                 'request_duration' => $request->get_param('request_duration'),
 
             )
@@ -217,7 +232,7 @@ class BrokenLinkCheckerSite
 
         $this->load_broken_links();
         if (empty($this->current_broken_links)) {
-            return;
+            return $content;
         }
         $tags = new \WP_HTML_Tag_Processor($content);
         //no point in checking images

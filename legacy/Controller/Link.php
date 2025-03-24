@@ -11,6 +11,7 @@ use Blc\Database\TransactionManager;
 use Blc\Util\Utility;
 use Blc\Util\ConfigurationManager;
 use Blc\Helper\CheckerHelper;
+use blcHttpCheckerBase;
 
 
 define('BLC_LINK_STATUS_UNKNOWN', 'unknown');
@@ -112,6 +113,8 @@ class Link
         505 => 'HTTP Version Not Supported',
         509 => 'Bandwidth Limit Exceeded',
         510 => 'Not Extended',
+        606 => 'SSL Error',
+        613 => 'Time out',
     );
     var $isOptionLinkChanged = false; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 
@@ -255,6 +258,7 @@ class Link
         );
 
 
+
         // FB::info($rez, "Check results");
 
         $results = array_merge($defaults, $results);
@@ -273,11 +277,12 @@ class Link
         $this->set_values($results);
         if ($this->final_url && $this->url != $this->final_url) {
             $this->final_url = Utility::idn_to_utf8($this->final_url);
-            if ($this->redirect_count == 0 ) {
+            if ($this->redirect_count == 0) {
                 $this->redirect_count == 1;
             }
         }
-
+        require_once BLC_DIRECTORY_LEGACY . '/modules/checkers/http.php';
+        $this->broken = blcHttpCheckerBase::is_error_code($this->http_code);
         // Update timestamps & state-dependent fields
         $this->status_changed($results['broken'], $new_result_hash);
         $this->being_checked = false;

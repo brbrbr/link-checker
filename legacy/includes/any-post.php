@@ -396,24 +396,7 @@ class blcAnyPostContainer extends Container
                 __('Edit')
             );
 
-            // Trash/Delete link
-            if (current_user_can($post_type_object->cap->delete_post, $this->container_id)) {
-                if ($this->can_be_trashed()) {
-                    $actions['trash'] = sprintf(
-                        "<span class='trash'><a class='submitdelete' title='%s' href='%s'>%s</a>",
-                        esc_attr(__('Move this item to the Trash')),
-                        esc_attr(get_delete_post_link($this->container_id, '', false)),
-                        __('Trash')
-                    );
-                } else {
-                    $actions['delete'] = sprintf(
-                        "<span><a class='submitdelete' title='%s' href='%s'>%s</a>",
-                        esc_attr(__('Delete this item permanently')),
-                        esc_attr(get_delete_post_link($this->container_id, '', true)),
-                        __('Delete')
-                    );
-                }
-            }
+      
         }
 
         // View/Preview link
@@ -578,89 +561,11 @@ class blcAnyPostContainer extends Container
         return get_permalink($this->container_id);
     }
 
-    /**
-     * Delete or trash the post corresponding to this container.
-     * Will always move to trash instead of deleting if trash is enabled.
-     *
-     * @return bool|WP_error
-     */
-    function delete_wrapped_object()
-    {
-        // Note that we don't need to delete the synch record and instances here -
-        // wp_delete_post()/wp_trash_post() will run the post_delete/trash hook,
-        // which will be caught by blcPostContainerManager, which will in turn
-        // delete anything that needs to be deleted.
-        if (EMPTY_TRASH_DAYS) {
-            return $this->trash_wrapped_object();
-        } elseif (wp_delete_post($this->container_id, true)) {
-                return true;
-        } else {
-            return new WP_Error(
-                'delete_failed',
-                sprintf(
-                    __('Failed to delete post "%1$s" (%2$d)', 'broken-link-checker'),
-                    get_the_title($this->container_id),
-                    $this->container_id
-                )
-            );
-        }
-    }
 
-    /**
-     * Move the post corresponding to this container to the Trash.
-     *
-     * @return bool|WP_Error
-     */
-    function trash_wrapped_object()
-    {
-        if (! EMPTY_TRASH_DAYS) {
-            return new WP_Error(
-                'trash_disabled',
-                sprintf(
-                    __('Can\'t move post "%1$s" (%2$d) to the trash because the trash feature is disabled', 'broken-link-checker'),
-                    get_the_title($this->container_id),
-                    $this->container_id
-                )
-            );
-        }
 
-        $post = get_post($this->container_id);
-        if ($post->post_status == 'trash') {
-            // Prevent conflicts between post and custom field containers trying to trash the same post.
-            // BUG: Post and custom field containers shouldn't wrap the same object
-            return true;
-        }
 
-        if (wp_trash_post($this->container_id)) {
-            return true;
-        } else {
-            return new WP_Error(
-                'trash_failed',
-                sprintf(
-                    __('Failed to move post "%1$s" (%2$d) to the trash', 'broken-link-checker'),
-                    get_the_title($this->container_id),
-                    $this->container_id
-                )
-            );
-        }
-    }
 
-    /**
-     * Check if the current user can delete/trash this post.
-     *
-     * @return bool
-     */
-    function current_user_can_delete()
-    {
-        $post             = $this->get_wrapped_object();
-        $post_type_object = get_post_type_object($post->post_type);
-        return current_user_can($post_type_object->cap->delete_post, $this->container_id);
-    }
 
-    function can_be_trashed()
-    {
-        return defined('EMPTY_TRASH_DAYS') && EMPTY_TRASH_DAYS;
-    }
 }
 
 /**

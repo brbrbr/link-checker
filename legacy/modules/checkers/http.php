@@ -114,7 +114,7 @@ class blcHttpCheckerBase extends Checker
         return $url;
     }
 
-    function is_error_code($http_code)
+    public static function is_error_code($http_code)
     {
         /*
         "Good" response codes are anything in the 2XX range (e.g "200 OK") and redirects  - the 3XX range.
@@ -277,36 +277,36 @@ class blcCurlHttp extends blcHttpCheckerBase
     function check($url, $use_get = false)
     {
         global $blclog;
-        $blclog->info( __CLASS__ . ' Checking link', $url );
+        $blclog->info(__CLASS__ . ' Checking link', $url);
 
         $log                = '';
         $this->last_headers = '';
-        $url                = wp_http_validate_url( $url );
-      
+        $url                = wp_http_validate_url($url);
 
-        if ( empty( $url ) ) {
-                $blclog->error( __CLASS__ . ' Invalid URL:', $url );
 
-                $result = array(
-                        'warning'     => true,
-                        'log'         => "Invalid URL.\nURL fails to pass validation for safe use in the HTTP API.",
-                        'status_text' => __( 'Invalid URL', 'broken-link-checker' ),
-                        'error_code'  => 'invalid_url',
-                        'status_code' => BLC_LINK_STATUS_WARNING,
-                );
+        if (empty($url)) {
+            $blclog->error(__CLASS__ . ' Invalid URL:', $url);
 
-                return $result;
+            $result = array(
+                'warning'     => true,
+                'log'         => "Invalid URL.\nURL fails to pass validation for safe use in the HTTP API.",
+                'status_text' => __('Invalid URL', 'broken-link-checker'),
+                'error_code'  => 'invalid_url',
+                'status_code' => BLC_LINK_STATUS_WARNING,
+            );
+
+            return $result;
         }
 
-        $url = wp_kses_bad_protocol( $this->clean_url( $url ), array( 'http', 'https', 'ssl' ) );
+        $url = wp_kses_bad_protocol($this->clean_url($url), array('http', 'https', 'ssl'));
 
         $result             = array(
             'broken'  => false,
             'timeout' => false,
             'warning' => false,
-    );
+        );
 
-        $blclog->debug( __CLASS__ . ' Clean URL:', $url );
+        $blclog->debug(__CLASS__ . ' Clean URL:', $url);
 
         $options = array();
 
@@ -390,7 +390,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         $nobody = !$use_get; // Whether to send a HEAD request (the default) or a GET request
 
-        if ('https' === strtolower(parse_url($url, PHP_URL_SCHEME)??'')) {
+        if ('https' === strtolower(parse_url($url, PHP_URL_SCHEME) ?? '')) {
             // Require valid ssl
             $options[CURLOPT_SSL_VERIFYPEER] = true;
             $options[CURLOPT_SSL_VERIFYHOST] = 2;
@@ -413,9 +413,9 @@ class blcCurlHttp extends blcHttpCheckerBase
         }
 
         // Apply filter for additional options
-    
+
         curl_setopt_array($ch, apply_filters('link-checker-curl-options', $options));
-     
+
         // Execute the request
         $start_time                = microtime(true);
         $content                   = curl_exec($ch);
@@ -479,6 +479,13 @@ class blcCurlHttp extends blcHttpCheckerBase
                     }
                     break;
 
+                case 58:
+                case 59:
+                case 60:   //SSL Errors
+                    $result['http_code']      = 606; //pseudo error code for SSL
+                    $result['broken'] = 1;
+                    break;
+
                 default:
                     $result['status_code'] = BLC_LINK_STATUS_WARNING;
                     $result['status_text'] = __('Unknown Error', 'broken-link-checker');
@@ -488,7 +495,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             $result['status_text'] = __('Unknown Error', 'broken-link-checker');
             $result['warning']     = true;
         } else {
-            $result['broken'] = $this->is_error_code($result['http_code']);
+            $result['broken'] = self::is_error_code($result['http_code']);
         }
 
         // Apply filter before curl closes
@@ -504,7 +511,7 @@ class blcCurlHttp extends blcHttpCheckerBase
                 isset($result['status_text']) ? $result['status_text'] : 'N/A'
             )
         );
-    
+
 
         $retryGet = apply_filters('link-checker-retry-with-get-after-head', true, $result);
 
@@ -612,10 +619,9 @@ class blcWPHttp extends blcHttpCheckerBase
             $result['timeout']   = true;
             $result['message']   = $request->get_error_message();
         } else {
-          //  $http_resp           = wp_remote_retrieve_body( $request ); from broken-link-checker - failty or unused??
-            $result['http_code'] = wp_remote_retrieve_response_code( $request ); // HTTP status code
-            $result['message']   = wp_remote_retrieve_response_message( $request );
-
+            //  $http_resp           = wp_remote_retrieve_body( $request ); from broken-link-checker - failty or unused??
+            $result['http_code'] = wp_remote_retrieve_response_code($request); // HTTP status code
+            $result['message']   = wp_remote_retrieve_response_message($request);
         }
 
         // Build the log
@@ -637,7 +643,7 @@ class blcWPHttp extends blcHttpCheckerBase
         }
 
         // Determine if the link counts as "broken"
-        $result['broken'] = $this->is_error_code($result['http_code']) || $result['timeout'];
+        $result['broken'] = self::is_error_code($result['http_code']) || $result['timeout'];
 
         $log          .= '<em>(' . __('Using WP HTTP', 'broken-link-checker') . ')</em>';
         $result['log'] = $log;

@@ -317,54 +317,11 @@ abstract class Container
         }
     }
 
-    /**
-     * Delete or trash the WP entity corresponding to this container. Should prefer moving to trash, if possible.
-     * Also remove the synch. record of the container and all associated instances.
-     *
-     * Must be over-ridden in a sub-class.
-     *
-     * @return bool|WP_Error
-     */
-    function delete_wrapped_object()
-    {
-        trigger_error('Function Container::delete_wrapped_object() must be over-ridden in a sub-class', E_USER_ERROR);
-    }
 
-    /**
-     * Move the WP entity corresponding to this container to the Trash.
-     *
-     * Must be over-riden in a subclass.
-     *
-     * @return bool|WP_Error
-     */
-    function trash_wrapped_object()
-    {
-        trigger_error('Function Container::trash_wrapped_object() must be over-ridden in a sub-class', E_USER_ERROR);
-    }
 
-    /**
-     * Check if the current user can delete/trash this container.
-     *
-     * Should be over-ridden in a subclass.
-     *
-     * @return bool
-     */
-    function current_user_can_delete()
-    {
-        return false;
-    }
 
-    /**
-     * Determine if this container can be moved to the trash.
-     *
-     * Should be over-ridden in a subclass.
-     *
-     * @return bool
-     */
-    function can_be_trashed()
-    {
-        return false;
-    }
+
+
 
 
     /**

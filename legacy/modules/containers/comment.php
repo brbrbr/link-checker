@@ -62,66 +62,8 @@ class blcComment extends Container
         }
     }
 
-    /**
-     * Delete the comment corresponding to this container.
-     * This will actually move the comment to the trash in newer versions of WP.
-     *
-     * @return bool|WP_error
-     */
-    function delete_wrapped_object()
-    {
-        if (EMPTY_TRASH_DAYS) {
-            return $this->trash_wrapped_object();
-        } elseif (wp_delete_comment($this->container_id, true)) {
-            return true;
-        } else {
-            return new WP_Error(
-                'delete_failed',
-                sprintf(
-                    __('Failed to delete comment %d', 'broken-link-checker'),
-                    $this->container_id
-                )
-            );
-        }
-    }
 
-    /**
-     * Delete the comment corresponding to this container.
-     * This will actually move the comment to the trash in newer versions of WP.
-     *
-     * @return bool|WP_error
-     */
-    function trash_wrapped_object()
-    {
-        if (wp_trash_comment($this->container_id)) {
-            return true;
-        } else {
-            return new WP_Error(
-                'trash_failed',
-                sprintf(
-                    __('Can\'t move comment %d to the trash', 'broken-link-checker'),
-                    $this->container_id
-                )
-            );
-        }
-    }
 
-    /**
-     * Check if the current user can delete/trash this comment.
-     *
-     * @return bool
-     */
-    function current_user_can_delete()
-    {
-        // TODO: Fix for custom post types? WP itself doesn't care, at least in 3.0.
-        $comment = $this->get_wrapped_object();
-        return current_user_can('edit_post', $comment->comment_post_ID);
-    }
-
-    function can_be_trashed()
-    {
-        return defined('EMPTY_TRASH_DAYS') && EMPTY_TRASH_DAYS;
-    }
 
     /**
      * Get the default link text to use for links found in a specific container field.
@@ -164,20 +106,10 @@ class blcComment extends Container
             return $actions;
         }
 
-        // Display Edit & Delete/Trash links only if the user has the right caps.
+      
         $user_can = current_user_can('edit_post', $comment->comment_post_ID);
         if ($user_can) {
             $actions['edit'] = "<a href='" . $this->get_edit_url() . "' title='" . esc_attr__('Edit comment') . "'>" . __('Edit') . '</a>';
-
-            $del_nonce  = esc_html('_wpnonce=' . wp_create_nonce("delete-comment_$comment->comment_ID"));
-            $trash_url  = esc_url(admin_url("comment.php?action=trashcomment&p=$post->ID&c=$comment->comment_ID&$del_nonce"));
-            $delete_url = esc_url(admin_url("comment.php?action=deletecomment&p=$post->ID&c=$comment->comment_ID&$del_nonce"));
-
-            if (! constant('EMPTY_TRASH_DAYS')) {
-                $actions['delete'] = "<a href='$delete_url' class='delete:the-comment-list:comment-$comment->comment_ID::delete=1 delete vim-d vim-destructive submitdelete'>" . __('Delete Permanently') . '</a>';
-            } else {
-                $actions['trash'] = "<a href='$trash_url' class='delete:the-comment-list:comment-$comment->comment_ID::trash=1 delete vim-d vim-destructive submitdelete' title='" . esc_attr__('Move this comment to the trash') . "'>" . _x('Trash', 'verb') . '</a>';
-            }
         }
 
         $actions['view'] = '<span class="view"><a href="' . get_comment_link($this->container_id) . '" title="' . esc_attr(__('View comment', 'broken-link-checker')) . '" rel="permalink">' . __('View') . '</a>';

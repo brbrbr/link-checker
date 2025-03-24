@@ -54,12 +54,11 @@ class blcComment extends Container
         $data = (array) $this->wrapped_object;
         if (wp_update_comment($data)) {
             return true;
-        } else {
-            return new WP_Error(
-                'update_failed',
-                sprintf(__('Updating comment %d failed', 'broken-link-checker'), $this->container_id)
-            );
         }
+        return new WP_Error(
+            'update_failed',
+            sprintf(__('Updating comment %d failed', 'broken-link-checker'), $this->container_id)
+        );
     }
 
 
@@ -106,7 +105,7 @@ class blcComment extends Container
             return $actions;
         }
 
-      
+
         $user_can = current_user_can('edit_post', $comment->comment_post_ID);
         if ($user_can) {
             $actions['edit'] = "<a href='" . $this->get_edit_url() . "' title='" . esc_attr__('Edit comment') . "'>" . __('Edit') . '</a>';
@@ -223,9 +222,10 @@ class blcCommentManager extends ContainerManager
     }
 
     function hook_trashed_post_comments(
-    /** @noinspection PhpUnusedParameterInspection */
-    $post_id, $statuses)
-    {
+        /** @noinspection PhpUnusedParameterInspection */
+        $post_id,
+        $statuses
+    ) {
         foreach ($statuses as $comment_id => $comment_status) {
             if ('1' == $comment_status) {
                 $container = ContainerHelper::get_container(array($this->container_type, $comment_id));

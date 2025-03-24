@@ -114,6 +114,7 @@ abstract class Container
     function update_wrapped_object()
     {
         trigger_error('Function Container::update_wrapped_object() must be over-ridden in a sub-class', E_USER_ERROR);
+        return false;
     }
 
     /**

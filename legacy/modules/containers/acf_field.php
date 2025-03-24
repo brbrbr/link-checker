@@ -58,6 +58,7 @@ class blcAcfMeta extends Container
     function update_wrapped_object()
     {
         trigger_error('Function blcAcfMeta::update_wrapped_object() does nothing and should not be used.', E_USER_WARNING);
+        return false;
     }
 
     /**

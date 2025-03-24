@@ -93,6 +93,7 @@ class blcHttpCheckerBase extends Checker
     protected $headers = [];
     protected $acceptLanguage         = 'en-US,en;q=0.5';
     protected $userAgent              = "";
+    protected string $splitOption = "#(;|,|\r\n|\n|\r)#";
     function clean_url($url)
     {
         $url = html_entity_decode($url);

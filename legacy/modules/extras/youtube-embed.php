@@ -13,10 +13,13 @@ ModuleLazyInit: true
 
 ModulePriority: 110
 */
+use Blc\Abstract\EmbedParser;
 
 
 class blcYouTubeEmbed extends EmbedParser
 {
+ 
+
     function init()
     {
         parent::init();

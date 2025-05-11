@@ -45,7 +45,7 @@ abstract class EmbedParser extends Parser
         $embeds = $this->extract_embeds($content);
         foreach ($embeds as $embed) {
             // Do we know how to handle this embed? (first-pass verification)
-            if (strpos($embed['attributes']['src'], $this->url_search_string) === false) {
+            if (!str_contains($embed['attributes']['src'], $this->url_search_string)) {
                 continue;
             }
 

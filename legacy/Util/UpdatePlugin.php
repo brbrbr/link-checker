@@ -15,7 +15,7 @@ class UpdatePlugin
     public function __construct()
     {
 
-        add_filter('update_plugins_downloads.brokenlinkchecker.dev', array($this, 'checkUpdate'), accepted_args: 2);
+        add_filter('update_plugins_downloads.brokenlinkchecker.dev', $this->checkUpdate(...), accepted_args: 2);
     }
 
     public function checkUpdate($update, $plugin_data)
@@ -25,7 +25,7 @@ class UpdatePlugin
         }
 
         $url = $plugin_data['UpdateURI'];
-        $thisPlugin = get_plugin_data(BLC_BASENAME);
+        $thisPlugin = get_plugin_data(BLC_BASENAME_DIR . '/link-checker.php' );
         if ($url == $thisPlugin['UpdateURI']) {
             return $this->fetchUpdate($url);
         }

@@ -183,12 +183,12 @@ class blcCommentManager extends ContainerManager
     {
         parent::init();
 
-        add_action('post_comment', array($this, 'hook_post_comment'), 10, 2);
-        add_action('edit_comment', array($this, 'hook_edit_comment'));
-        add_action('transition_comment_status', array($this, 'hook_comment_status'), 10, 3);
+        add_action('post_comment', $this->hook_post_comment(...), 10, 2);
+        add_action('edit_comment', $this->hook_edit_comment(...));
+        add_action('transition_comment_status', $this->hook_comment_status(...), 10, 3);
 
-        add_action('trashed_post_comments', array($this, 'hook_trashed_post_comments'), 10, 2);
-        add_action('untrash_post_comments', array($this, 'hook_untrash_post_comments'));
+        add_action('trashed_post_comments', $this->hook_trashed_post_comments(...), 10, 2);
+        add_action('untrash_post_comments', $this->hook_untrash_post_comments(...));
     }
 
     function hook_post_comment($comment_id, $comment_status)

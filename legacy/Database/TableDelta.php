@@ -261,7 +261,7 @@ class TableDelta
         if ($index) {
             // Names are optional for indexes; the INDEX/etc keyword can be immediately
             // followed by a column list (or index_type, but we're ignoring that possibility).
-            if (strpos($token, '(') === false) {
+            if (!str_contains($token, '(')) {
                 $name = $token;
             } else {
                 if ('primary' == $index_modifier) {

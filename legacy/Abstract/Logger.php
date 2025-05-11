@@ -62,17 +62,13 @@ abstract class Logger
 	}
 
 	protected function get_level_string($level)
-	{
-		switch ($level) {
-			case self::BLC_LEVEL_DEBUG:
-				return 'DEBUG:';
-			case self::BLC_LEVEL_ERROR:
-				return 'ERROR:';
-			case self::BLC_LEVEL_WARNING:
-				return 'WARN:';
-			case self::BLC_LEVEL_INFO:
-				return 'INFO:';
-		}
-		return 'LOG:';
-	}
+    {
+        return match ($level) {
+            self::BLC_LEVEL_DEBUG => 'DEBUG:',
+            self::BLC_LEVEL_ERROR => 'ERROR:',
+            self::BLC_LEVEL_WARNING => 'WARN:',
+            self::BLC_LEVEL_INFO => 'INFO:',
+            default => 'LOG:',
+        };
+    }
 }

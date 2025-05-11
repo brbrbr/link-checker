@@ -152,9 +152,7 @@ class blcHttpCheckerBase extends Checker
         // TODO: Remove/fix this. Probably not a good idea to "fix" invalid URLs like that.
         return preg_replace_callback(
             '|[^a-z0-9\+\-\/\\#:.,;=?!&%@()$\|*~_]|i',
-            function ($str) {
-                return rawurlencode($str[0]);
-            },
+            fn($str) => rawurlencode($str[0]),
             $url
         );
     }
@@ -216,9 +214,7 @@ class blcHttpCheckerBase extends Checker
     {
         $key           = strtok($header, ':');
         $partialString = "$key:";
-        $this->headers =  array_filter($this->headers, function ($item) use ($partialString) {
-            return stripos($item, $partialString) !== 0;
-        });
+        $this->headers =  array_filter($this->headers, fn($item) => stripos($item, $partialString) !== 0);
     }
 
     public function replaceHeader(string $header)
@@ -340,7 +336,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             CURLOPT_CONNECTTIMEOUT => $conf['timeout'],
             // Register a callback function which will process the HTTP header(s).
             // It can be called multiple times if the remote server performs a redirect.
-            CURLOPT_HEADERFUNCTION => [$this, 'read_header'],
+            CURLOPT_HEADERFUNCTION => $this->read_header(...),
 
             // Add a semi-plausible referer header to avoid tripping up some bot traps
             CURLOPT_REFERER        => home_url(),
@@ -550,7 +546,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
         if (!$nobody && (false !== $content) && $result['broken']) {
-            if (strpos($contentType, 'text') !== false) {
+            if (str_contains($contentType, 'text')) {
                 // in case the returned stuff is gzipped or what
                 // technically we should check against the database collation
                 if (!mb_detect_encoding($content, strict: true)) {

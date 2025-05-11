@@ -28,9 +28,9 @@ class ScreenOptions
         $this->registered_panels = array();
         $this->page_panels       = array();
 
-        add_action('current_screen', array($this, 'populate_page_panels'));
-        add_filter('screen_settings', array(&$this, 'append_screen_settings'), 10, 2);
-        add_action('admin_print_scripts', array(&$this, 'add_autosave_script'));
+        add_action('current_screen', $this->populate_page_panels(...));
+        add_filter('screen_settings', $this->append_screen_settings(...), 10, 2);
+        add_action('admin_print_scripts', $this->add_autosave_script(...));
     }
 
     /**
@@ -60,7 +60,7 @@ class ScreenOptions
         $this->registered_panels[$id] = $new_panel;
 
         if ($save_callback) {
-            add_action('wp_ajax_save_settings-' . $id, array($this, 'ajax_save_callback'));
+            add_action('wp_ajax_save_settings-' . $id, $this->ajax_save_callback(...));
         }
     }
 
@@ -79,7 +79,7 @@ class ScreenOptions
             $page = $panel['page'];
 
             // Convert page hooks/slugs to screen IDs
-            $page = array_map(array($this, 'page_to_screen_id'), $page);
+            $page = array_map($this->page_to_screen_id(...), $page);
             $page = array_unique($page);
 
             // Store the panel ID in each relevant page's list

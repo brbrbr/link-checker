@@ -323,7 +323,7 @@ class Link
 
             // Add an explanatory notice to the link's log
             $error_notice = '[' . __('The plugin script was terminated while trying to check the link.', 'broken-link-checker') . ']';
-            if (strpos($this->log, $error_notice) === false) {
+            if (!str_contains($this->log, $error_notice)) {
                 $this->log = $error_notice . "\r\n" . $this->log;
             }
 
@@ -1189,7 +1189,7 @@ class Link
         $site_host = preg_replace('@^www\.@', '', $site_host, 1);
 
         // Check if $host ends with $site_host. This means blah.example.com will match example.com.
-        return (substr($host, -strlen($site_host)) === $site_host);
+        return (str_ends_with($host, $site_host));
     }
 
     /**

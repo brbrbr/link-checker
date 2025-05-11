@@ -6,27 +6,27 @@ namespace Blc\Util;
  */
 class TokenBucketList
 {
-    const MICROSECONDS_PER_SECOND = 1000000;
-
-    /** @var float How many tokens each bucket can hold. */
-    private $capacity;
-
-    /** @var  float How long it takes to completely fill a bucket (in seconds). */
-    private $fillTime; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
-
-    /** @var float Minimum interval between taking tokens from a bucket (in seconds).  */
-    private $minTakeInterval; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
+    const MICROSECONDS_PER_SECOND = 1000000; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 
     /** @var int How many buckets we can manage, in total. */
     private $maxBuckets = 200; //phpcs:ignore WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase
 
     private $buckets = array();
 
-    public function __construct($capacity, $fillTime, $minInterval = 0)
+    /**
+     * @param float $capacity
+     * @param float $fillTime
+     * @param float $minInterval
+     */
+    public function __construct(
+        /** @var float How many tokens each bucket can hold. */
+        private $capacity,
+        /** @var  float How long it takes to completely fill a bucket (in seconds). */
+        private $fillTime,
+        /** @var float Minimum interval between taking tokens from a bucket (in seconds).  */
+        private $minTakeInterval = 0
+    )
     {
-        $this->capacity        = $capacity;
-        $this->fillTime        = $fillTime;
-        $this->minTakeInterval = $minInterval;
     }
 
     /**

@@ -142,7 +142,7 @@ class blcHTMLImage extends Parser
         $this->new_url = htmlentities($new_url);
 
         // Find all images and replace those that match $old_url.
-        $content = preg_replace_callback($this->img_pattern, array( &$this, 'edit_callback' ), $content);
+        $content = preg_replace_callback($this->img_pattern, $this->edit_callback(...), $content);
 
         return array(
             'content' => $content,
@@ -176,7 +176,7 @@ class blcHTMLImage extends Parser
         }
 
         $this->old_url = $raw_url; // used by the callback
-        $content       = preg_replace_callback($this->img_pattern, array( &$this, 'unlink_callback' ), $content);
+        $content       = preg_replace_callback($this->img_pattern, $this->unlink_callback(...), $content);
 
         return $content;
     }

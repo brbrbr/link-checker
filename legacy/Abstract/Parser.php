@@ -215,12 +215,12 @@ abstract class Parser extends Module
         $parts = (parse_url($base_url));
 
         // Protocol-relative URLs start with "//". We just need to prepend the right protocol.
-        if ('//' === substr($url, 0, 2)) {
+        if (str_starts_with($url, '//')) {
             $scheme = isset($parts['scheme']) ? $parts['scheme'] : 'http';
             return $scheme . ':' . $url;
         }
 
-        if (substr($url, 0, 1) == '/') {
+        if (str_starts_with($url, '/')) {
             // Relative URL starts with a slash => ignore the base path and jump straight to the root.
             $path_segments = explode('/', $url);
             array_shift($path_segments);

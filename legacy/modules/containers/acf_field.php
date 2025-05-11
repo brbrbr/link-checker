@@ -310,20 +310,8 @@ class blcAcfMeta extends Container
 
 class blcAcfExtractedFieldWalker
 {
-    private $keys;
-
-    private $selected_fields;
-
-    private $url_fields;
-
-    private $html_fields;
-
-    public function __construct(&$keys, $selected_fields, $url_fields, $html_fields)
+    public function __construct(private $keys, private $selected_fields, private $url_fields, private $html_fields)
     {
-        $this->keys            = $keys;
-        $this->selected_fields = $selected_fields;
-        $this->url_fields      = $url_fields;
-        $this->html_fields     = $html_fields;
     }
 
     public function walk_function($item, $key)
@@ -376,14 +364,14 @@ class blcAcfMetaManager extends ContainerManager
         }
 
         // Intercept 2.9+ style metadata modification actions
-        add_action('acf/save_post', array( $this, 'acf_save' ), 20, 1);
+        add_action('acf/save_post', $this->acf_save(...), 20, 1);
 
         // When a post is deleted, also delete the custom field container associated with it.
-        add_action('delete_post', array( $this, 'post_deleted' ));
-        add_action('trash_post', array( $this, 'post_deleted' ));
+        add_action('delete_post', $this->post_deleted(...));
+        add_action('trash_post', $this->post_deleted(...));
 
         // Re-parse custom fields when a post is restored from trash
-        add_action('untrashed_post', array( $this, 'post_untrashed' ));
+        add_action('untrashed_post', $this->post_untrashed(...));
     }
 
     /**
@@ -444,7 +432,7 @@ class blcAcfMetaManager extends ContainerManager
 
         $selected_fields = $this->selected_fields;
 
-        $html_fields = array_filter($selected_fields, array( $this, 'filterHtmlExtract' ));
+        $html_fields = array_filter($selected_fields, $this->filterHtmlExtract(...));
 
         $url_fields  = array_keys(array_diff($selected_fields, $html_fields));
         $html_fields = array_keys($html_fields);
@@ -585,7 +573,7 @@ class blcAcfMetaManager extends ContainerManager
 
         $selected_fields = $this->selected_fields;
 
-        $html_fields = array_filter($selected_fields, array( $this, 'filterHtmlExtract' ));
+        $html_fields = array_filter($selected_fields, $this->filterHtmlExtract(...));
 
         $url_fields = array_keys(array_diff($selected_fields, $html_fields));
 

@@ -46,7 +46,7 @@ class blcHTMLLink extends Parser
             'default_link_text' => $default_link_text,
         );
 
-        $instances = $this->map($content, array( $this, 'parser_callback' ), $params);
+        $instances = $this->map($content, $this->parser_callback(...), $params);
 
         // The parser callback returns NULL when it finds an invalid link. Filter out those nulls
         // from the list of instances.
@@ -150,7 +150,7 @@ class blcHTMLLink extends Parser
         );
 
         // Find all links and replace those that match $old_url.
-        $content = $this->multi_edit($content, array( &$this, 'edit_callback' ), $args);
+        $content = $this->multi_edit($content, $this->edit_callback(...), $args);
 
         $result = array(
             'content' => $content,
@@ -210,7 +210,7 @@ class blcHTMLLink extends Parser
         );
 
         // Find all links and remove those that match $raw_url.
-        $content = $this->multi_edit($content, array( &$this, 'unlink_callback' ), $args);
+        $content = $this->multi_edit($content, $this->unlink_callback(...), $args);
 
         return $content;
     }
@@ -331,7 +331,7 @@ class blcHTMLLink extends Parser
     function multi_edit($content, $callback, $extra = null)
     {
         // Just reuse map() + a little helper func. to apply the callback to all links and get modified links
-        $modified_links = $this->map($content, array( &$this, 'execute_edit_callback' ), array( $callback, $extra ));
+        $modified_links = $this->map($content, $this->execute_edit_callback(...), array( $callback, $extra ));
 
         // Replace each old link with the modified one
         $offset = 0;
@@ -343,7 +343,7 @@ class blcHTMLLink extends Parser
                 $new_html = '<a';
                 foreach ($link as $name => $value) {
                     // Skip special keys like '#raw' and '#offset'
-                    if (substr($name, 0, 1) === '#') {
+                    if (str_starts_with($name, '#')) {
                         continue;
                     }
 

@@ -65,11 +65,11 @@ class blcPostTypeOverlord
         }
      
         // These hooks update the synch & instance records when posts are added, deleted or modified.
-        add_action('delete_post', array( &$this, 'post_deleted' ));
-        add_action('save_post', array( &$this, 'post_saved' ));
+        add_action('delete_post', $this->post_deleted(...));
+        add_action('save_post', $this->post_saved(...));
         // We also treat post trashing/untrashing as delete/save.
-        add_action('trashed_post', array( &$this, 'post_deleted' ));
-        add_action('untrash_post', array( &$this, 'post_saved' ));
+        add_action('trashed_post', $this->post_deleted(...));
+        add_action('untrash_post', $this->post_saved(...));
     
     
     }
@@ -77,12 +77,12 @@ class blcPostTypeOverlord
 
     public function __clone()/*: void*/
     {
-        throw new \Error('Class singleton cant be cloned. (' . \get_class($this) . ' )');
+        throw new \Error('Class singleton cant be cloned. (' . static::class . ' )');
     }
 
     public function __wakeup(): void
     {
-        throw new \Error('Class singleton cant be serialized. (' . \get_class($this) . ' )');
+        throw new \Error('Class singleton cant be serialized. (' . static::class . ' )');
     }
     /**
      * Retrieve an instance of the overlord class.

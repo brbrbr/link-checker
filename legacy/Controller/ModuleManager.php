@@ -39,7 +39,7 @@ class ModuleManager
         $this->loaded    = array();
         $this->instances = array();
 
-        add_filter('extra_plugin_headers', array( &$this, 'inject_module_headers' ));
+        add_filter('extra_plugin_headers', $this->inject_module_headers(...));
     }
 
     /**
@@ -227,7 +227,7 @@ class ModuleManager
         }
 
         foreach ($categories as $cat => $cat_modules) {
-            uasort($categories[ $cat ], array( &$this, 'compare_priorities' ));
+            uasort($categories[ $cat ], $this->compare_priorities(...));
         }
 
         return $categories;
@@ -690,7 +690,7 @@ class ModuleManager
      */
     function put_virtual_last($modules)
     {
-        uasort($modules, array( &$this, 'compare_virtual_flags' ));
+        uasort($modules, $this->compare_virtual_flags(...));
         return $modules;
     }
 

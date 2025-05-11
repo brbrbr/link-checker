@@ -121,7 +121,7 @@ abstract class PlaintextUrlParser extends Parser
         }
 
         return array(
-            'content'   => preg_replace_callback($this->url_regexp, array( &$this, 'edit_callback' ), $content),
+            'content'   => preg_replace_callback($this->url_regexp, $this->edit_callback(...), $content),
             'raw_url'   => $new_url,
             'link_text' => $new_url,
         );
@@ -153,7 +153,7 @@ abstract class PlaintextUrlParser extends Parser
             $this->old_url = $raw_url;
         }
 
-        return preg_replace_callback($this->url_regexp, array( &$this, 'unlink_callback' ), $content);
+        return preg_replace_callback($this->url_regexp, $this->unlink_callback(...), $content);
     }
 
     function unlink_callback($match)

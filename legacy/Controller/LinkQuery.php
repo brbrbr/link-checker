@@ -430,7 +430,7 @@ class LinkQuery
                 if (is_numeric($code)) {
                     // It's a single number
                     $individual_codes[] = abs(intval($code));
-                } elseif (strpos($code, '-') !== false) {
+                } elseif (str_contains($code, '-')) {
                     // Try to parse it as a range
                     $range = explode('-', $code, 2);
                     if ((count($range) == 2) && is_numeric($range[0]) && is_numeric($range[0])) {
@@ -582,7 +582,7 @@ class LinkQuery
             // Only get the number of matching links.
             $q = "
 				SELECT  COUNT(*)
-	
+
 					FROM
 						{$wpdb->prefix}blc_links AS links
 					WHERE

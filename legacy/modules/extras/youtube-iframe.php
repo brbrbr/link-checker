@@ -76,7 +76,7 @@ class blcYouTubeIframe extends EmbedParser
         }
 
         // Is this a playlist?
-        if (strpos($parts['path'], 'videoseries') !== false) {
+        if (str_contains($parts['path'], 'videoseries')) {
             // Extract the playlist ID from the query string.
             if (! isset($parts['query']) || empty($parts['query'])) {
                 return null;
@@ -87,7 +87,7 @@ class blcYouTubeIframe extends EmbedParser
             }
 
             $playlist_id = $query['list'];
-            if (substr($playlist_id, 0, 2) === 'PL') {
+            if (str_starts_with($playlist_id, 'PL')) {
                 $playlist_id = substr($playlist_id, 2);
             }
 

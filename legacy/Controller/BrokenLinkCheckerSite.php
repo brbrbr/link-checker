@@ -62,18 +62,18 @@ class BrokenLinkCheckerSite
         $this->plugin_config = ConfigurationManager::getInstance();
 
         if ($this->plugin_config->options['mark_removed_links'] && !empty($this->plugin_config->options['removed_link_css'])) {
-            add_action('wp_footer', [$this, 'blc_print_removed_link_css']);
+            add_action('wp_footer', $this->blc_print_removed_link_css(...));
         }
 
         // Highlight and nofollow broken links in posts & pages
         if ($this->plugin_config->options['mark_broken_links'] || $this->plugin_config->options['nofollow_broken_links']) {
-            add_filter('the_content', array($this, 'hook_the_content'));
+            add_filter('the_content', $this->hook_the_content(...));
 
             if ($this->plugin_config->options['mark_broken_links'] && ! empty($this->plugin_config->options['broken_link_css'])) {
-                add_action('wp_footer', array($this, 'blc_print_broken_link_css'));
+                add_action('wp_footer', $this->blc_print_broken_link_css(...));
             }
         }
-        add_action('rest_api_init',  array($this, 'rest_api_init'));
+        add_action('rest_api_init',  $this->rest_api_init(...));
     }
 
     public function rest_api_init()
@@ -84,7 +84,7 @@ class BrokenLinkCheckerSite
             [
                 'methods'             => \WP_REST_Server::READABLE,
                 'permission_callback' => '__return_true',
-                'callback'            => [$this, 'rest_report'],
+                'callback'            => $this->rest_report(...),
                 "show_in_index" => false,
                 'args' => [
                     "http_code" => [
@@ -112,7 +112,7 @@ class BrokenLinkCheckerSite
             "/update",
             [
                 'methods'             => \WP_REST_Server::CREATABLE,
-                'callback'            => [$this, 'rest_update'],
+                'callback'            => $this->rest_update(...),
                 'permission_callback' => function () {
                     $username = $_SERVER['PHP_AUTH_USER'];
                     $password = $_SERVER['PHP_AUTH_PW'];

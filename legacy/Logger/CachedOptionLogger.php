@@ -40,7 +40,7 @@ class CachedOptionLogger extends Logger
     function get_log($min_level = self::BLC_LEVEL_DEBUG)
     {
         $this->filter_level = $min_level;
-        return array_filter($this->log, array($this, '_filter_log'));
+        return array_filter($this->log, $this->_filter_log(...));
     }
 
     function _filter_log($entry)
@@ -51,7 +51,7 @@ class CachedOptionLogger extends Logger
     function get_messages($min_level = self::BLC_LEVEL_DEBUG)
     {
         $messages = $this->get_log($min_level);
-        return array_map(array($this, '_get_log_message'), $messages);
+        return array_map($this->_get_log_message(...), $messages);
     }
 
     function _get_log_message($entry)

@@ -67,7 +67,7 @@ class blcYouTubeChecker extends Checker
         $playlist_id = null;
         if (strtolower($components['host']) === 'youtu.be') {
             $video_id = trim($components['path'], '/');
-        } elseif ((strpos($components['path'], 'watch') !== false) && isset($query['v'])) {
+        } elseif ((str_contains($components['path'], 'watch')) && isset($query['v'])) {
             $video_id = $query['v'];
         } elseif ('/playlist' == $components['path']) {
             $playlist_id = $query['list'];

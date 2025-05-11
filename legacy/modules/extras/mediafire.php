@@ -91,22 +91,22 @@ class blcMediaFireChecker extends Checker
                 // The 'errno' argument contains an (undocumented) error code.
                 $result['broken'] = true;
 
-                if (strpos($rez['headers']['location'], '/download/') !== false) {
+                if (str_contains($rez['headers']['location'], '/download/')) {
                     $result['broken']    = false;
                     $result['http_code'] = 200;
                     $result['log']      .= 'File OK';
                     $result['log']      .= "\nFull URL: " . $rez['headers']['location'];
-                } elseif (strpos($rez['headers']['location'], 'errno=320') !== false) {
+                } elseif (str_contains($rez['headers']['location'], 'errno=320')) {
                     $result['status_code'] = BLC_LINK_STATUS_ERROR;
                     $result['status_text'] = __('Not Found', 'broken-link-checker');
                     $result['http_code']   = 0;
                     $result['log']        .= 'The file is invalid or has been removed.';
-                } elseif (strpos($rez['headers']['location'], 'errno=378') !== false) {
+                } elseif (str_contains($rez['headers']['location'], 'errno=378')) {
                     $result['status_code'] = BLC_LINK_STATUS_ERROR;
                     $result['status_text'] = __('Not Found', 'broken-link-checker');
                     $result['http_code']   = 0;
                     $result['log']        .= 'The file has been removed due to a violation of MediaFire ToS.';
-                } elseif (strpos($rez['headers']['location'], 'errno=388') !== false) {
+                } elseif (str_contains($rez['headers']['location'], 'errno=388')) {
                     $result['status_code'] = BLC_LINK_STATUS_WARNING;
                     $result['status_text'] = __('Permission Denied', 'broken-link-checker');
                     $result['http_code']   = 0;

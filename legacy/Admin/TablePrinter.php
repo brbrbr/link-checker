@@ -218,12 +218,12 @@ class TablePrinter
         $this->columns = array(
             'status'        => array(
                 'heading' => __('Status', 'broken-link-checker'),
-                'content' => array( $this, 'column_status' ),
+                'content' => $this->column_status(...),
             ),
 
             'new-url'       => array(
                 'heading'  => __('URL', 'broken-link-checker'),
-                'content'  => array( $this, 'column_new_url' ),
+                'content'  => $this->column_new_url(...),
                 'sortable' => true,
                 'orderby'  => 'url',
             ),
@@ -231,19 +231,19 @@ class TablePrinter
             'used-in'       => array(
                 'heading' => __('Source', 'broken-link-checker'),
                 'class'   => 'column-title',
-                'content' => array( $this, 'column_used_in' ),
+                'content' => $this->column_used_in(...),
             ),
 
             'new-link-text' => array(
                 'heading'  => __('Link Text', 'broken-link-checker'),
-                'content'  => array( $this, 'column_new_link_text' ),
+                'content'  => $this->column_new_link_text(...),
                 'sortable' => true,
                 'orderby'  => 'link_text',
             ),
 
             'redirect-url'  => array(
                 'heading'  => __('Redirect URL', 'broken-link-checker'),
-                'content'  => array( $this, 'column_redirect_url' ),
+                'content'  => $this->column_redirect_url(...),
                 'sortable' => true,
                 'orderby'  => 'redirect_url',
             ),
@@ -862,7 +862,7 @@ class TablePrinter
     function sort_instances_for_display($instances, $searched_link_type = '')
     {
         $this->searched_link_type = $searched_link_type;
-        usort($instances, array( $this, 'compare_link_instances' ));
+        usort($instances, $this->compare_link_instances(...));
         return $instances;
     }
 

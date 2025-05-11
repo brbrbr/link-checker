@@ -10,7 +10,6 @@ namespace Blc\Util;
 
 final class ConfigurationManager
 {
-    private  $name = '';
     public  $options = [];
     private  $defaults = [];
     private  $loaded_values = [];
@@ -21,10 +20,8 @@ final class ConfigurationManager
      */
 
     //final class so we can use the __construct with the singleton
-    private function __construct(string $name, ?array $default_settings = null)
+    private function __construct(private readonly string $name, ?array $default_settings = null)
     {
-        $this->name = $name;
-
         if (is_array($default_settings)) {
             $this->defaults = $default_settings;
         }

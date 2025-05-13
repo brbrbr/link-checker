@@ -20,9 +20,9 @@ namespace Blc\Integrations;
 		 */
 		protected function __construct() {
 
-			add_filter( 'blc-parser-html-link-content', array( $this, 'decode_html_widget' ) );
-			add_filter( 'blc_parser_html_link_pre_content', array( $this, 'decode_html_widget' ) );
-			add_filter( 'blc_parser_html_link_post_content', array( $this, 'encode_back_html_widget' ) );
+			add_filter( 'blc-parser-html-link-content', $this->decode_html_widget(...) );
+			add_filter( 'blc_parser_html_link_pre_content', $this->decode_html_widget(...) );
+			add_filter( 'blc_parser_html_link_post_content', $this->encode_back_html_widget(...) );
 		}
 
 		/**

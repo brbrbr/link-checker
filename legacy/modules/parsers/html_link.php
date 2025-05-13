@@ -23,8 +23,12 @@ use Blc\Controller\LinkInstance;
 
 class blcHTMLLink extends Parser
 {
-    var $supported_formats = array( 'html' );
-
+    var $supported_formats = array('html');
+    /**
+     * @var array $modified_links An array of modified BLC links.
+     * @since 2.4.3
+     */
+    var $modified_links = [];
     /**
      * Parse a string for HTML links - <a href="URL">anchor text</a>
      *
@@ -99,7 +103,7 @@ class blcHTMLLink extends Parser
         }
 
         // Skip invalid links (again)
-        if (! $url || ( strlen($url) < 6 )) {
+        if (! $url || (strlen($url) < 6)) {
             $blclog->info(__CLASS__ . ':' . __FUNCTION__ . ' Skipping the link (invalid/short URL)', $url);
             return null;
         }
@@ -299,7 +303,7 @@ class blcHTMLLink extends Parser
             );
 
             // Prepare arguments for the callback
-            $params = array( $param );
+            $params = array($param);
             if (isset($extra)) {
                 $params[] = $extra;
             }
@@ -330,12 +334,14 @@ class blcHTMLLink extends Parser
      */
     function multi_edit($content, $callback, $extra = null)
     {
+        //2.4.3
+        $content = apply_filters('blc_parser_html_link_pre_content', $content);
         // Just reuse map() + a little helper func. to apply the callback to all links and get modified links
-        $modified_links = $this->map($content, $this->execute_edit_callback(...), array( $callback, $extra ));
+        $this->modified_links = $this->map($content, $this->execute_edit_callback(...), array($callback, $extra));
 
         // Replace each old link with the modified one
         $offset = 0;
-        foreach ($modified_links as $link) {
+        foreach ($this->modified_links as $link) {
             if (isset($link['#new_raw'])) {
                 $new_html = $link['#new_raw'];
             } else {
@@ -354,9 +360,12 @@ class blcHTMLLink extends Parser
 
             $content = substr_replace($content, $new_html, $link['#offset'] + $offset, strlen($link['#raw']));
             // Update the replacement offset
-            $offset += ( strlen($new_html) - strlen($link['#raw']) );
+            $offset += (strlen($new_html) - strlen($link['#raw']));
         }
 
+        //2.4.3
+        $content = apply_filters('blc_parser_html_link_post_content', $content);
+        
         return $content;
     }
 
@@ -378,7 +387,7 @@ class blcHTMLLink extends Parser
         list($callback, $extra) = $info;
 
         // Prepare arguments for the callback
-        $params = array( $link );
+        $params = array($link);
         if (isset($extra)) {
             $params[] = $extra;
         }

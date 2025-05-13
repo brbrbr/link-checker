@@ -6,6 +6,8 @@ use Blc\Abstract\ContainerManager;
 use Blc\Abstract\Container;
 use Blc\Helper\ContainerHelper;
 use Blc\Util\Utility;
+use Blc\Integrations\Elementor;
+use Blc\Integrations\SiteOrigin;
 
 
 /**
@@ -22,7 +24,7 @@ use Blc\Util\Utility;
 class blcPostTypeOverlord
 {
     public $enabled_post_types    = array();  // Post types currently selected for link checking
-    public $enabled_post_statuses = array( 'publish' ); // Only posts that have one of these statuses shall be checked
+    public $enabled_post_statuses = array('publish'); // Only posts that have one of these statuses shall be checked
 
     var $plugin_conf;
     var $resynch_already_done = false;
@@ -33,7 +35,7 @@ class blcPostTypeOverlord
      */
     final private function __construct()
     {
-    
+
         $this->plugin_conf = ConfigurationManager::getInstance();
 
         if (isset($this->plugin_conf->options['enabled_post_statuses'])) {
@@ -44,7 +46,7 @@ class blcPostTypeOverlord
         $module_manager = ModuleManager::getInstance();
 
         $post_types = get_post_types(array(), 'objects');
-        $exceptions = array( 'revision', 'nav_menu_item', 'attachment' );
+        $exceptions = array('revision', 'nav_menu_item', 'attachment');
 
         foreach ($post_types as $data) {
             $post_type = $data->name;
@@ -63,15 +65,13 @@ class blcPostTypeOverlord
                 )
             );
         }
-     
+
         // These hooks update the synch & instance records when posts are added, deleted or modified.
         add_action('delete_post', $this->post_deleted(...));
         add_action('save_post', $this->post_saved(...));
         // We also treat post trashing/untrashing as delete/save.
         add_action('trashed_post', $this->post_deleted(...));
         add_action('untrash_post', $this->post_saved(...));
-    
-    
     }
 
 
@@ -94,7 +94,6 @@ class blcPostTypeOverlord
         static $instance = null;
         if (is_null($instance)) {
             $instance = new blcPostTypeOverlord();
-         
         }
         return $instance;
     }
@@ -135,7 +134,7 @@ class blcPostTypeOverlord
         }
         // Get the associated container object
         $post_type      = get_post_type($post);
-        $post_container = ContainerHelper::get_container(array( $post_type, $post_id ));
+        $post_container = ContainerHelper::get_container(array($post_type, $post_id));
 
         if ($post_container) {
             // Delete the container
@@ -180,29 +179,29 @@ class blcPostTypeOverlord
      */
     function post_saved($post_id)
     {
-   
-    
+
+
         // Get the container type matching the type of the deleted post
         $post = get_post($post_id);
         if (! $post) {
             return;
         }
-     
+
         // Only check links in currently enabled post types
         if (! in_array($post->post_type, $this->enabled_post_types)) {
             return;
         }
-   
+
         // Only check posts that have one of the allowed statuses
         if (! in_array($post->post_status, $this->enabled_post_statuses)) {
             return;
         }
-      
+
         // Get the container & mark it as unparsed
-        $args           = array( $post->post_type, intval($post_id) );
+        $args           = array($post->post_type, intval($post_id));
         $post_container = ContainerHelper::get_container($args);
 
-     
+
         $post_container->mark_as_unsynched();
     }
 
@@ -216,7 +215,8 @@ class blcPostTypeOverlord
      */
     function resynch($container_type = '', $forced = false)
     {
-        global $wpdb; /** @var wpdb $wpdb */
+        global $wpdb;
+        /** @var wpdb $wpdb */
         global $blclog;
 
         // Resynch is expensive in terms of DB performance. Thus we only do it once, processing
@@ -347,11 +347,6 @@ class blcPostTypeOverlord
 
         $this->resynch_already_done = true;
     }
-
-
-
-
-
 }
 
 
@@ -388,6 +383,12 @@ class blcAnyPostContainer extends Container
 
         $post_type_object = get_post_type_object($post->post_type);
 
+        //2.4.3
+        if (! $post_type_object) {
+            return $actions;
+        }
+
+
         // Each post type can have its own cap requirements
         if (current_user_can($post_type_object->cap->edit_post, $this->container_id)) {
             $actions['edit'] = sprintf(
@@ -396,13 +397,11 @@ class blcAnyPostContainer extends Container
                 $post_type_object->labels->edit_item,
                 __('Edit')
             );
-
-      
         }
 
         // View/Preview link
         $title = get_the_title($this->container_id);
-        if (in_array($post->post_status, array( 'pending', 'draft' ))) {
+        if (in_array($post->post_status, array('pending', 'draft'))) {
             if (current_user_can($post_type_object->cap->edit_post, $this->container_id)) {
                 $actions['view'] = sprintf(
                     '<span class="view"><a href="%s" title="%s" rel="permalink">%s</a>',
@@ -472,7 +471,19 @@ class blcAnyPostContainer extends Container
             return '';
         }
 
-        return apply_filters('get_edit_post_link', admin_url(sprintf($post_type_object->_edit_link . $action, $post->ID)), $post->ID, $context);
+        //2.4.3
+        if ('wp_template' === $post->post_type || 'wp_template_part' === $post->post_type) {
+            $slug = urlencode(get_stylesheet() . '//' . $post->post_name);
+            $link = admin_url(sprintf($post_type_object->_edit_link, $post->post_type, $slug));
+        } elseif ('wp_navigation' === $post->post_type) {
+            $link = admin_url(sprintf($post_type_object->_edit_link, (string) $post->ID));
+        } elseif ($post_type_object->_edit_link) {
+            $link = admin_url(sprintf($post_type_object->_edit_link . $action, $post->ID));
+        }
+
+        $post_type_object->_edit_link = str_replace('postType=%s&', '', $post_type_object->_edit_link);
+
+        return apply_filters('get_edit_post_link', $link, $post->ID, $context);
     }
 
     /**
@@ -531,23 +542,58 @@ class blcAnyPostContainer extends Container
      * Update the the links on pagebuilders
      *
      * @param int $post_id  Post ID of whose content to update.
+     * updated 2.4.3
      */
     function update_pagebuilders($post_id)
     {
-
         if (! $post_id) {
             return;
         }
 
-        global $wpdb;
         // support for elementor page builder.
         if (class_exists('\Elementor\Plugin') && \Elementor\Plugin::$instance->db->is_built_with_elementor($post_id)) {
-			// @codingStandardsIgnoreStart cannot use `$wpdb->prepare` because it remove's the backslashes
-			$rows_affected = $wpdb->query(
-				"UPDATE {$wpdb->postmeta} " .
-				"SET `meta_value` = REPLACE(`meta_value`, '" . str_replace( '/', '\\\/', $this->updating_urls['old_url'] ) . "', '" . str_replace( '/', '\\\/', $this->updating_urls['new_url'] ) . "') " .
-				"WHERE `meta_key` = '_elementor_data' AND `post_id` = '" . $post_id . "' AND `meta_value` LIKE '[%' ;" ); // meta_value LIKE '[%' are json formatted
-			// @codingStandardsIgnoreEnd
+            if (is_array($this->updating_urls)) {
+                if (isset($this->updating_urls['old_url']) && isset($this->updating_urls['new_url'])) {
+                    // Editing case.
+                    $old_url = $this->updating_urls['old_url'];
+                    $new_url = $this->updating_urls['new_url'];
+                    Elementor::instance()->update_blc_links($old_url, $new_url, $post_id);
+                } else { // Unlinking case.
+                    foreach ($this->updating_urls as $key => $link_info) {
+                        $old_url = $link_info['#raw'];
+                        $new_url = $link_info['#new_raw'];
+
+                        if ($old_url === $new_url) {
+                            continue;
+                        }
+
+                        Elementor::instance()->update_blc_links($old_url, $new_url, $post_id);
+                    }
+                }
+            }
+        }
+
+        // Support for Page Builder by SiteOrigin.
+        if (class_exists('\SiteOrigin_Panels') && get_post_meta($post_id, 'panels_data', true)) {
+            if (is_array($this->updating_urls)) {
+                if (isset($this->updating_urls['old_url']) && isset($this->updating_urls['new_url'])) {
+                    // Editing case.
+                    $old_url = $this->updating_urls['old_url'];
+                    $new_url = $this->updating_urls['new_url'];
+                    SiteOrigin::instance()->update_blc_links($old_url, $new_url, $post_id);
+                } else { // Unlinking case.
+                    foreach ($this->updating_urls as $key => $link_info) {
+                        $old_url = $link_info['#raw'];
+                        $new_url = $link_info['#new_raw'];
+
+                        if ($old_url === $new_url) {
+                            continue;
+                        }
+
+                        SiteOrigin::instance()->update_blc_links($old_url, $new_url, $post_id);
+                    }
+                }
+            }
         }
     }
 
@@ -561,12 +607,6 @@ class blcAnyPostContainer extends Container
     {
         return get_permalink($this->container_id);
     }
-
-
-
-
-
-
 }
 
 /**
@@ -608,20 +648,20 @@ class blcAnyPostContainerManager extends ContainerManager
         $containers = $this->make_containers($containers);
 
         // Preload post data if it is likely to be useful later
-        $preload = $load_wrapped_objects || in_array($purpose, array( BLC_FOR_DISPLAY, BLC_FOR_PARSING ));
+        $preload = $load_wrapped_objects || in_array($purpose, array(BLC_FOR_DISPLAY, BLC_FOR_PARSING));
         if ($preload) {
             $post_ids = array();
             foreach ($containers as $container) {
                 $post_ids[] = $container->container_id;
             }
 
-            $args  = array( 'include' => implode(',', $post_ids) );
+            $args  = array('include' => implode(',', $post_ids));
             $posts = get_posts($args);
 
             foreach ($posts as $post) {
                 $key = $this->container_type . '|' . $post->ID;
-                if (isset($containers[ $key ])) {
-                    $containers[ $key ]->wrapped_object = $post;
+                if (isset($containers[$key])) {
+                    $containers[$key]->wrapped_object = $post;
                 }
             }
         }

@@ -325,7 +325,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         $this->replaceHeader('Expect:');
 
         $options = array(
-            CURLOPT_ENCODING       => '',
+
             CURLOPT_URL            => $this->urlencodefix($url),
             CURLOPT_RETURNTRANSFER => true,
             // Set maximum redirects
@@ -407,6 +407,15 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         if (!empty($this->headers)) {
             $options[CURLOPT_HTTPHEADER] =   $this->headers;
+        }
+        //2.4.3 - CURLOPT_ENCODING was already in the fork. addepted for >7.21.6
+        if (apply_filters('wpmudev_blc_local_accept_encoding_header', true)) {
+            $version = curl_version();
+            if (version_compare($version['version'], '7.21.6', '<')) {
+                curl_setopt($ch, CURLOPT_ENCODING, '');
+            } else {
+                curl_setopt($ch, CURLOPT_ACCEPT_ENCODING, '');
+            }
         }
 
         // Apply filter for additional options

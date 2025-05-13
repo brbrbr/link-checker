@@ -22,6 +22,7 @@ use Blc\Controller\ModuleManager;
 use Blc\Helper\ContainerHelper;
 use Blc\Util\UpdatePlugin;
 use Blc\Controller\LinkQuery;
+use Blc\Integrations\SiteOrigin;
 
 
 
@@ -102,6 +103,10 @@ class BrokenLinkChecker
 
         //Start up the post overlord
         \blcPostTypeOverlord::getInstance();
+        //2.4.3
+        if (class_exists('\SiteOrigin_Panels')) {
+            SiteOrigin::instance();
+        }
 
         // Let other plugins register virtual modules.
         do_action('blc_register_modules', $moduleManager);
@@ -518,7 +523,7 @@ class BrokenLinkChecker
     {
 
         if ($file === BLC_BASENAME) {
-            
+
             // $links[] = "<a href='admin.php?page=link-checker-settings'>" . __( 'Settings' ) . '</a>';
             $links[] = "<a href='admin.php?page=blc_local&local-settings=true'>" . __('Settings') . '</a>';
             $links[] = "<a href='admin.php?page=blc_local'>" . __('Broken Links') . '</a>';

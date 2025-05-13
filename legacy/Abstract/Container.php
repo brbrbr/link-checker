@@ -199,7 +199,7 @@ abstract class Container
             )
         );
 
-        return ( false !== $rez );
+        return (false !== $rez);
     }
 
     /**
@@ -226,7 +226,7 @@ abstract class Container
 
         Utility::blc_got_unsynched_items();
 
-        return ( false !== $rez );
+        return (false !== $rez);
     }
 
     /**
@@ -410,6 +410,11 @@ abstract class Container
         if (is_wp_error($new_value)) {
             return $new_value;
         }
+        //2.4.3
+        if (is_array($parser->modified_links)) {
+            $this->updating_urls = $parser->modified_links;
+        }
+
 
         return $this->update_field($field_name, $new_value, $old_value);
     }
@@ -470,6 +475,3 @@ abstract class Container
         return '';
     }
 }
-
-
-

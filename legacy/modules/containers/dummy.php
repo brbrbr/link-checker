@@ -77,8 +77,9 @@ class blcDummyManager extends ContainerManager
 {
     var $container_class_name = 'blcDummyContainer';
 
-    function resynch($forced = false)
+    function resynch($forced = false) : int
     {
         // Do nothing.
+        return 0;
     }
 }

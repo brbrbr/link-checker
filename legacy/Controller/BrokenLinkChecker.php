@@ -594,7 +594,6 @@ class BrokenLinkChecker
     public function options_page()
     {
         $moduleManager = ModuleManager::getInstance();
-
         if (isset($_POST['recheck']) && !empty($_POST['recheck'])) {
             $this->initiate_recheck();
 
@@ -657,9 +656,10 @@ class BrokenLinkChecker
             }
 
             // Did the user add/remove any post statuses?
-            $same_statuses         = array_intersect($enabled_post_statuses, $this->plugin_config->options['enabled_post_statuses']);
-            $post_statuses_changed = (count($same_statuses) != count($enabled_post_statuses))
-                || (count($same_statuses) !== count($this->plugin_config->options['enabled_post_statuses']));
+
+
+
+
 
             $this->plugin_config->options['enabled_post_statuses'] = $enabled_post_statuses;
 
@@ -843,6 +843,8 @@ class BrokenLinkChecker
                 $this->plugin_config->options['cookie_jar'] = $cookie_jar;
             }
 
+
+            Utility::blc_got_unsynched_items();
             // Make settings that affect our Cron events take effect immediately
             $this->setup_cron_events();
             $this->plugin_config->save_options();
@@ -874,18 +876,6 @@ class BrokenLinkChecker
                 }
             }
 
-            // Resynchronize posts when the user enables or disables post statuses.
-            if (true || $post_statuses_changed) {
-
-
-                $overlord                        = \blcPostTypeOverlord::getInstance();
-                $overlord->enabled_post_statuses = $this->plugin_config->get('enabled_post_statuses', array());
-                $overlord->resynch('wsh_status_resynch_trigger');
-
-                Utility::blc_got_unsynched_items();
-                Utility::blc_cleanup_instances();
-                Utility::blc_cleanup_links();
-            }
 
             // Redirect back to the settings page
             $base_url = remove_query_arg(
@@ -2876,6 +2866,17 @@ class BrokenLinkChecker
         $orphans_possible   = false;
         $still_need_resynch = $this->plugin_config->options['need_resynch'];
         if ($still_need_resynch) {
+
+            $start               = microtime(true);
+            //ok, resync the instances. post might be deleted,published, changed state etc etc.
+            $overlord                        = \blcPostTypeOverlord::getInstance();
+            $overlord->enabled_post_statuses = $this->plugin_config->get('enabled_post_statuses', array());
+
+            $changed = $overlord->resynch(__CLASS__ . '::' . __METHOD__);
+            $orphans_possible = $changed > 0;
+            $get_time = microtime(true) - $start;
+            $this->sleep_to_maintain_ratio($get_time, $target_usage_fraction);
+
             // FB::log("Looking for containers that need parsing...");
             $max_containers_per_query = 50;
 
@@ -2941,8 +2942,8 @@ class BrokenLinkChecker
         /******************************************
          * Resynch done?
          */
-        if ($this->plugin_config->options['need_resynch'] && !$still_need_resynch) {
-            $this->plugin_config->options['need_resynch'] = $still_need_resynch;
+        if (!$still_need_resynch) {
+            $this->plugin_config->options['need_resynch'] = false;
             $this->plugin_config->save_options();
         }
 
@@ -2952,10 +2953,12 @@ class BrokenLinkChecker
 
         if ($orphans_possible) {
             $start = microtime(true);
-
-            $blclog->info('Removing orphaned links.');
             Utility::blc_cleanup_links();
+            $get_links_time = microtime(true) - $start;
+            $this->sleep_to_maintain_ratio($get_links_time, $target_usage_fraction);
 
+            $start = microtime(true);
+            Utility::blc_cleanup_instances();
             $get_links_time = microtime(true) - $start;
             $this->sleep_to_maintain_ratio($get_links_time, $target_usage_fraction);
         }

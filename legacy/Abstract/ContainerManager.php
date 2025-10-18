@@ -1,4 +1,5 @@
 <?php
+
 namespace Blc\Abstract;
 
 
@@ -84,7 +85,7 @@ abstract class ContainerManager extends Module
         $results = array();
         foreach ($containers as $container) {
             $key             = $container['container_type'] . '|' . $container['container_id'];
-            $results[ $key ] = $this->get_container($container);
+            $results[$key] = $this->get_container($container);
         }
         return $results;
     }
@@ -95,11 +96,12 @@ abstract class ContainerManager extends Module
      * Must be over-ridden in subclasses.
      *
      * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
-     * @return void
+     * @return int
      */
-    function resynch($forced = false)
+    function resynch($forced = false): int
     {
         trigger_error('Function ContainerManager::resynch() must be over-ridden in a sub-class', E_USER_ERROR);
+        return 0;
     }
 
     /**
@@ -125,7 +127,3 @@ abstract class ContainerManager extends Module
         return $this->fields;
     }
 }
-
-
-
-

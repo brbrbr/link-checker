@@ -420,14 +420,14 @@ class blcPostMetaManager extends ContainerManager
      * Create or update synchronization records for all containers managed by this class.
      *
      * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
-     * @return void
+     * @return int
      */
-    function resynch($forced = false)
+    function resynch($forced = false) : int
     {
         global $wpdb;
         /** @var wpdb $wpdb */
         global $blclog;
-
+        $changed = 0;
         // Only check custom fields on selected post types. By default, that's "post" and "page".
         $post_types = array('post', 'page');
 
@@ -450,6 +450,7 @@ class blcPostMetaManager extends ContainerManager
 	 				AND {$wpdb->posts}.post_type IN ({$escaped_post_types})";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+              $changed +=  $wpdb->rows_affected;
         } else {
             // Delete synch records corresponding to posts that no longer exist.
             $blclog->log('...... Deleting custom field synch records corresponding to deleted posts');
@@ -462,6 +463,7 @@ class blcPostMetaManager extends ContainerManager
 					 synch.container_type = '{$this->container_type}' AND posts.ID IS NULL";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+              $changed +=  $wpdb->rows_affected;
 
             // Remove the 'synched' flag from all posts that have been updated
             // since the last time they were parsed/synchronized.
@@ -476,6 +478,7 @@ class blcPostMetaManager extends ContainerManager
 					synch.last_synch < posts.post_modified";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows updated in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+              $changed +=  $wpdb->rows_affected;
 
             // Create synch. records for posts that don't have them.
             $blclog->log('...... Creating custom field synch records for new ' . $escaped_post_types);
@@ -491,7 +494,9 @@ class blcPostMetaManager extends ContainerManager
 					AND synch.container_id IS NULL";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+              $changed +=  $wpdb->rows_affected;
         }
+        return $changed;
     }
 
     /**

@@ -52,7 +52,7 @@ class ContainerHelper
     {
         global $wpdb; /* @var wpdb $wpdb */
 
-        if (! is_array($container) || ( count($container) < 2 )) {
+        if (! is_array($container) || (count($container) < 2)) {
             return null;
         }
 
@@ -108,7 +108,7 @@ class ContainerHelper
         global $wpdb; /* @var wpdb $wpdb */
 
         // If the input is invalid or empty, return an empty array.
-        if (! is_array($containers) || ( count($containers) < 1 )) {
+        if (! is_array($containers) || (count($containers) < 1)) {
             return array();
         }
 
@@ -123,10 +123,10 @@ class ContainerHelper
             $by_type = array();
 
             foreach ($containers as $container) {
-                if (isset($by_type[ $container[0] ])) {
-                    array_push($by_type[ $container[0] ], intval($container[1]));
+                if (isset($by_type[$container[0]])) {
+                    array_push($by_type[$container[0]], intval($container[1]));
                 } else {
-                    $by_type[ $container[0] ] = array( intval($container[1]) );
+                    $by_type[$container[0]] = array(intval($container[1]));
                 }
             }
 
@@ -154,10 +154,10 @@ class ContainerHelper
         // At this point, $containers is an array of assoc. arrays comprising container data.
         $by_type = array();
         foreach ($containers as $container) {
-            if (isset($by_type[ $container['container_type'] ])) {
-                array_push($by_type[ $container['container_type'] ], $container);
+            if (isset($by_type[$container['container_type']])) {
+                array_push($by_type[$container['container_type']], $container);
             } else {
-                $by_type[ $container['container_type'] ] = array( $container );
+                $by_type[$container['container_type']] = array($container);
             }
         }
 
@@ -203,20 +203,21 @@ class ContainerHelper
      * Calls the resynch() method of all registered managers.
      *
      * @param bool $forced If true, assume that no synch. records exist and build all of them from scratch.
-     * @return void
+     * @return int
      */
-    static function resynch($forced = false)
+    static function resynch($forced = false): int
     {
         global $wpdb;
-
+        $changed = 0;
         $module_manager  = ModuleManager::getInstance();
         $active_managers = $module_manager->get_active_by_category('container');
         foreach ($active_managers as $module_id => $module_data) {
             $manager = $module_manager->get_module($module_id);
             if ($manager) {
-                $manager->resynch($forced);
+                $changed +=   $manager->resynch($forced);
             }
         }
+        return $changed;
     }
 
     /**
@@ -248,10 +249,10 @@ class ContainerHelper
                 foreach ($formats as $format => $timestamp) {
                     if (in_array($format, $fields)) {
                         // Choose the earliest timestamp
-                        if (isset($container_types[ $container_type ])) {
-                            $container_types[ $container_type ] = min($timestamp, $container_types[ $container_type ]);
+                        if (isset($container_types[$container_type])) {
+                            $container_types[$container_type] = min($timestamp, $container_types[$container_type]);
                         } else {
-                            $container_types[ $container_type ] = $timestamp;
+                            $container_types[$container_type] = $timestamp;
                         }
                     }
                 }
@@ -279,7 +280,7 @@ class ContainerHelper
         $blclog->log('...... Executing query: ' . $q);
 
         $start_time = microtime(true);
-        $rez        = ( $wpdb->query($q) !== false ); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $rez        = ($wpdb->query($q) !== false); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $blclog->log(sprintf('...... %d rows affected, %.3f seconds', $wpdb->rows_affected, microtime(true) - $start_time));
 
         Utility::blc_got_unsynched_items();

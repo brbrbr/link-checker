@@ -9,6 +9,7 @@ ModuleID: acf_field
 ModuleCategory: container
 ModuleClassName: blcAcfMetaManager
 */
+
 use Blc\Abstract\Parser;
 use Blc\Helper\ContainerHelper;
 use Blc\Abstract\ContainerManager;
@@ -80,16 +81,16 @@ class blcAcfMeta extends Container
         $key  = explode('|', str_replace('_field', '|field', $meta));
 
         if (is_array($key)) {
-            $key = $key[ count($key) - 1 ];
+            $key = $key[count($key) - 1];
         } else {
             $key = $meta;
         }
 
-        if (! isset($this->fields[ $key ])) {
+        if (! isset($this->fields[$key])) {
             $key = $field;
         }
 
-        $get_only_first_field = ( 'acf_field' !== $this->fields[ $key ] );
+        $get_only_first_field = ('acf_field' !== $this->fields[$key]);
 
         return get_metadata($this->meta_type, $this->container_id, $field, $get_only_first_field);
     }
@@ -127,14 +128,14 @@ class blcAcfMeta extends Container
      */
     function unlink($field_name, $parser, $url, $raw_url = '')
     {
-        
+
         $meta = get_metadata('post', $this->container_id, '_' . $field_name, true);
         $key  = explode('|', str_replace('_field', '|field', $meta));
 
         if (is_array($key)) {
-            $key = $key[ count($key) - 1 ];
+            $key = $key[count($key) - 1];
         }
-        if ('acf_field' !== $this->fields[ $key ]) {
+        if ('acf_field' !== $this->fields[$key]) {
             return parent::unlink($field_name, $parser, $url, $raw_url);
         }
 
@@ -160,15 +161,15 @@ class blcAcfMeta extends Container
      */
     function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
     {
-    
+
         $meta = get_metadata('post', $this->container_id, '_' . $field_name, true);
         $key  = explode('|', str_replace('_field', '|field', $meta));
 
         if (is_array($key)) {
-            $key = $key[ count($key) - 1 ];
+            $key = $key[count($key) - 1];
         }
 
-        if ('acf_field' !== $this->fields[ $key ]) {
+        if ('acf_field' !== $this->fields[$key]) {
             return parent::edit_link($field_name, $parser, $new_url, $old_url, $old_raw_url, $new_text);
         }
 
@@ -218,7 +219,7 @@ class blcAcfMeta extends Container
 
     function ui_get_source($container_field = '', $context = 'display')
     {
-     
+
         if (! post_type_exists(get_post_type($this->container_id))) {
             // Error: Invalid post type. The user probably removed a CPT without removing the actual posts.
             $post_html = '';
@@ -239,7 +240,7 @@ class blcAcfMeta extends Container
 
     function ui_get_action_links($container_field)
     {
-       
+
         $actions = array();
         if (! post_type_exists(get_post_type($this->container_id))) {
             return $actions;
@@ -247,8 +248,6 @@ class blcAcfMeta extends Container
 
         if (current_user_can('edit_post', $this->container_id)) {
             $actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr(__('Edit this item')) . '">' . __('Edit') . '</a>';
-
-          
         }
         $actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'broken-link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
 
@@ -265,7 +264,7 @@ class blcAcfMeta extends Container
      */
     function get_edit_url()
     {
-    
+
 
         /*
         The below is a near-exact copy of the get_post_edit_link() function.
@@ -305,21 +304,18 @@ class blcAcfMeta extends Container
     {
         return get_permalink($this->container_id);
     }
-
 }
 
 class blcAcfExtractedFieldWalker
 {
-    public function __construct(private $keys, private $selected_fields, private $url_fields, private $html_fields)
-    {
-    }
+    public function __construct(private $keys, private $selected_fields, private $url_fields, private $html_fields) {}
 
     public function walk_function($item, $key)
     {
         $key = explode('|', str_replace('_field', '|field', $key));
 
         if (is_array($key)) {
-            $key = $key[ count($key) - 1 ];
+            $key = $key[count($key) - 1];
         }
 
         if (in_array($key, $this->url_fields)) {
@@ -355,10 +351,10 @@ class blcAcfMetaManager extends ContainerManager
             foreach ($this->plugin_conf->options['acf_fields'] as $meta_name) {
                 // The user can add an optional "format:" prefix to specify the format of the custom field.
                 $parts = explode(':', $meta_name, 2);
-                if (( count($parts) == 2 ) && in_array($parts[0], $prefix_formats)) {
-                    $this->selected_fields[ $parts[1] ] = $prefix_formats[ $parts[0] ];
+                if ((count($parts) == 2) && in_array($parts[0], $prefix_formats)) {
+                    $this->selected_fields[$parts[1]] = $prefix_formats[$parts[0]];
                 } else {
-                    $this->selected_fields[ $meta_name ] = 'acf_field';
+                    $this->selected_fields[$meta_name] = 'acf_field';
                 }
             }
         }
@@ -419,14 +415,14 @@ class blcAcfMetaManager extends ContainerManager
         don't need to actually store the results anywhere in the container object().
         */
 
-        $preload = $load_wrapped_objects || in_array($purpose, array( BLC_FOR_DISPLAY ));
+        $preload = $load_wrapped_objects || in_array($purpose, array(BLC_FOR_DISPLAY));
         if ($preload) {
             $post_ids = array();
             foreach ($containers as $container) {
                 $post_ids[] = $container->container_id;
             }
 
-            $args = array( 'include' => implode(',', $post_ids) );
+            $args = array('include' => implode(',', $post_ids));
             get_posts($args);
         }
 
@@ -447,25 +443,25 @@ class blcAcfMetaManager extends ContainerManager
                 if (! is_array($value)) {
                     continue;
                 } else {
-                    $value = $value[ count($value) - 1 ];
+                    $value = $value[count($value) - 1];
 
                     if (in_array($value, $url_fields)) {
                         $field = ltrim($field, '_');
-                        if (! filter_var($meta[ $field ][0], FILTER_VALIDATE_URL) === false) {
-                            $fields[ $field ] = 'acf_field';
+                        if (! filter_var($meta[$field][0], FILTER_VALIDATE_URL) === false) {
+                            $fields[$field] = 'acf_field';
                         }
                     }
 
                     if (in_array($value, $html_fields)) {
                         $field = ltrim($field, '_');
-                        if ('' !== $meta[ $field ][0]) {
-                            $fields[ $field ] = 'html';
+                        if ('' !== $meta[$field][0]) {
+                            $fields[$field] = 'html';
                         }
                     }
                 }
             }
 
-            $containers[ $key ]->fields = $fields;
+            $containers[$key]->fields = $fields;
         }
 
         return $containers;
@@ -476,22 +472,22 @@ class blcAcfMetaManager extends ContainerManager
      *
      * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
      *
-     * @return void
+     * @return int
      */
-    function resynch($forced = false)
+    function resynch($forced = false): int
     {
-      
+
         global $wpdb;
         /** @var wpdb $wpdb */
         global $blclog;
-
+        $changed = 0;
         // Only check custom fields on selected post types. By default, that's "post" and "page".
-        $post_types = array( 'post', 'page' );
-      
-            $overlord   = \blcPostTypeOverlord::getInstance();
-            $post_types = array_merge($post_types, $overlord->enabled_post_types);
-            $post_types = array_unique($post_types);
-        
+        $post_types = array('post', 'page');
+
+        $overlord   = \blcPostTypeOverlord::getInstance();
+        $post_types = array_merge($post_types, $overlord->enabled_post_types);
+        $post_types = array_unique($post_types);
+
 
         $escaped_post_types = "'" . implode("', '", array_map('esc_sql', $post_types)) . "'";
 
@@ -507,6 +503,7 @@ class blcAcfMetaManager extends ContainerManager
 	 				AND {$wpdb->posts}.post_type IN ({$escaped_post_types})";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed +=  $wpdb->rows_affected;
         } else {
             // Delete synch records corresponding to posts that no longer exist.
             $blclog->log('...... Deleting custom field synch records corresponding to deleted posts');
@@ -519,7 +516,7 @@ class blcAcfMetaManager extends ContainerManager
 					 synch.container_type = '{$this->container_type}' AND posts.ID IS NULL";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
-
+            $changed +=  $wpdb->rows_affected;
             // Remove the 'synched' flag from all posts that have been updated
             // since the last time they were parsed/synchronized.
             $blclog->log('...... Marking custom fields on changed posts as unsynched');
@@ -533,7 +530,7 @@ class blcAcfMetaManager extends ContainerManager
 					synch.last_synch < posts.post_modified";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows updated in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
-
+            $changed +=  $wpdb->rows_affected;
             // Create synch. records for posts that don't have them.
             $blclog->log('...... Creating custom field synch records for new ' . $escaped_post_types);
             $start = microtime(true);
@@ -548,7 +545,9 @@ class blcAcfMetaManager extends ContainerManager
 					AND synch.container_id IS NULL";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed +=  $wpdb->rows_affected;
         }
+        return  $changed;
     }
 
     /**
@@ -589,19 +588,19 @@ class blcAcfMetaManager extends ContainerManager
             if (! is_array($value)) {
                 continue;
             } else {
-                $value = $value[ count($value) - 1 ];
+                $value = $value[count($value) - 1];
 
                 if (in_array($value, $url_fields)) {
                     $field = ltrim($field, '_');
-                    if (! filter_var($meta[ $field ][0], FILTER_VALIDATE_URL) === false) {
-                        $fields[ $field ] = 'acf_field';
+                    if (! filter_var($meta[$field][0], FILTER_VALIDATE_URL) === false) {
+                        $fields[$field] = 'acf_field';
                     }
                 }
 
                 if (in_array($value, $html_fields)) {
                     $field = ltrim($field, '_');
-                    if ('' != $meta[ $field ][0]) {
-                        $fields[ $field ] = 'html';
+                    if ('' != $meta[$field][0]) {
+                        $fields[$field] = 'html';
                     }
                 }
             }
@@ -611,7 +610,7 @@ class blcAcfMetaManager extends ContainerManager
             return;
         }
 
-        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
         $container->mark_as_unsynched();
     }
 
@@ -626,7 +625,7 @@ class blcAcfMetaManager extends ContainerManager
     {
         // Get the associated container object
 
-        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
 
         if (null != $container) {
             // Delete it
@@ -647,7 +646,7 @@ class blcAcfMetaManager extends ContainerManager
     function post_untrashed($post_id)
     {
         // Get the associated container object
-        $container = ContainerHelper::get_container(array( $this->container_type, intval($post_id) ));
+        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
         $container->mark_as_unsynched();
     }
 }

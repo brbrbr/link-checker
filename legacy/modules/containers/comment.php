@@ -257,13 +257,13 @@ class blcCommentManager extends ContainerManager
      * Create or update synchronization records for all comments.
      *
      * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
-     * @return void
+     * @return int
      */
-    function resynch($forced = false)
+    function resynch($forced = false): int
     {
         global $wpdb; /* @var wpdb $wpdb */
         global $blclog;
-
+        $changed = 0;
         if ($forced) {
             // Create new synchronization records for all comments.
             $blclog->log('...... Creating synch. records for comments');
@@ -275,6 +275,7 @@ class blcCommentManager extends ContainerManager
 				  	{$wpdb->comments}.comment_approved = '1'";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed +=  $wpdb->rows_affected;
         } else {
             // Delete synch records corresponding to comments that no longer exist
             // or have been trashed/spammed/unapproved.
@@ -289,6 +290,7 @@ class blcCommentManager extends ContainerManager
 					 AND (comments.comment_ID IS NULL OR comments.comment_approved <> '1')";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed +=  $wpdb->rows_affected;
 
             // Create synch. records for comments that don't have them.
             $blclog->log('...... Creating synch. records for new comments');
@@ -303,6 +305,7 @@ class blcCommentManager extends ContainerManager
 					AND synch.container_id IS NULL";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed +=  $wpdb->rows_affected;
 
             /*
             Note that there is no way to detect comments that were *edited* (not added - those
@@ -310,6 +313,7 @@ class blcCommentManager extends ContainerManager
             WP doesn't track comment modification times.
             */
         }
+        return $changed;
     }
 
 

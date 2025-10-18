@@ -117,13 +117,15 @@ class blcPostTypeOverlord
     }
 
     /**
-     * Remove the synch. record and link instances associated with a post when it's deleted
+     * Remove the synch. record and link instances associated with a post when it's deleted or should not be indexed (anymore)
      *
      * @param int $post_id
      * @return void
      */
     function post_deleted($post_id)
     {
+        global $blclog;
+        $blclog->log(__CLASS__ . '::' . __FUNCTION__);
         global $wpdb;
 
         $post_id = intval($post_id);
@@ -132,14 +134,25 @@ class blcPostTypeOverlord
         if (! $post) {
             return;
         }
+
         // Get the associated container object
         $post_type      = get_post_type($post);
         $post_container = ContainerHelper::get_container(array($post_type, $post_id));
 
         if ($post_container) {
+            $blclog->log(sprintf('Removing container instance: %s', $post_container->container_id));
             // Delete the container
             $post_container->delete();
+        }
+        Utility::blc_got_unsynched_items(); // let Brokenlinkchecker::work take core of the rest
+        return;
 
+        /* this doesn't make any sense at all, the delete above while clear all instances en synches for the container 
+so all is gone and the code below will not find anything 
+but is misses the Utility::blc_cleanup_links
+*/
+        if ($post_container) {
+            $post_container->delete();
             // Firstly: See if we have any current instances
             $q_current_instance_ids = $wpdb->prepare(
                 'SELECT instance_id FROM `' . $wpdb->prefix . 'blc_instances` WHERE container_id = %d AND container_type = %s',
@@ -147,9 +160,12 @@ class blcPostTypeOverlord
                 $post_type
             );
 
+            $blclog->log(sprintf('Removing container instance: %s', $q_current_instance_ids));
+
             $current_instance_ids_results = $wpdb->get_results($q_current_instance_ids, ARRAY_A);
 
             if ($wpdb->num_rows == 0) {
+                $blclog->log(__CLASS__ . '::' . __FUNCTION__ . ': No current instances present, skip cleanup at once');
                 // No current instances present, skip cleanup at once
                 return;
             }
@@ -180,7 +196,8 @@ class blcPostTypeOverlord
     function post_saved($post_id)
     {
 
-
+        global $blclog;
+        $blclog->log(__CLASS__ . '::' . __FUNCTION__);
         // Get the container type matching the type of the deleted post
         $post = get_post($post_id);
         if (! $post) {
@@ -188,21 +205,25 @@ class blcPostTypeOverlord
         }
 
         // Only check links in currently enabled post types
-        if (! in_array($post->post_type, $this->enabled_post_types)) {
+        // Only check posts that have one of the allowed statuses
+        //let the work figure this out
+        /* if (! in_array($post->post_type, $this->enabled_post_types)) {
+            //delete the instances etc in case the type changed
+            $this->post_deleted($post_id);
             return;
         }
 
         // Only check posts that have one of the allowed statuses
         if (! in_array($post->post_status, $this->enabled_post_statuses)) {
+            //delete the instances etc in case the status changed
+            $this->post_deleted($post_id);
             return;
         }
-
+*/
         // Get the container & mark it as unparsed
         $args           = array($post->post_type, intval($post_id));
         $post_container = ContainerHelper::get_container($args);
-
-
-        $post_container->mark_as_unsynched();
+        $post_container->mark_as_unsynched(); // let Brokenlinkchecker::work take core of the rest
     }
 
 
@@ -211,26 +232,26 @@ class blcPostTypeOverlord
      *
      * @param string $container_type
      * @param bool   $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
-     * @return void
+     * @return int
      */
-    function resynch($container_type = '', $forced = false)
+    function resynch($container_type = '', $forced = false): int
     {
         global $wpdb;
         /** @var wpdb $wpdb */
         global $blclog;
-
+        $changed = 0;
         // Resynch is expensive in terms of DB performance. Thus we only do it once, processing
         // all post types in one go and ignoring any further resynch requests during this pageload.
         // BUG: This might be a problem if there ever is an actual need to run resynch twice or
         // more per pageload.
         if ($this->resynch_already_done) {
             $blclog->log(sprintf('...... Skipping "%s" resyncyh since all post types were already synched.', $container_type));
-            return;
+            return 0;
         }
 
         if (empty($this->enabled_post_types)) {
             $blclog->warn(sprintf('...... Skipping "%s" resyncyh since no post types are enabled.', $container_type));
-            return;
+            return 0;
         }
 
         $escaped_post_types    = array_map('esc_sql', $this->enabled_post_types);
@@ -253,6 +274,7 @@ class blcPostTypeOverlord
             );
             $wpdb->query($q);
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed += $wpdb->rows_affected;
         } else {
             // Delete synch records corresponding to posts that no longer exist.
             // Also delete posts that don't have enabled post status
@@ -278,7 +300,7 @@ class blcPostTypeOverlord
             $elapsed = microtime(true) - $start;
             $blclog->debug($q);
             $blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
-
+            $changed += $wpdb->rows_affected;
             // //Delete records where the post status is not one of the enabled statuses.
             // $blclog->log( '...... Deleting synch records for posts that have a disallowed status' );
             // $start = microtime( true );
@@ -321,7 +343,7 @@ class blcPostTypeOverlord
             $elapsed = microtime(true) - $start;
             $blclog->debug($q);
             $blclog->log(sprintf('...... %d rows updated in %.3f seconds', $wpdb->rows_affected, $elapsed));
-
+            $changed += $wpdb->rows_affected;
             // Create synch. records for posts that don't have them.
             $blclog->log('...... Creating synch records for new posts');
             $start = microtime(true);
@@ -343,9 +365,11 @@ class blcPostTypeOverlord
             $elapsed = microtime(true) - $start;
             $blclog->debug($q);
             $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, $elapsed));
+            $changed += $wpdb->rows_affected;
         }
 
         $this->resynch_already_done = true;
+        return $changed;
     }
 }
 
@@ -673,11 +697,11 @@ class blcAnyPostContainerManager extends ContainerManager
      * Create or update synchronization records for all posts.
      *
      * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
-     * @return void
+     * @return int
      */
-    function resynch($forced = false)
+    function resynch($forced = false): int
     {
         $overlord = blcPostTypeOverlord::getInstance();
-        $overlord->resynch($this->container_type, $forced);
+        return $overlord->resynch($this->container_type, $forced);
     }
 }

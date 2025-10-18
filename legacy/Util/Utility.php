@@ -312,7 +312,6 @@ class Utility
     {
         global $wpdb; /* @var wpdb $wpdb */
         global $blclog;
-
         $start = microtime(true);
         $q     = "DELETE FROM {$wpdb->prefix}blc_links
 			USING {$wpdb->prefix}blc_links LEFT JOIN {$wpdb->prefix}blc_instances
@@ -329,7 +328,7 @@ class Utility
 
         $rez     = $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $elapsed = microtime(true) - $start;
-        $blclog->log(sprintf('... %d links deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
+        $blclog->log(sprintf('... %d orphaned links deleted in %.3f seconds', $wpdb->rows_affected, $elapsed));
 
         return false !== $rez;
     }

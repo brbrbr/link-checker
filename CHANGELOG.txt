@@ -18,6 +18,8 @@
  * L Language
  * N Note
 
+2.4.6.7836
+  ^ Improved handling of changed settings and post statusen. There where some issues like when a post status was changed to 'private' extracted links where not removed until the post status option was changed(twice).
 2.4.6.7603
   - merged 2.4.4 - 2.4.6 changes
     !Fix: Patched a vulnerability issue.

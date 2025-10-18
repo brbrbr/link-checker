@@ -185,9 +185,22 @@ class ScreenOptions
         if (empty($_POST['action'])) {
             die('0');
         }
-       $action=explode('-', $_POST['action'], 2);
+
+
+        if (! current_user_can('edit_others_posts')) {
+            wp_die(
+                json_encode(
+                    array(
+                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    )
+                ),
+                403
+            );
+        }
         // The 'action' argument is in the form "save_settings-panel_id"
-        $id = array_pop($action);
+        //2.4.6
+        $parts = explode('-', $_POST['action'], 2);
+        $id = end($parts);
 
         // Basic security check.
         check_ajax_referer('save_settings-' . $id, '_wpnonce-' . $id);
@@ -235,7 +248,7 @@ class ScreenOptions
         if ($got_autosave) {
             // Enqueue the script itself
             $url = plugins_url('js/screen-options.js', BLC_PLUGIN_FILE_LEGACY);
-            wp_enqueue_script('screen-options-custom-autosave', $url, array('jquery'));
+            wp_enqueue_script('screen-options-custom-autosave', $url, array('jquery'),BLC_SCIPTS_VERSION);
         }
     }
 

@@ -117,6 +117,8 @@ class BrokenLinkCheckerSite
                     $username = $_SERVER['PHP_AUTH_USER'];
                     $password = $_SERVER['PHP_AUTH_PW'];
                     $user = wp_authenticate($username, $password);
+                    //usr/local/bin/wp --url=https://.... --path=... role create blc-rest 'BLC Rest User' 
+                    //usr/local/bin/wp --url=https://.... --path=... user add-role    <n> 'blc-rest'
                     return  is_wp_error($user) ? false : user_can($user, 'blc-rest');
                 },
                 "show_in_index" => false,

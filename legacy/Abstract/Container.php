@@ -410,8 +410,8 @@ abstract class Container
         if (is_wp_error($new_value)) {
             return $new_value;
         }
-        //2.4.3
-        if (is_array($parser->modified_links)) {
+        //2.4.3 / 2.4.6
+        if ( property_exists( $parser, 'modified_links' ) && is_array( $parser->modified_links ) ) {
             $this->updating_urls = $parser->modified_links;
         }
 

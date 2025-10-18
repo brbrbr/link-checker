@@ -160,7 +160,7 @@ class BrokenLinkChecker
         add_action('blc_cron_email_notifications', $this->maybe_send_email_notifications(...));
         add_action('blc_cron_check_links', $this->cron_check_links(...));
         add_action('blc_cron_database_maintenance', $this->database_maintenance(...));
-        add_action('blc_corn_clear_log_file', $this->clear_log_file(...));
+        add_action('blc_cron_clear_log_file', $this->clear_log_file(...));
 
         // Set the footer hook that will call the worker function via AJAX.
         add_action('admin_footer', $this->admin_footer(...));
@@ -228,6 +228,18 @@ class BrokenLinkChecker
      */
     public function admin_footer()
     {
+
+        /* 2.4.6
+			Don't run the script if the user doesn't have the right capabilities to avoid abuse of overloading the server with requests.
+			Remove chances of unnecessary resource usage. Having every logged-in user spawn AJAX jobs is wasteful, especially on busy sites.
+			Malicious logged-in users could:
+			- Reduce the interval time eg from browser's (DoS risk).
+			- Open multiple tabs and flood server with AJAX calls (Logged-in attackers bypass most of rate-limiters and are harder to detect if they blend in).
+			*/
+        if (! current_user_can('edit_others_posts')) {
+            return;
+        }
+
         $fix = filter_input(INPUT_GET, 'fix-install-button', FILTER_VALIDATE_BOOLEAN);
         $tab = !empty($_GET['tab']) ? sanitize_text_field(wp_unslash($_GET['tab'])) : '';
 
@@ -240,32 +252,20 @@ class BrokenLinkChecker
         if (!$this->plugin_config->options['run_in_dashboard']) {
             return;
         }
-        $nonce = wp_create_nonce('blc_work');
-?>
-        <!-- wsblc admin footer -->
-        <script type='text/javascript'>
-            (function($) {
 
-                //(Re)starts the background worker thread
-                function blcDoWork() {
-                    $.post(
-                        ajaxurl, {
-                            'action': 'blc_work',
-                            '_ajax_nonce': '<?php echo esc_js($nonce); ?>'
-                        }
-                    );
-                }
 
-                //Call it the first time
-                blcDoWork();
 
-                //Then call it periodically every X seconds
-                setInterval(blcDoWork, <?php echo (intval($this->max_execution_time_option()) + 1) * 10000; ?>);
+        wp_enqueue_script('blc-work', plugins_url('js/work.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), BLC_SCIPTS_VERSION);
 
-            })(jQuery);
-        </script>
-        <!-- /wsblc admin footer -->
-    <?php
+        wp_localize_script(
+            'blc-work',
+            'blcwork',
+            array(
+                'nonce' => wp_create_nonce('blc_work'), //2.4.6
+                'interval' => (intval($this->max_execution_time_option()) + 1) * 10000,
+                'ajaxurl' => admin_url('admin-ajax.php'),
+            )
+        );
     }
 
     /**
@@ -296,7 +296,7 @@ class BrokenLinkChecker
     {
 
         $this->addStatusAssets();
-    ?>
+?>
         <p id="wsblc_activity_box" class="blc_full_status"><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
 
     <?php
@@ -344,8 +344,13 @@ class BrokenLinkChecker
         wp_enqueue_script('jquery-ui-core');   // Used for background color animation.
         wp_enqueue_script('jquery-ui-dialog');
         wp_enqueue_script('jquery-ui-tabs');
-        wp_enqueue_script('jquery-cookie', plugins_url('js/jquery.cookie.js', BLC_PLUGIN_FILE_LEGACY), array(), '1.0.0', false); // Used for storing last widget states, etc.
-        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), BLC_SCIPTS_VERSION, false);
+        wp_enqueue_script('jquery-cookie', plugins_url('js/jquery.cookie.js', BLC_PLUGIN_FILE_LEGACY), array(), '1.4.1'); // Used for storing last widget states, etc.
+        wp_enqueue_script('options-page-js', plugins_url('js/options-page.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), BLC_SCIPTS_VERSION);
+        wp_localize_script('options-page-js', 'blcoptions', array(
+            'nonce' => wp_create_nonce('blc_current_load'), //fix n.a.v. 2.4.6,,
+            'ajaxurl' => admin_url('admin-ajax.php'),
+
+        ));
         wp_set_script_translations('options-page-js', 'broken-link-checker');
     }
 
@@ -425,7 +430,7 @@ class BrokenLinkChecker
         wp_clear_scheduled_hook('blc_cron_check_links');
         wp_clear_scheduled_hook('blc_cron_email_notifications');
         wp_clear_scheduled_hook('blc_cron_database_maintenance');
-        wp_clear_scheduled_hook('blc_corn_clear_log_file');
+        wp_clear_scheduled_hook('blc_cron_clear_log_file');
 
         wp_clear_scheduled_hook('blc_cron_check_news'); // Unused event.
         // Note the deactivation time for each module. This will help them
@@ -505,8 +510,12 @@ class BrokenLinkChecker
 
     private function addStatusAssets()
     {
-        wp_enqueue_style('blc-status', plugins_url('css/status.css', BLC_PLUGIN_FILE_LEGACY), array(), '20141113');
-        wp_enqueue_script('blc-status', plugins_url('js/status.js', BLC_PLUGIN_FILE_LEGACY), array(), '20141113');
+        wp_enqueue_style('blc-status', plugins_url('css/status.css', BLC_PLUGIN_FILE_LEGACY), array(), BLC_SCIPTS_VERSION);
+        wp_enqueue_script('blc-status', plugins_url('js/status.js', BLC_PLUGIN_FILE_LEGACY), array('jquery'), BLC_SCIPTS_VERSION);
+        wp_localize_script('blc-status', 'blcstatus', array(
+            'nonce' => wp_create_nonce('blc_full_status'), //2.4.6
+            'ajaxurl' => admin_url('admin-ajax.php'),
+        ));
     }
 
     /**
@@ -810,10 +819,10 @@ class BrokenLinkChecker
 
             // process the log snd cookie file option even if logging_enabled is false
             // if the value is changed and then logging_enabled is unchecked the change wouldn't be saved.
-            $log_file = self::checkAndCreateFile($cleanPost['log_file'] ?? '');
+            $log_file = $this->checkAndCreateFile($cleanPost['log_file'] ?? '');
 
             if (!$log_file) {
-                $log_file = self::checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_log_basename());
+                $log_file = $this->checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_log_basename());
             }
             if (!$log_file) {
                 $this->plugin_config->options['logging_enabled'] = false;
@@ -821,11 +830,11 @@ class BrokenLinkChecker
                 $this->plugin_config->options['log_file'] = $log_file;
             }
 
-            $cookie_jar = self::checkAndCreateFile($cleanPost['cookie_jar']);
+            $cookie_jar = $this->checkAndCreateFile($cleanPost['cookie_jar']);
 
 
             if (!$cookie_jar) {
-                $cookie_jar = self::checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_cookie_basename());
+                $cookie_jar = $this->checkAndCreateFile(ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_cookie_basename());
             }
 
             if (!$cookie_jar) {
@@ -866,7 +875,9 @@ class BrokenLinkChecker
             }
 
             // Resynchronize posts when the user enables or disables post statuses.
-            if ($post_statuses_changed) {
+            if (true || $post_statuses_changed) {
+
+
                 $overlord                        = \blcPostTypeOverlord::getInstance();
                 $overlord->enabled_post_statuses = $this->plugin_config->get('enabled_post_statuses', array());
                 $overlord->resynch('wsh_status_resynch_trigger');
@@ -1660,7 +1671,12 @@ class BrokenLinkChecker
     {
 
         $log_file       = esc_url_raw(strval($input));
-        $file_type_data = wp_check_filetype($log_file);
+        $mimes  = get_allowed_mime_types();
+        $mimes['txt'] =  "text/plain";
+        $mimes['log'] =  "text/plain";
+
+        $file_type_data = wp_check_filetype($log_file, $mimes);
+
 
         if (str_starts_with($log_file, 'phar://') || !isset($file_type_data['type']) || empty($file_type_data['type'])) {
             $log_file = '';
@@ -3200,6 +3216,22 @@ class BrokenLinkChecker
      */
     function ajax_full_status()
     {
+
+
+        /**
+         * from 2.4.6
+         */
+        if (! current_user_can('edit_others_posts') || ! check_ajax_referer('blc_full_status', false, false)) {
+            wp_die(
+                json_encode(
+                    array(
+                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    )
+                ),
+                403
+            );
+        }
+
         $status = $this->get_status();
         $text   = $this->status_text($status);
 
@@ -3291,6 +3323,17 @@ class BrokenLinkChecker
      */
     function ajax_current_load()
     {
+        if (! current_user_can('edit_others_posts') || ! check_ajax_referer('blc_current_load', false, false)) {
+            wp_die(
+                json_encode(
+                    array(
+                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    )
+                ),
+                403
+            );
+        }
+
         $load = Utility::get_server_load();
         if (empty($load)) {
             die(_x('Unknown', 'current load', 'broken-link-checker'));
@@ -3340,7 +3383,10 @@ class BrokenLinkChecker
     function ajax_work()
     {
 
-        check_ajax_referer('blc_work');
+
+        if (! current_user_can('edit_others_posts') || ! check_ajax_referer('blc_work', false, false)) {  //2.4.6
+            die(__("You're not allowed to do that!", 'broken-link-checker'));
+        }
 
         // Run the worker function
         $this->work();
@@ -4274,12 +4320,12 @@ class BrokenLinkChecker
         }
 
         $clear_log = $this->plugin_config->options['clear_log_on'];
-        if (!wp_next_scheduled('blc_corn_clear_log_file') && !empty($clear_log)) {
-            wp_schedule_event(time(), $clear_log, 'blc_corn_clear_log_file');
+        if (!wp_next_scheduled('blc_cron_clear_log_file') && !empty($clear_log)) {
+            wp_schedule_event(time(), $clear_log, 'blc_cron_clear_log_file');
         }
 
         if (empty($clear_log)) {
-            wp_clear_scheduled_hook('blc_corn_clear_log_file');
+            wp_clear_scheduled_hook('blc_cron_clear_log_file');
         }
     }
 

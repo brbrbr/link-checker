@@ -8,39 +8,40 @@ jQuery(
 			$.ajax(
 				{
 					dataType: "json",
-					url: ajaxurl,
+					url: blcstatus.ajaxurl,
 					cache: false,
 					data: {
-						'action': 'blc_full_status',
+						action: 'blc_full_status',
+						_ajax_nonce: blcstatus.nonce
 					},
 				}
 			).done(
 				data => {
-                if (data) {
-                    let text = data.text || '';
+					if (data) {
+						let text = data.text || '';
 
-                    $( '.blc_full_status' ).html( text );
-                    let broken = data.status && data.status.broken_links || 0;
-                    let f      = data.status && data.status.f || 0;
+						$('.blc_full_status').html(text);
+						let broken = data.status && data.status.broken_links || 0;
+						let f = data.status && data.status.f || 0;
 
-                    if ( broken) {
-                        $( '.blc-broken-count' ).html( broken ).show();
-                        $( '.filter-broken-link-count' ).html( broken );
-                    } else {
-                        $( '.blc-broken-count' ).hide();
-                        $( '.filter-broken-link-count' ).html( 0 );
-                    }
+						if (broken) {
+							$('.blc-broken-count').html(broken).show();
+							$('.filter-broken-link-count').html(broken);
+						} else {
+							$('.blc-broken-count').hide();
+							$('.filter-broken-link-count').html(0);
+						}
 
-                } else {
-						$( '.blc_full_status' ).html( __( '[ Network error ]', 'broken-link-checker' ) );
+					} else {
+						$('.blc_full_status').html(__('[ Network error ]', 'broken-link-checker'));
 					}
-					}
+				}
 			).fail(
-				() => $( '.blc_full_status' ).html(
+				() => $('.blc_full_status').html(
 					__(
-					'[ Network error ]',
-                        'broken-link-checker'
-				)
+						'[ Network error ]',
+						'broken-link-checker'
+					)
 				)
 			).always(
 				// This ensure that the request do not pile up ( versus setInterval )

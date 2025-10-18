@@ -6,19 +6,23 @@ jQuery(function ($) {
 
 
     //Refresh the avg. load display every 10 seconds
-    function blcUpdateLoad()
-    {
-        $.get(
-            ajaxurl,
+    function blcUpdateLoad() {
+
+         $.ajax(
             {
-                'action': 'blc_current_load'
+                url: blcoptions.ajaxurl,
+                cache: false,
+                data: {
+                    action: 'blc_current_load',
+                    _ajax_nonce:blcoptions.nonce
+                }
             }
         ).done(
             data => $('#wsblc_current_load').html(data)
         ).fail(
             () => $('#wsblc_current_load').html(__(
                 '[ Network error ]',
-            'broken-link-checker'
+                'broken-link-checker'
             ))
         ).always(
             //This ensure that the request do not pile up ( versus setInterval )
@@ -119,8 +123,7 @@ jQuery(function ($) {
     });
 
     //Enable/disable log-related options depending on whether "Enable logging" is on.
-    function blcToggleLogOptions()
-    {
+    function blcToggleLogOptions() {
         $('.blc-logging-options')
             .find('input,select')
             .prop('disabled', !$('#logging_enabled').is(':checked'));
@@ -131,8 +134,7 @@ jQuery(function ($) {
 
 
     //Enable/disable log-related options depending on whether "Enable logging" is on.
-    function blcToggleCookiesptions()
-    {
+    function blcToggleCookiesptions() {
         $('.blc-cookie-options')
             .find('input,select')
             .prop('disabled', !$('#cookies_enabled').is(':checked'));

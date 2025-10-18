@@ -17,6 +17,11 @@
  * ! Security
  * L Language
  * N Note
+
+2.4.6.7603
+  - merged 2.4.4 - 2.4.6 changes
+    !Fix: Patched a vulnerability issue.
+  ^ updated jQuery.cookie
 2.4.3.7438
  - merged 2.4.3 changes
 2.4.2.7325

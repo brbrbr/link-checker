@@ -223,7 +223,13 @@ but is misses the Utility::blc_cleanup_links
         // Get the container & mark it as unparsed
         $args           = array($post->post_type, intval($post_id));
         $post_container = ContainerHelper::get_container($args);
-        $post_container->mark_as_unsynched(); // let Brokenlinkchecker::work take core of the rest
+        if ($post_container) {
+            $post_container->mark_as_unsynched(); // let Brokenlinkchecker::work take core of the rest
+        } else {
+            // Ok, we got a save for some post that hasn't a container
+            //tell the blcbrokenlnkchecker::work take action ( will resync)
+            Utility::blc_got_unsynched_items();
+        }
     }
 
 

@@ -80,6 +80,9 @@ class BrokenLinkChecker
         'domein.link'       => "`final_url` like '%domein.link%'",
         'gopremium.net'     => "`final_url` like '%gopremium.net%'",
         'koopdomeinnaam.nl' => "`final_url` like '%koopdomeinnaam.nl%'",
+        'hugedomains.com' => "`final_url` like '%hugedomains.com%'",
+
+       
     );
     protected $plugin_config;
 
@@ -2792,6 +2795,7 @@ class BrokenLinkChecker
         if (!$this->acquire_lock()) {
             // FB::warn("Another instance of BLC is already working. Stop.");
             $blclog->info('Another instance of BLC is already working. Stop.');
+
             return;
         }
 
@@ -2865,6 +2869,7 @@ class BrokenLinkChecker
 
         $orphans_possible   = false;
         $still_need_resynch = $this->plugin_config->options['need_resynch'];
+       
         if ($still_need_resynch) {
 
             $start               = microtime(true);

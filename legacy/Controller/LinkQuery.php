@@ -29,9 +29,9 @@ class LinkQuery
                 'params'       => array(
                     'where_expr' => '1',
                 ),
-                'name'         => __('All', 'broken-link-checker'),
-                'heading'      => __('Detected Links', 'broken-link-checker'),
-                'heading_zero' => __('No links found (yet)', 'broken-link-checker'),
+                'name'         => __('All', 'link-checker'),
+                'heading'      => __('Detected Links', 'link-checker'),
+                'heading_zero' => __('No links found (yet)', 'link-checker'),
                 'native'       => true,
             ),
 
@@ -40,9 +40,9 @@ class LinkQuery
                     'where_expr'          => '( `broken` = 1 )',
                     's_include_dismissed' => false,
                 ),
-                'name'         => __('Broken', 'broken-link-checker'),
-                'heading'      => __('Broken Links', 'broken-link-checker'),
-                'heading_zero' => __('No broken links found', 'broken-link-checker'),
+                'name'         => __('Broken', 'link-checker'),
+                'heading'      => __('Broken Links', 'link-checker'),
+                'heading_zero' => __('No broken links found', 'link-checker'),
                 'native'       => true,
             ),
             'warnings'  => array(
@@ -50,9 +50,9 @@ class LinkQuery
                     'where_expr'          => '( `warning` = 1 )',
                     's_include_dismissed' => false,
                 ),
-                'name'         => _x('Warnings', 'filter name', 'broken-link-checker'),
-                'heading'      => _x('Warnings', 'filter heading', 'broken-link-checker'),
-                'heading_zero' => __('No warnings found', 'broken-link-checker'),
+                'name'         => _x('Warnings', 'filter name', 'link-checker'),
+                'heading'      => _x('Warnings', 'filter heading', 'link-checker'),
+                'heading_zero' => __('No warnings found', 'link-checker'),
                 'native'       => true,
             ),
             'redirects' => array(
@@ -60,9 +60,9 @@ class LinkQuery
                     'where_expr'          => '( `redirect_count` > 0 AND `url` != `final_url` )',
                     's_include_dismissed' => false,
                 ),
-                'name'         => __('Redirects', 'broken-link-checker'),
-                'heading'      => __('Redirected Links', 'broken-link-checker'),
-                'heading_zero' => __('No redirects found', 'broken-link-checker'),
+                'name'         => __('Redirects', 'link-checker'),
+                'heading'      => __('Redirected Links', 'link-checker'),
+                'heading_zero' => __('No redirects found', 'link-checker'),
                 'native'       => true,
             ),
 
@@ -70,9 +70,9 @@ class LinkQuery
                 'params'       => array(
                     'where_expr' => '( `dismissed` = 1 )',
                 ),
-                'name'         => __('Dismissed', 'broken-link-checker'),
-                'heading'      => __('Dismissed Links', 'broken-link-checker'),
-                'heading_zero' => __('No dismissed links found', 'broken-link-checker'),
+                'name'         => __('Dismissed', 'link-checker'),
+                'heading'      => __('Dismissed Links', 'link-checker'),
+                'heading_zero' => __('No dismissed links found', 'link-checker'),
                 'native'       => true,
             ),
 
@@ -81,9 +81,9 @@ class LinkQuery
                     'where_expr'          => '( `parked` = 1 )', // BLC_PARKED_PARKED
                     's_include_dismissed' => false,
                 ),
-                'name'         => __('Parking', 'broken-link-checker'),
-                'heading'      => __('Possible Parked Domain', 'broken-link-checker'),
-                'heading_zero' => __('No parked links found', 'broken-link-checker'),
+                'name'         => __('Parking', 'link-checker'),
+                'heading'      => __('Possible Parked Domain', 'link-checker'),
+                'heading_zero' => __('No parked links found', 'link-checker'),
                 'native'       => true,
 
             ),
@@ -97,9 +97,9 @@ class LinkQuery
 
         // Create the special "search" filter
         $this->search_filter = array(
-            'name'           => __('Search', 'broken-link-checker'),
-            'heading'        => __('Search Results', 'broken-link-checker'),
-            'heading_zero'   => __('No links found for your query', 'broken-link-checker'),
+            'name'           => __('Search', 'link-checker'),
+            'heading'        => __('Search Results', 'link-checker'),
+            'heading_zero'   => __('No links found for your query', 'link-checker'),
             'params'         => array(),
             'use_url_params' => true,
             'hidden'         => true,
@@ -150,7 +150,7 @@ class LinkQuery
                     'name'         => $data['name'],
                     'params'       => $params,
                     'heading'      => ucwords($data['name']),
-                    'heading_zero' => __('No links found for your query', 'broken-link-checker'),
+                    'heading_zero' => __('No links found for your query', 'link-checker'),
                     'custom'       => true,
                 );
             }

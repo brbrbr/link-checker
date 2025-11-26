@@ -23,8 +23,8 @@ class blcYouTubeEmbed extends EmbedParser
     function init()
     {
         parent::init();
-        $this->short_title       = __('YouTube Video', 'broken-link-checker');
-        $this->long_title        = __('Embedded YouTube video', 'broken-link-checker');
+        $this->short_title       = __('YouTube Video', 'link-checker');
+        $this->long_title        = __('Embedded YouTube video', 'link-checker');
         $this->url_search_string = 'youtube.com/v/';
     }
 

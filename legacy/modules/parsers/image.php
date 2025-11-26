@@ -203,7 +203,7 @@ class blcHTMLImage extends Parser
      */
     function ui_get_link_text($instance, $context = 'display')
     {
-        $text = __('Image', 'broken-link-checker');
+        $text = __('Image', 'link-checker');
 
         $image = sprintf(
             '<img src="%s" class="blc-small-image" alt="%2$s" title="%2$s"> ',

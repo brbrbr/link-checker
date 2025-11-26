@@ -115,8 +115,6 @@ $blclog->info('Installation/update begins.');
 // Load the module subsystem
 
 
-
-
 // Prepare the database.
 $blclog->info('Upgrading the database...');
 $upgrade_start = microtime(true);

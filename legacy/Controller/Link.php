@@ -322,7 +322,7 @@ class Link
             $this->being_checked = false;
 
             // Add an explanatory notice to the link's log
-            $error_notice = '[' . __('The plugin script was terminated while trying to check the link.', 'broken-link-checker') . ']';
+            $error_notice = '[' . __('The plugin script was terminated while trying to check the link.', 'link-checker') . ']';
             if (!str_contains($this->log, $error_notice)) {
                 $this->log = $error_notice . "\r\n" . $this->log;
             }
@@ -369,7 +369,7 @@ class Link
             // Assume the link is working, but leave a note in the log.
             $this->broken        = false;
             $this->being_checked = false;
-            $this->log           = __("The plugin doesn't know how to check this type of link.", 'broken-link-checker');
+            $this->log           = __("The plugin doesn't know how to check this type of link.", 'link-checker');
 
             if ($save_results) {
                 $this->save();
@@ -605,9 +605,9 @@ class Link
 
         // Add a line indicating link status to the log
         if ($this->broken || $this->warning) {
-            $this->log .= "\n" . __('Link is broken.', 'broken-link-checker');
+            $this->log .= "\n" . __('Link is broken.', 'link-checker');
         } else {
-            $this->log .= "\n" . __('Link is valid.', 'broken-link-checker');
+            $this->log .= "\n" . __('Link is valid.', 'link-checker');
         }
     }
 
@@ -842,7 +842,7 @@ class Link
         if (!$this->valid()) {
             return new \WP_Error(
                 'link_invalid',
-                __('Link is not valid', 'broken-link-checker')
+                __('Link is not valid', 'link-checker')
             );
         }
 
@@ -859,7 +859,7 @@ class Link
                 'errors'      => array(
                     new \WP_Error(
                         'no_instances_found',
-                        __('This link can not be edited because it is not used anywhere on this site.', 'broken-link-checker')
+                        __('This link can not be edited because it is not used anywhere on this site.', 'link-checker')
                     ),
                 ),
             );
@@ -885,7 +885,7 @@ class Link
                 'errors'      => array(
                     new \WP_Error(
                         'link_creation_failed',
-                        __('Failed to create a DB entry for the new URL.', 'broken-link-checker')
+                        __('Failed to create a DB entry for the new URL.', 'link-checker')
                     ),
                 ),
             );
@@ -946,14 +946,14 @@ class Link
         if (!$this->valid()) {
             return new \WP_Error(
                 'link_invalid',
-                __('Link is not valid', 'broken-link-checker')
+                __('Link is not valid', 'link-checker')
             );
         }
 
         if (($this->redirect_count <= 0) || empty($this->final_url)) {
             return new \WP_Error(
                 'not_redirect',
-                __('This link is not a redirect', 'broken-link-checker')
+                __('This link is not a redirect', 'link-checker')
             );
         }
 
@@ -981,7 +981,7 @@ class Link
         if (!$this->valid()) {
             return new \WP_Error(
                 'link_invalid',
-                __('Link is not valid', 'broken-link-checker')
+                __('Link is not valid', 'link-checker')
             );
         }
 
@@ -1008,7 +1008,7 @@ class Link
                     'errors'       => array(
                         new \WP_Error(
                             'deletion_failed',
-                            __("Couldn't delete the link's database record", 'broken-link-checker')
+                            __("Couldn't delete the link's database record", 'link-checker')
                         ),
                     ),
                 );
@@ -1045,7 +1045,7 @@ class Link
                     $errors,
                     new \WP_Error(
                         'deletion_failed',
-                        __("Couldn't delete the link's database record", 'broken-link-checker')
+                        __("Couldn't delete the link's database record", 'link-checker')
                     )
                 );
             }
@@ -1125,7 +1125,7 @@ class Link
     function analyse_status()
     {
         $code = BLC_LINK_STATUS_UNKNOWN;
-        $text = _x('Unknown', 'link status', 'broken-link-checker');
+        $text = _x('Unknown', 'link status', 'link-checker');
 
         // Status text
         if (isset($this->status_text) && !empty($this->status_text) && !empty($this->status_code)) {
@@ -1134,10 +1134,10 @@ class Link
             $code = $this->status_code;
         } elseif ($this->broken || $this->warning) {
             $code = BLC_LINK_STATUS_WARNING;
-            $text = __('Unknown Error', 'broken-link-checker');
+            $text = __('Unknown Error', 'link-checker');
 
             if ($this->timeout) {
-                $text = __('Timeout', 'broken-link-checker');
+                $text = __('Timeout', 'link-checker');
                 $code = BLC_LINK_STATUS_WARNING;
             } elseif ($this->http_code) {
                 // Only 404 (Not Found) and 410 (Gone) are treated as broken-for-sure.
@@ -1152,13 +1152,13 @@ class Link
                 }
             }
         } elseif (!$this->last_check) {
-            $text = __('Not checked', 'broken-link-checker');
+            $text = __('Not checked', 'link-checker');
             $code = BLC_LINK_STATUS_UNKNOWN;
         } elseif ($this->false_positive) {
-            $text = __('False positive', 'broken-link-checker');
+            $text = __('False positive', 'link-checker');
             $code = BLC_LINK_STATUS_UNKNOWN;
         } else {
-            $text = _x('OK', 'link status', 'broken-link-checker');
+            $text = _x('OK', 'link status', 'link-checker');
             $code = BLC_LINK_STATUS_OK;
         }
 

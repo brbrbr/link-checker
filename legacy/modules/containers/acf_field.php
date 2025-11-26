@@ -112,7 +112,7 @@ class blcAcfMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new \WP_Error('metadata_update_failed', sprintf(__("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'), $field, $this->meta_type, $this->container_id));
+            return new \WP_Error('metadata_update_failed', sprintf(__("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'link-checker'), $field, $this->meta_type, $this->container_id));
         }
     }
 
@@ -143,7 +143,7 @@ class blcAcfMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new \WP_Error('metadata_delete_failed', sprintf(__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'), $field_name, $this->meta_type, $this->container_id));
+            return new \WP_Error('metadata_delete_failed', sprintf(__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'link-checker'), $field_name, $this->meta_type, $this->container_id));
         }
     }
 
@@ -249,7 +249,7 @@ class blcAcfMeta extends Container
         if (current_user_can('edit_post', $this->container_id)) {
             $actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr(__('Edit this item')) . '">' . __('Edit') . '</a>';
         }
-        $actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'broken-link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
+        $actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
 
         return $actions;
     }

@@ -52,7 +52,7 @@ class blcRapidShareChecker extends Checker
             'redirect_count' => 0,
             'timeout'        => false,
             'broken'         => false,
-            'log'            => sprintf("<em>(%s)</em>\n\n", __('Using RapidShare API', 'broken-link-checker')),
+            'log'            => sprintf("<em>(%s)</em>\n\n", __('Using RapidShare API', 'link-checker')),
             'result_hash'    => '',
             'status_code'    => '',
             'status_text'    => '',
@@ -139,56 +139,56 @@ class blcRapidShareChecker extends Checker
                             $file_status_text      = 'File not found';
                             $result['broken']      = true;
                             $result['status_code'] = BLC_LINK_STATUS_ERROR;
-                            $result['status_text'] = __('Not Found', 'broken-link-checker');
+                            $result['status_text'] = __('Not Found', 'link-checker');
                             break;
 
                         case 1:
                             $file_status_text      = 'File OK (Anonymous downloading)';
                             $result['status_code'] = BLC_LINK_STATUS_OK;
-                            $result['status_text'] = _x('OK', 'link status', 'broken-link-checker');
+                            $result['status_text'] = _x('OK', 'link status', 'link-checker');
                             break;
 
                         case 2:
                             $file_status_text      = 'File OK (TrafficShare direct download without any logging)';
                             $result['status_code'] = BLC_LINK_STATUS_OK;
-                            $result['status_text'] = _x('OK', 'link status', 'broken-link-checker');
+                            $result['status_text'] = _x('OK', 'link status', 'link-checker');
                             break;
 
                         case 3:
                             $file_status_text      = 'Server down';
                             $result['broken']      = true;
                             $result['status_code'] = BLC_LINK_STATUS_WARNING;
-                            $result['status_text'] = __('RS Server Down', 'broken-link-checker');
+                            $result['status_text'] = __('RS Server Down', 'link-checker');
                             break;
 
                         case 4:
                             $file_status_text      = 'File marked as illegal';
                             $result['broken']      = true;
                             $result['status_code'] = BLC_LINK_STATUS_ERROR;
-                            $result['status_text'] = __('File Blocked', 'broken-link-checker');
+                            $result['status_text'] = __('File Blocked', 'link-checker');
                             break;
 
                         case 5:
                             $file_status_text      = 'Anonymous file locked because it has more than 10 downloads';
                             $result['broken']      = true;
                             $result['status_code'] = BLC_LINK_STATUS_WARNING;
-                            $result['status_text'] = __('File Locked', 'broken-link-checker');
+                            $result['status_text'] = __('File Locked', 'link-checker');
                             break;
 
                         case 6:
                             $file_status_text      = 'File OK (TrafficShare direct download with enabled logging)';
                             $result['status_code'] = BLC_LINK_STATUS_OK;
-                            $result['status_text'] = _x('OK', 'link status', 'broken-link-checker');
+                            $result['status_text'] = _x('OK', 'link status', 'link-checker');
                             break;
                     }
 
                     $result['log'] .= sprintf(
-                        __('RapidShare : %s', 'broken-link-checker'),
+                        __('RapidShare : %s', 'link-checker'),
                         $file_status_text
                     );
                 } else {
                     $result['log'] .= sprintf(
-                        __('RapidShare API error: %s', 'broken-link-checker'),
+                        __('RapidShare API error: %s', 'link-checker'),
                         $response['body']
                     );
                 }

@@ -126,7 +126,7 @@ class blcACFParser extends Parser
         $image_html = sprintf(
             '<img src="%s" class="blc-small-image" title="%2$s" alt="%2$s"> ',
             esc_attr(plugins_url('/images/font-awesome/font-awesome-code.png', BLC_PLUGIN_FILE_LEGACY)),
-            __('Custom field', 'broken-link-checker')
+            __('Custom field', 'link-checker')
         );
 
         $field_html = sprintf(

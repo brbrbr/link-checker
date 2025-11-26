@@ -16,7 +16,7 @@ use Blc\Controller\ModuleManager;
  * @author Janis Elsts
  * @access public
  */
-abstract class Module
+abstract class Module 
 {
     var $module_id;      // The ID of this module. Usually a lowercase string.
     var $cached_header;  // An associative array containing the header data of the module file.

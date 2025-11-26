@@ -66,7 +66,13 @@ class BrokenLinkCheckerSite
         }
 
         // Highlight and nofollow broken links in posts & pages
-        if ($this->plugin_config->options['mark_broken_links'] || $this->plugin_config->options['nofollow_broken_links']) {
+        // Only do this for logged-in users to avoid issues for regular visitors.
+        if (
+            is_user_logged_in() && (
+                $this->plugin_config->options['mark_broken_links'] ||
+                $this->plugin_config->options['nofollow_broken_links']
+            )
+        ) {
             add_filter('the_content', $this->hook_the_content(...));
 
             if ($this->plugin_config->options['mark_broken_links'] && ! empty($this->plugin_config->options['broken_link_css'])) {
@@ -169,7 +175,7 @@ class BrokenLinkCheckerSite
     {
         $url = $request->get_param('url');
         $link = new Link($url);
-        if ( $link->link_id  == 0 || $link->is_new === true) {
+        if ($link->link_id  == 0 || $link->is_new === true) {
             http_response_code(406);
             exit;
         }

@@ -94,7 +94,7 @@ class DatabaseUpgrader
 
         if (false === $rez) {
             $error = sprintf(
-                __('Failed to delete old DB tables. Database error : %s', 'broken-link-checker'),
+                __('Failed to delete old DB tables. Database error : %s', 'link-checker'),
                 $wpdb->last_error
             );
 

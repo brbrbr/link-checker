@@ -18,7 +18,7 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
             <input type="hidden" name="name" id="blc-custom-filter-name" value="" />
             <input type="hidden" name="params" id="blc-custom-filter-params" value="<?php echo http_build_query($search_params, '', '&'); ?>" />
             <input type="hidden" name="action" value="create-custom-filter" />
-            <input type="button" value="<?php esc_attr_e('Save This Search As a Filter', 'broken-link-checker'); ?>" id="blc-create-filter" class="button" />
+            <input type="button" value="<?php esc_attr_e('Save This Search As a Filter', 'link-checker'); ?>" id="blc-create-filter" class="button" />
         </form>
     <?php
     } elseif (! empty($current_filter['custom'])) {
@@ -28,13 +28,13 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
             <?php wp_nonce_field('delete-custom-filter'); ?>
             <input type="hidden" name="filter_id" id="blc-custom-filter-id" value="<?php echo $filter_id; /* @phpstan-ignore variable.undefined */ ?>" />
             <input type="hidden" name="action" value="delete-custom-filter" />
-            <input type="submit" value="<?php esc_attr_e('Delete This Filter', 'broken-link-checker'); ?>" id="blc-delete-filter" class="button" />
+            <input type="submit" value="<?php esc_attr_e('Delete This Filter', 'link-checker'); ?>" id="blc-delete-filter" class="button" />
         </form>
     <?php
     }
     ?>
 
-    <input type="button" value="<?php esc_attr_e('Search', 'broken-link-checker'); ?> &raquo;" id="blc-open-search-box" class="button" />
+    <input type="button" value="<?php esc_attr_e('Search', 'link-checker'); ?> &raquo;" id="blc-open-search-box" class="button" />
 </div>
 
 <!-- The search dialog -->
@@ -44,16 +44,16 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
         <input type="hidden" name="filter_id" value="search" />
         <fieldset>
 
-            <label for="s_link_text"><?php _e('Link text', 'broken-link-checker'); ?></label>
+            <label for="s_link_text"><?php _e('Link text', 'link-checker'); ?></label>
             <input type="text" name="s_link_text" value="<?php echo ! empty($search_params['s_link_text']) ? esc_attr($search_params['s_link_text']) : ''; ?>" id="s_link_text" class="text ui-widget-content" />
 
-            <label for="s_link_url"><?php _e('URL', 'broken-link-checker'); ?></label>
+            <label for="s_link_url"><?php _e('URL', 'link-checker'); ?></label>
             <input type="text" name="s_link_url" id="s_link_url" value="<?php echo ! empty($search_params['s_link_url']) ? esc_attr($search_params['s_link_url']) : ''; ?>" class="text ui-widget-content" />
 
-            <label for="s_http_code"><?php _e('HTTP code', 'broken-link-checker'); ?></label>
+            <label for="s_http_code"><?php _e('HTTP code', 'link-checker'); ?></label>
             <input type="text" name="s_http_code" id="s_http_code" value="<?php echo ! empty($search_params['s_http_code']) ? esc_attr($search_params['s_http_code']) : ''; ?>" class="text ui-widget-content" />
 
-            <label for="s_filter"><?php _e('Link status', 'broken-link-checker'); ?></label>
+            <label for="s_filter"><?php _e('Link status', 'link-checker'); ?></label>
             <select name="s_filter" id="s_filter">
                 <?php
                 if (! empty($search_params['s_filter'])) {
@@ -70,13 +70,13 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
                 ?>
             </select>
 
-            <label for="s_link_type"><?php _e('Link type', 'broken-link-checker'); ?></label>
+            <label for="s_link_type"><?php _e('Link type', 'link-checker'); ?></label>
             <select name="s_link_type" id="s_link_type">
-                <option value=""><?php _e('Any', 'broken-link-checker'); ?></option>
+                <option value=""><?php _e('Any', 'link-checker'); ?></option>
                 <?php
                 $moduleManager = ModuleManager::getInstance();
 
-                printf('<optgroup label="%s">', esc_attr(__('Links used in', 'broken-link-checker')));
+                printf('<optgroup label="%s">', esc_attr(__('Links used in', 'link-checker')));
                 $containers = $moduleManager->get_modules_by_category('container', false, true);
                 foreach ($containers as $container_type => $module_data) {
                     if (! empty($module_data['ModuleHidden']) || ! $moduleManager->is_active($container_type)) {
@@ -87,7 +87,7 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
                 }
                 echo '</optgroup>';
                 // TODO: Better group labels
-                printf('<optgroup label="%s">', esc_attr(__('Link type', 'broken-link-checker')));
+                printf('<optgroup label="%s">', esc_attr(__('Link type', 'link-checker')));
                 $parsers = $moduleManager->get_modules_by_category('parser', false, true);
                 foreach ($parsers as $parser_type => $module_data) {
                     if (! empty($module_data['ModuleHidden']) || ! $moduleManager->is_active($parser_type)) {
@@ -100,12 +100,12 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
 
                 /*
         $link_types = array(
-            __('Any', 'broken-link-checker') => '',
-            __('Normal link', 'broken-link-checker') => 'link',
-            __('Image', 'broken-link-checker') => 'image',
-            __('Custom field', 'broken-link-checker') => 'custom_field',
-            __('Bookmark', 'broken-link-checker') => 'blogroll',
-            __('Comment', 'broken-link-checker') => 'comment',
+            __('Any', 'link-checker') => '',
+            __('Normal link', 'link-checker') => 'link',
+            __('Image', 'link-checker') => 'image',
+            __('Custom field', 'link-checker') => 'custom_field',
+            __('Bookmark', 'link-checker') => 'blogroll',
+            __('Comment', 'link-checker') => 'comment',
         );
         */
                 ?>
@@ -114,8 +114,8 @@ $search_params = $current_filter['search_params'];  /* @phpstan-ignore variable.
         </fieldset>
 
         <div id="blc-search-button-row">
-            <input type="submit" value="<?php esc_attr_e('Search Links', 'broken-link-checker'); ?>" id="blc-search-button" name="search_button" class="button-primary" />
-            <input type="button" value="<?php esc_attr_e('Cancel', 'broken-link-checker'); ?>" id="blc-cancel-search" class="button" />
+            <input type="submit" value="<?php esc_attr_e('Search Links', 'link-checker'); ?>" id="blc-search-button" name="search_button" class="button-primary" />
+            <input type="button" value="<?php esc_attr_e('Cancel', 'link-checker'); ?>" id="blc-cancel-search" class="button" />
         </div>
 
     </form>

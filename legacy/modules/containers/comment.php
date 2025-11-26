@@ -47,7 +47,7 @@ class blcComment extends Container
         if (is_null($this->wrapped_object)) {
             return new \WP_Error(
                 'no_wrapped_object',
-                __('Nothing to update', 'broken-link-checker')
+                __('Nothing to update', 'link-checker')
             );
         }
 
@@ -57,7 +57,7 @@ class blcComment extends Container
         }
         return new \WP_Error(
             'update_failed',
-            sprintf(__('Updating comment %d failed', 'broken-link-checker'), $this->container_id)
+            sprintf(__('Updating comment %d failed', 'link-checker'), $this->container_id)
         );
     }
 
@@ -111,7 +111,7 @@ class blcComment extends Container
             $actions['edit'] = "<a href='" . $this->get_edit_url() . "' title='" . esc_attr__('Edit comment') . "'>" . __('Edit') . '</a>';
         }
 
-        $actions['view'] = '<span class="view"><a href="' . get_comment_link($this->container_id) . '" title="' . esc_attr(__('View comment', 'broken-link-checker')) . '" rel="permalink">' . __('View') . '</a>';
+        $actions['view'] = '<span class="view"><a href="' . get_comment_link($this->container_id) . '" title="' . esc_attr(__('View comment', 'link-checker')) . '" rel="permalink">' . __('View') . '</a>';
 
         return $actions;
     }
@@ -129,12 +129,12 @@ class blcComment extends Container
             '<img src="%s/legacy/images/%s" class="blc-small-image" title="%3$s" alt="%3$s"> ',
             esc_attr(plugins_url($image, BLC_PLUGIN_FILE_LEGACY)),
             $image,
-            __('Comment', 'broken-link-checker')
+            __('Comment', 'link-checker')
         );
 
         $comment = $this->get_wrapped_object();
         if (! $comment) {
-            $html  = __('Comment not found', 'broken-link-checker');
+            $html  = __('Comment not found', 'link-checker');
         } else {
 
             // Display a small text sample from the comment

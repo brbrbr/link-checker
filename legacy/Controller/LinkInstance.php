@@ -102,7 +102,7 @@ class LinkInstance
         if (is_null($container)) {
             return new \WP_Error(
                 'container_not_found',
-                sprintf(__('Container %1$s[%2$d] not found', 'broken-link-checker'), $this->container_type, $this->container_id)
+                sprintf(__('Container %1$s[%2$d] not found', 'link-checker'), $this->container_type, $this->container_id)
             );
         }
 
@@ -111,7 +111,7 @@ class LinkInstance
         if (is_null($parser)) {
             return new \WP_Error(
                 'parser_not_found',
-                sprintf(__("Parser '%s' not found.", 'broken-link-checker'), $this->parser_type)
+                sprintf(__("Parser '%s' not found.", 'link-checker'), $this->parser_type)
             );
         }
 
@@ -158,7 +158,7 @@ class LinkInstance
         if (is_null($container)) {
             return new \WP_Error(
                 'container_not_found',
-                sprintf(__('Container %1$s[%2$d] not found', 'broken-link-checker'), $this->container_type, $this->container_id)
+                sprintf(__('Container %1$s[%2$d] not found', 'link-checker'), $this->container_type, $this->container_id)
             );
         }
 
@@ -167,7 +167,7 @@ class LinkInstance
         if (is_null($parser)) {
             return new \WP_Error(
                 'parser_not_found',
-                sprintf(__("Parser '%s' not found.", 'broken-link-checker'), $this->parser_type)
+                sprintf(__("Parser '%s' not found.", 'link-checker'), $this->parser_type)
             );
         }
 

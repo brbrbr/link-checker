@@ -8,14 +8,14 @@ Author: Janis Elsts
 
 ModuleID: custom_field
 ModuleCategory: container
-ModuleClassName: blcPostMetaManager
+ModuleClassName: PostMetaManager
 */
 
 // Note : If it ever becomes necessary to check metadata on objects other than posts, it will
-// be fairly easy to extract a more general metadata container class from blcPostMeta.
+// be fairly easy to extract a more general metadata container class from PostMeta.
 
 /**
- * blcPostMeta - A link container class for post metadata (AKA custom fields).
+ * PostMeta - A link container class for post metadata (AKA custom fields).
  *
  * Due to the way metadata works, this container differs significantly from other containers :
  *  - container_field is equal to meta name, and container_id holds the ID of the post.
@@ -30,304 +30,15 @@ ModuleClassName: blcPostMetaManager
  * @access public
  */
 
-use Blc\Abstract\Parser;
-use Blc\Helper\ContainerHelper;
+
 use Blc\Abstract\ContainerManager;
-use Blc\Abstract\Container;
+use Blc\Container\PostMeta as Container;
 use Blc\Util\Utility;
 
 
-class blcPostMeta extends Container
+class PostMetaManager extends ContainerManager
 {
-    var $meta_type = 'post';
-
-    /**
-     * Retrieve all metadata fields of the post associated with this container.
-     * The results are cached in the internal $wrapped_object variable.
-     *
-     * @param bool $ensure_consistency
-     * @return object The wrapped object.
-     */
-    function get_wrapped_object($ensure_consistency = false)
-    {
-        if (is_null($this->wrapped_object) || $ensure_consistency) {
-            $this->wrapped_object = get_metadata($this->meta_type, $this->container_id);
-        }
-
-        return $this->wrapped_object;
-    }
-
-    function update_wrapped_object()
-    {
-        trigger_error('Function blcPostMeta::update_wrapped_object() does nothing and should not be used.', E_USER_WARNING);
-        return false;
-    }
-
-    /**
-     * Get the value of the specified metadata field of the object wrapped by this container.
-     *
-     * @access protected
-     *
-     * @param string $field Field name. If omitted, the value of the default field will be returned.
-     * @return array
-     */
-    function get_field($field = '', $single = false)
-    {
-        $get_only_first_field = ('metadata' !== $this->fields[$field]);
-
-        // override the get only first by a param
-        if ($single) {
-            $get_only_first_field = true;
-        }
-
-        return get_metadata($this->meta_type, $this->container_id, $field, $get_only_first_field);
-    }
-
-    /**
-     * Update the value of the specified metadata field of the object wrapped by this container.
-     *
-     * @access protected
-     *
-     * @param string $field Meta name.
-     * @param string $new_value New meta value.
-     * @param string $old_value old meta value.
-     * @return bool|\WP_Error True on success, an error object if something went wrong.
-     */
-    function update_field($field, $new_value, $old_value = '')
-    {
-
-        // necessary for metas that store more than one value in a key
-        $meta_value     = $this->get_field($field, true);
-        $new_meta_value = $meta_value;
-        if (is_array($meta_value)) {
-            foreach ($meta_value as $key => $meta) {
-                if ($meta === $old_value) {
-                    $new_meta_value[$key] = $new_value;
-                }
-            }
-            $new_value = $new_meta_value;
-            $old_value = $meta_value;
-        }
-
-        // update the medatadata
-        $rez = update_metadata($this->meta_type, $this->container_id, $field, $new_value, $old_value);
-        if ($rez) {
-            return true;
-        } else {
-            return new \WP_Error(
-                'metadata_update_failed',
-                sprintf(
-                    __("Failed to update the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'),
-                    $field,
-                    $this->meta_type,
-                    $this->container_id
-                )
-            );
-        }
-    }
-
-    /**
-     * "Unlink"-ing a custom fields removes all metadata fields that contain the specified URL.
-     *
-     * @param string    $field_name
-     * @param Parser $parser
-     * @param string    $url
-     * @param string    $raw_url
-     * @return bool|\WP_Error True on success, or an error object if something went wrong.
-     */
-    function unlink($field_name, $parser, $url, $raw_url = '')
-    {
-        if ('metadata' !== $this->fields[$field_name]) {
-            return parent::unlink($field_name, $parser, $url, $raw_url);
-        }
-
-        $rez = delete_metadata($this->meta_type, $this->container_id, $field_name, $raw_url);
-        if ($rez) {
-            return true;
-        } else {
-            return new \WP_Error(
-                'metadata_delete_failed',
-                sprintf(
-                    __("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'broken-link-checker'),
-                    $field_name,
-                    $this->meta_type,
-                    $this->container_id
-                )
-            );
-        }
-    }
-
-    /**
-     * Change a meta field containing the specified URL to a new URL.
-     *
-     * @param string    $field_name Meta name
-     * @param Parser $parser
-     * @param string    $new_url New URL.
-     * @param string    $old_url
-     * @param string    $old_raw_url Old meta value.
-     * @param null      $new_text
-     * @return string|\WP_Error The new value of raw_url on success, or an error object if something went wrong.
-     */
-    function edit_link($field_name, $parser, $new_url, $old_url = '', $old_raw_url = '', $new_text = null)
-    {
-        /*
-        FB::log(sprintf(
-            'Editing %s[%d]:%s - %s to %s',
-            $this->container_type,
-            $this->container_id,
-            $field_name,
-            $old_url,
-            $new_url
-        ));
-        */
-
-        if ('metadata' !== $this->fields[$field_name]) {
-            return parent::edit_link($field_name, $parser, $new_url, $old_url, $old_raw_url, $new_text);
-        }
-
-        if (empty($old_raw_url)) {
-            $old_raw_url = $old_url;
-        }
-
-        // Get the current values of the field that needs to be edited.
-        // The default metadata parser ignores them, but we're still going
-        // to set this argument to a valid value in case someone writes a
-        // custom meta parser that needs it.
-        $old_value = $this->get_field($field_name);
-
-        // Get the new field value (a string).
-        $edit_result = $parser->edit($old_value, $new_url, $old_url, $old_raw_url);
-        if (is_wp_error($edit_result)) {
-            return $edit_result;
-        }
-
-        // Update the field with the new value returned by the parser.
-        // Notice how $old_raw_url is used instead of $old_value. $old_raw_url contains the entire old
-        // value of the metadata field (see blcMetadataParser::parse()) and thus can be used to
-        // differentiate between multiple meta fields with identical names.
-        $update_result = $this->update_field($field_name, $edit_result['content'], $old_raw_url);
-        if (is_wp_error($update_result)) {
-            return $update_result;
-        }
-
-        // Return the new "raw" URL.
-        return $edit_result['raw_url'];
-    }
-
-    /**
-     * Get the default link text to use for links found in a specific container field.
-     *
-     * @param string $field
-     * @return string
-     */
-    function default_link_text($field = '')
-    {
-        // Just use the field name. There's no way to know how the links inside custom fields are
-        // used, so no way to know the "real" link text. Displaying the field name at least gives
-        // the user a clue where to look if they want to find/modify the field.
-        return $field;
-    }
-
-    function ui_get_source($container_field = '', $context = 'display')
-    {
-        if (! post_type_exists(get_post_type($this->container_id))) {
-            // Error: Invalid post type. The user probably removed a CPT without removing the actual posts.
-            $post_html = '';
-
-            $post = get_post($this->container_id);
-            if ($post) {
-                $post_html .= sprintf(
-                    '<span class="row-title">%s</span><br>',
-                    get_the_title($post)
-                );
-            }
-            $post_html .= sprintf(
-                'Invalid post type "%s"',
-                htmlentities($this->container_type)
-            );
-
-            return $post_html;
-        }
-
-        $post_html = sprintf(
-            '<a class="row-title" href="%s" title="%s">%s</a>',
-            esc_url($this->get_edit_url()),
-            esc_attr(__('Edit this post')),
-            get_the_title($this->container_id)
-        );
-
-        return $post_html;
-    }
-
-    function ui_get_action_links($container_field)
-    {
-        $actions = array();
-        if (! post_type_exists(get_post_type($this->container_id))) {
-            return $actions;
-        }
-
-        if (current_user_can('edit_post', $this->container_id)) {
-            $actions['edit'] = '<span class="edit"><a href="' . $this->get_edit_url() . '" title="' . esc_attr(__('Edit this item')) . '">' . __('Edit') . '</a>';
-        }
-        $actions['view'] = '<span class="view"><a href="' . esc_url(get_permalink($this->container_id)) . '" title="' . esc_attr(sprintf(__('View "%s"', 'broken-link-checker'), get_the_title($this->container_id))) . '" rel="permalink">' . __('View') . '</a>';
-
-        return $actions;
-    }
-
-    /**
-     * Get edit URL for this container. Returns the URL of the Dashboard page where the item
-     * associated with this container can be edited.
-     *
-     * @access protected
-     *
-     * @return string
-     */
-    function get_edit_url()
-    {
-        /*
-        The below is a near-exact copy of the get_post_edit_link() function.
-        Unfortunately we can't just call that function because it has a hardcoded
-        caps-check which fails when called from the email notification script
-        executed by Cron.
-        */
-        $post = get_post($this->container_id);
-
-        if (! $post) {
-            return '';
-        }
-
-        $context = 'display';
-
-        // WP 3.0
-        if ('display' === $context) {
-            $action = '&amp;action=edit';
-        } else {
-            $action = '&action=edit';
-        }
-
-        $post_type_object = get_post_type_object($post->post_type);
-        if (! $post_type_object) {
-            return '';
-        }
-
-        return apply_filters('get_edit_post_link', admin_url(sprintf($post_type_object->_edit_link . $action, $post->ID)), $post->ID, $context);
-    }
-
-    /**
-     * Get the base URL of the container. For custom fields, the base URL is the permalink of
-     * the post that the field is attached to.
-     *
-     * @return string
-     */
-    function base_url()
-    {
-        return get_permalink($this->container_id);
-    }
-}
-
-class blcPostMetaManager extends ContainerManager
-{
-    var $container_class_name  = 'blcPostMeta';
+    var $container_class_name  = Container::class;
     var $meta_type             = 'post';
     protected $selected_fields = array();
 
@@ -352,15 +63,18 @@ class blcPostMetaManager extends ContainerManager
                 }
             }
         }
+        if (empty($this->selected_fields)) {
+            return;
+        }
 
         // Intercept 2.9+ style metadata modification actions
-        add_action("added_{$this->meta_type}_meta", $this->meta_modified(...), 10, 4);
-        add_action("updated_{$this->meta_type}_meta", $this->meta_modified(...), 10, 4);
-        add_action("deleted_{$this->meta_type}_meta", $this->meta_modified(...), 10, 4);
+        add_action("added_{$this->meta_type}_meta", $this->meta_modified(...), 10, 3);
+        add_action("updated_{$this->meta_type}_meta", $this->meta_modified(...), 10, 3);
+        add_action("deleted_{$this->meta_type}_meta", $this->meta_modified(...), 10, 3);
 
         // When a post is deleted, also delete the custom field container associated with it.
-        add_action('delete_post', $this->post_deleted(...));
-        add_action('trash_post', $this->post_deleted(...));
+        add_action('delete_post', $this->post_deleted(...), 10, 1);
+        add_action('trash_post', $this->post_deleted(...), 10, 1);
 
         // Re-parse custom fields when a post is restored from trash
         add_action('untrashed_post', $this->post_untrashed(...));
@@ -384,7 +98,7 @@ class blcPostMetaManager extends ContainerManager
      * @param string $purpose An optional code indicating how the retrieved containers will be used.
      * @param bool   $load_wrapped_objects Preload wrapped objects regardless of purpose.
      *
-     * @return array of blcPostMeta indexed by "container_type|container_id"
+     * @return array of PostMeta indexed by "container_type|container_id"
      */
     function get_containers($containers, $purpose = '', $load_wrapped_objects = false)
     {
@@ -422,80 +136,72 @@ class blcPostMetaManager extends ContainerManager
      * @param bool $forced If true, assume that all synch. records are gone and will need to be recreated from scratch.
      * @return int
      */
-    function resynch($forced = false) : int
+    function resynch($forced = false): int
     {
         global $wpdb;
         /** @var wpdb $wpdb */
         global $blclog;
         $changed = 0;
-        // Only check custom fields on selected post types. By default, that's "post" and "page".
-        $post_types = array('post', 'page');
 
         $overlord   = \blcPostTypeOverlord::getInstance();
-        $post_types = array_merge($post_types, $overlord->enabled_post_types);
-        $post_types = array_unique($post_types);
 
 
-        $escaped_post_types = "'" . implode("', '", array_map('esc_sql', $post_types)) . "'";
+        // Only check custom fields on selected post types and statuses
+        $escaped_post_types = "'" . implode("', '", array_map('esc_sql', $overlord->enabled_post_types)) . "'";
+        $escaped_post_statuses =  "'" . implode("', '", array_map('esc_sql', $overlord->enabled_post_statuses)) . "'";
 
         if ($forced) {
-            // Create new synchronization records for all posts.
-            $blclog->log('...... Creating synch records for all custom fields on ' . $escaped_post_types);
+            $blclog->log('...... Deleting custom field synch records corresponding to deleted posts');
             $start = microtime(true);
-            $q     = "INSERT INTO {$wpdb->prefix}blc_synch(container_id, container_type, synched)
-				  SELECT id, '{$this->container_type}', 0
-				  FROM {$wpdb->posts}
-				  WHERE
-				  	{$wpdb->posts}.post_status = 'publish'
-	 				AND {$wpdb->posts}.post_type IN ({$escaped_post_types})";
+            $q     = "DELETE `synch`.* FROM `{$wpdb->prefix}blc_synch` AS `synch` WHERE `synch`.`container_type` = '{$this->container_type}'";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
-              $changed +=  $wpdb->rows_affected;
+            $blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+            $changed +=  $wpdb->rows_affected;
+            // Create new synchronization records for all posts.
+
         } else {
             // Delete synch records corresponding to posts that no longer exist.
             $blclog->log('...... Deleting custom field synch records corresponding to deleted posts');
             $start = microtime(true);
-            $q     = "DELETE synch.*
+            $q     = "DELETE `synch`.*
 				  FROM
-					 {$wpdb->prefix}blc_synch AS synch LEFT JOIN {$wpdb->posts} AS posts
-					 ON posts.ID = synch.container_id
+				 `{$wpdb->prefix}blc_synch` `synch` 
 				  WHERE
-					 synch.container_type = '{$this->container_type}' AND posts.ID IS NULL";
+                   `synch`.`container_type` = '{$this->container_type}'
+                   AND
+                    NOT EXISTS (SELECT `ID` FROM `{$wpdb->posts}` `posts` WHERE  `posts`.`ID` =  `synch`.`container_id`)";
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows deleted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
-              $changed +=  $wpdb->rows_affected;
+            $changed +=  $wpdb->rows_affected;
 
             // Remove the 'synched' flag from all posts that have been updated
             // since the last time they were parsed/synchronized.
             $blclog->log('...... Marking custom fields on changed posts as unsynched');
             $start = microtime(true);
-            $q     = "UPDATE
-					{$wpdb->prefix}blc_synch AS synch
-					JOIN {$wpdb->posts} AS posts ON (synch.container_id = posts.ID and synch.container_type='{$this->container_type}')
-				  SET
-					synched = 0
+            $q     = "UPDATE `{$wpdb->prefix}blc_synch`  `synch` SET `synched` = 0
 				  WHERE
-					synch.last_synch < posts.post_modified";
+                   `synch`.`container_type` = '{$this->container_type}'
+                   AND
+                     EXISTS (SELECT `ID` FROM `{$wpdb->posts}` `posts` WHERE  `posts`.`ID` =  `synch`.`container_id` AND `synch`.`last_synch` < `posts`.`post_modified`)";
+
             $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $blclog->log(sprintf('...... %d rows updated in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
-              $changed +=  $wpdb->rows_affected;
-
-            // Create synch. records for posts that don't have them.
-            $blclog->log('...... Creating custom field synch records for new ' . $escaped_post_types);
-            $start = microtime(true);
-            $q     = "INSERT INTO {$wpdb->prefix}blc_synch(container_id, container_type, synched)
-				  SELECT id, '{$this->container_type}', 0
-				  FROM
-				    {$wpdb->posts} AS posts LEFT JOIN {$wpdb->prefix}blc_synch AS synch
-					ON (synch.container_id = posts.ID and synch.container_type='{$this->container_type}')
-				  WHERE
-				  	posts.post_status = 'publish'
-	 				AND posts.post_type IN ({$escaped_post_types})
-					AND synch.container_id IS NULL";
-            $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
-              $changed +=  $wpdb->rows_affected;
+            $changed +=  $wpdb->rows_affected;
         }
+        // Create synch. records for posts that don't have them.
+        $blclog->log('...... Creating custom field synch records for new ' . $escaped_post_types);
+        $start = microtime(true);
+        $q     = "INSERT IGNORE INTO `{$wpdb->prefix}blc_synch` (container_id, container_type, synched)
+				  SELECT `id`, '{$this->container_type}', 0
+				  FROM
+				  `{$wpdb->posts}` `posts`
+				  WHERE
+				     `posts`.`post_status` IN ({$escaped_post_statuses})
+	 				AND  `posts`.`post_type` IN ({$escaped_post_types})";
+        $wpdb->query($q); //phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $blclog->log(sprintf('...... %d rows inserted in %.3f seconds', $wpdb->rows_affected, microtime(true) - $start));
+        $changed +=  $wpdb->rows_affected;
+
         return $changed;
     }
 
@@ -508,8 +214,15 @@ class blcPostMetaManager extends ContainerManager
      * @param string    $meta_value
      * @return void
      */
-    function meta_modified($meta_id, $object_id = 0, $meta_key = '', $meta_value = '')
+    function meta_modified($meta_id, $object_id = 0, $meta_key = '')
     {
+
+        // Metadata changes only matter to us if the modified key
+        // is one that the user wants checked.
+        if (empty($this->selected_fields)) {
+            return;
+        }
+        global $blclog;
         global $wpdb;
         /** @var wpdb $wpdb */
 
@@ -521,20 +234,15 @@ class blcPostMetaManager extends ContainerManager
                 $meta_id = array_shift($meta_id);
             }
 
-            $meta = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->postmeta WHERE meta_id = %d", $meta_id), ARRAY_A);
+            $meta = $wpdb->get_row($wpdb->prepare("SELECT `post_id`,`meta_key` FROM $wpdb->postmeta WHERE meta_id = %d", $meta_id), ARRAY_A);
             if (empty($meta)) {
                 return;
             }
 
-            $object_id = $meta['post_id'];
-            $meta_key  = $meta['meta_key'];
+            ['post_id' => $object_id, 'meta_key' => $meta_key] = $meta;
         }
 
-        // Metadata changes only matter to us if the modified key
-        // is one that the user wants checked.
-        if (empty($this->selected_fields)) {
-            return;
-        }
+
         if (! array_key_exists($meta_key, $this->selected_fields)) {
             return;
         }
@@ -545,8 +253,10 @@ class blcPostMetaManager extends ContainerManager
             return;
         }
 
-        $container = ContainerHelper::get_container(array($this->container_type, intval($object_id)));
+        $container = $this->get_container(array('container_type' => $this->container_type, 'container_id' => intval($object_id)));
+
         $container->mark_as_unsynched();
+        $blclog->log('Container marked unsynhced', array($this->container_type, $object_id));
     }
 
     /**
@@ -557,15 +267,17 @@ class blcPostMetaManager extends ContainerManager
      */
     function post_deleted($post_id)
     {
+        global $blclog;
         // Get the associated container object
 
-        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
+        $container = $this->get_container(array('container_type' => $this->container_type, 'container_id' => intval($post_id)));
         if (null != $container) {
             // Delete it
             $container->delete();
             // Clean up any dangling links
             Utility::blc_cleanup_links();
         }
+        $blclog->log('Container deleted',  $post_id);
     }
 
     /**
@@ -577,8 +289,10 @@ class blcPostMetaManager extends ContainerManager
      */
     function post_untrashed($post_id)
     {
+        global $blclog;
         // Get the associated container object
-        $container = ContainerHelper::get_container(array($this->container_type, intval($post_id)));
+        $container = $this->get_container(array('container_type' => $this->container_type, 'container_id' => intval($post_id)));
         $container->mark_as_unsynched();
+        $blclog->log('Container untrashed',  $post_id);
     }
 }

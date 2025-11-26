@@ -23,6 +23,7 @@ class ContainerHelper
     static function get_manager($container_type, $fallback = '')
     {
         $module_manager    = ModuleManager::getInstance();
+
         $container_manager = null;
         $container_manager = $module_manager->get_module($container_type, true, 'container');
 
@@ -52,6 +53,7 @@ class ContainerHelper
     {
         global $wpdb; /* @var wpdb $wpdb */
 
+
         if (! is_array($container) || (count($container) < 2)) {
             return null;
         }
@@ -79,8 +81,9 @@ class ContainerHelper
                 $container = $rez;
             }
         }
-
+      
         $manager = self::get_manager($container['container_type']);
+       
         if (! $manager) {
             return null;
         }

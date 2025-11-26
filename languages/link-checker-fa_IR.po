@@ -1,0 +1,1624 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: Omid Sheerkavand <o.sheerkavand@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2011-03-19 17:41+0330\n"
+"PO-Revision-Date: 2011-08-26 14:12+0330\n"
+"Language: \n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: C:/Users/$oSIs/DEsktop/broken-link-checker\n"
+"X-Poedit-Language: Persian\n"
+"X-Poedit-Country: IRAN, ISLAMIC REPUBLIC OF\n"
+"X-Poedit-SearchPath-0: C:/Users/$oSIs/DEsktop/broken-link-checker\n"
+
+#: legacy/Controller/BrokenLinkChecker.php:303
+#: legacy/includes/admin/links-page-js.php:45
+msgid "Loading..."
+msgstr "در حال بارگذاری..."
+
+#. Plugin Name of the plugin
+#: link-checker.php
+msgid "Link Checker"
+msgstr "بررسی کننده پیوند"
+
+#: legacy/Controller/BrokenLinkChecker.php:491
+#: legacy/Controller/BrokenLinkChecker.php:498
+#: legacy/Controller/BrokenLinkChecker.php:563
+#: legacy/Controller/LinkQuery.php:44
+msgid "Broken Links"
+msgstr "پیوندهای شکسته"
+
+#: legacy/Controller/BrokenLinkChecker.php:570
+msgid "Settings"
+msgstr "تنظیمات"
+
+#: legacy/Controller/BrokenLinkChecker.php:908
+msgid "Settings saved."
+msgstr "تنظیمات بروزرسانی شد"
+
+#: legacy/Controller/BrokenLinkChecker.php:914
+msgid "Complete site recheck started."
+msgstr "بازبررسی سایت آغاز شد."
+
+#: legacy/Controller/BrokenLinkChecker.php:937
+msgid "General"
+msgstr "عمومی"
+
+#: legacy/Controller/BrokenLinkChecker.php:938
+msgid "Look For Links In"
+msgstr "دنبال پیوندها بگرد در"
+
+#: legacy/Controller/BrokenLinkChecker.php:939
+msgid "Which Links To Check"
+msgstr "بررسی کدام پیوندها"
+
+#: legacy/Controller/BrokenLinkChecker.php:940
+msgid "Protocols & APIs"
+msgstr "پروتکل ها و رابط های برنامه کاربردی"
+
+#: legacy/Controller/BrokenLinkChecker.php:941
+msgid "Advanced"
+msgstr "پیشرفته"
+
+#: legacy/Admin/TablePrinter.php:220
+#: legacy/Controller/BrokenLinkChecker.php:992
+msgid "Status"
+msgstr "موقعیت"
+
+#: legacy/Controller/BrokenLinkChecker.php:994
+msgid "Show debug info"
+msgstr "نمایش اطلاعات اشکال زدایی"
+
+#: legacy/Controller/BrokenLinkChecker.php:1022
+msgid "Check each link"
+msgstr "بررسی هر یک از پیوندها"
+
+#: legacy/Controller/BrokenLinkChecker.php:1027
+#, php-format
+msgid "Every %s hours"
+msgstr "هر %s ساعت"
+
+#: legacy/Controller/BrokenLinkChecker.php:1036
+msgid "Existing links will be checked this often. New links will usually be checked ASAP."
+msgstr "اغلب پیوندهای موجود بررسی خواهند شد. پیوندهای جدید نیز معمولاً با ASAP بررسی می‌شوند."
+
+#: legacy/Controller/BrokenLinkChecker.php:1043
+msgid "E-mail notifications"
+msgstr "آگاه‌سازی از طریق رایانامه"
+
+#: legacy/Controller/BrokenLinkChecker.php:1052
+msgid "Send me e-mail notifications about newly detected broken links"
+msgstr "برای من رایانامه‌های آگاه‌سازی در مورد پیوندهای تازه شکسته شده بفرست."
+
+#: legacy/Controller/BrokenLinkChecker.php:1106
+msgid "Link tweaks"
+msgstr "تنظیم پیوند"
+
+#: legacy/Controller/BrokenLinkChecker.php:1115
+msgid "Apply custom formatting to broken links"
+msgstr "اعمال قالب سفارشی در پیوندهای شکسته"
+
+#: legacy/Controller/BrokenLinkChecker.php:1120
+#: legacy/Controller/BrokenLinkChecker.php:1162
+msgid "Edit CSS"
+msgstr "ویرایش CSS"
+
+#: legacy/Controller/BrokenLinkChecker.php:1157
+msgid "Apply custom formatting to removed links"
+msgstr "اعمال قالب سفارشی در پیوندهای پاک شده"
+
+#: legacy/Controller/BrokenLinkChecker.php:1200
+msgid "Stop search engines from following broken links"
+msgstr "موتورهای جستجو را برای این پیوندها متوقف کن"
+
+#: legacy/Controller/BrokenLinkChecker.php:1265
+msgid "Look for links in"
+msgstr "دنبال پیوندها بگرد در"
+
+#: legacy/Controller/BrokenLinkChecker.php:1280
+msgid "Post statuses"
+msgstr "وضعیت‌های نوشته"
+
+#: legacy/Controller/BrokenLinkChecker.php:1314
+msgid "Link types"
+msgstr "گونه‌های پیوند"
+
+#: legacy/Controller/BrokenLinkChecker.php:1320
+msgid "Error : All link parsers missing!"
+msgstr "خطا: تمامی پیوندهای parsers ناپدید شده‌اند!"
+
+#: legacy/Controller/BrokenLinkChecker.php:1327
+msgid "Exclusion list"
+msgstr "لیست محروم‌ها"
+
+#: legacy/Controller/BrokenLinkChecker.php:1328
+msgid "Don't check links where the URL contains any of these words (one per line) :"
+msgstr "اگر نشانی دارای چنین کلماتی بود آن را بررسی نکن (یکی در هر پیوند) :"
+
+#: legacy/Controller/BrokenLinkChecker.php:1351
+msgid "Check links using"
+msgstr "پیوندها را بررسی کن با"
+
+#: legacy/Controller/BrokenLinkChecker.php:1371
+#: legacy/Controller/Link.php:1140
+msgid "Timeout"
+msgstr "زمان مورد نظر به پایان رسید"
+
+#: legacy/Controller/BrokenLinkChecker.php:1377
+#: legacy/Controller/BrokenLinkChecker.php:1470
+#, php-format
+msgid "%s seconds"
+msgstr "%s ثانیه"
+
+#: legacy/Controller/BrokenLinkChecker.php:1386
+msgid "Links that take longer than this to load will be marked as broken."
+msgstr "پیوندهایی که از این مدت بیشتر برای بارگذاری زمان ببرند به عنوان شکسته نشانه‌گذاری می‌شوند."
+
+#: legacy/Controller/BrokenLinkChecker.php:1393
+msgid "Link monitor"
+msgstr "ناظر پیوند"
+
+#: legacy/Controller/BrokenLinkChecker.php:1404
+msgid "Run continuously while the Dashboard is open"
+msgstr "به طور مداوم اجرا کن وقتی پیش‌خوان باز است"
+
+#: legacy/Controller/BrokenLinkChecker.php:1415
+msgid "Run hourly in the background"
+msgstr "به طور ساعتی در پس‌زمینه اجرا کن"
+
+#: legacy/Controller/BrokenLinkChecker.php:1464
+msgid "Max. execution time"
+msgstr "بیشترین زمان اجرا"
+
+#: legacy/Controller/BrokenLinkChecker.php:1481
+msgid "The plugin works by periodically launching a background job that parses your posts for links, checks the discovered URLs, and performs other time-consuming tasks. Here you can set for how long, at most, the link monitor may run each time before stopping."
+msgstr "افزونه توسط اقدام به صورت دوره‌ای در یک پس‌زمینه که پیوندهای نوشته‌ها را آنالیز می‌کند، عمل می‌کند. پیوندهای کشف شده را بررسی می‌کند، و وظایف زمان‌بر را انجام می‌دهد. اینجا شما می‌توانید مقرر کنید که به چه مدت، حداکثر، ناظر پیوند می‌تواند در هر زمان قبل از توقف اجرا شود. "
+
+#: legacy/Controller/BrokenLinkChecker.php:1490
+msgid "Server load limit"
+msgstr "محدودیت بارگذاری سرور"
+
+#: legacy/Controller/BrokenLinkChecker.php:1505
+#, php-format
+msgid "Current load : %s"
+msgstr "بارگذاری فعلی : %s"
+
+#: legacy/Controller/BrokenLinkChecker.php:1510
+#, php-format
+msgid "Link checking will be suspended if the average <a href=\"%s\">server load</a> rises above this number. Leave this field blank to disable load limiting."
+msgstr "بررسی پیوندها معلق می‌شود اگر میانگین <a href=\"%s\">بار سرور</a>از این عدد تجاوز کند. برای غیرفعال کردن محدودیت بار این قسمت را خلی بگذارید"
+
+#: legacy/Controller/BrokenLinkChecker.php:1518
+msgid "Not available"
+msgstr "در دسترس نیست"
+
+#: legacy/Controller/BrokenLinkChecker.php:1520
+msgid "Load limiting only works on Linux-like systems where <code>/proc/loadavg</code> is present and accessible."
+msgstr "محدودیت بارگذاری فقط بر روی لینوکس کار می‌کند. مانند سیستم‌هایی در جایی که  <code>/proc/loadavg</code> حاظر و در دسترس است."
+
+#: legacy/Controller/BrokenLinkChecker.php:1634
+msgid "Forced recheck"
+msgstr "وادار به بازبررسی"
+
+#: legacy/Controller/BrokenLinkChecker.php:1636
+msgid "Re-check all pages"
+msgstr "تمامی صفحات را بازبررسی کن"
+
+#: legacy/Controller/BrokenLinkChecker.php:1641
+msgid "The \"Nuclear Option\". Click this button to make the plugin empty its link database and recheck the entire site from scratch."
+msgstr "\"اختیار هسته‌ای\". برای اینکه دیتابیس پیوند افزونه خالی شود و سایت را کامل از خطا بازبررسی کند، روی این دکمه کلیک کنید. "
+
+#: legacy/Controller/BrokenLinkChecker.php:1731
+msgid "Configure"
+msgstr "پیکربندی"
+
+#: legacy/Controller/BrokenLinkChecker.php:1989
+#: legacy/Controller/BrokenLinkChecker.php:2075
+#: legacy/Controller/BrokenLinkChecker.php:2107
+#, php-format
+msgid "Database error : %s"
+msgstr "خطا در دیتابیس : %s"
+
+#: legacy/Controller/BrokenLinkChecker.php:2056
+msgid "You must enter a filter name!"
+msgstr "شما باید برای فیلتر یک نام وارد کنید!"
+
+#: legacy/Controller/BrokenLinkChecker.php:2060
+msgid "Invalid search query."
+msgstr "جستجو  نامعتبر می‌باشد."
+
+#: legacy/Controller/BrokenLinkChecker.php:2070
+#, php-format
+msgid "Filter \"%s\" created"
+msgstr "فیلتر \"%s\" ایجاد شد"
+
+#: legacy/Controller/BrokenLinkChecker.php:2097
+msgid "Filter ID not specified."
+msgstr "شناسه فیلتر مشخص نشده است."
+
+#: legacy/Controller/BrokenLinkChecker.php:2104
+msgid "Filter deleted"
+msgstr "فیلتر حذف شد"
+
+#: legacy/Controller/BrokenLinkChecker.php:2177
+msgid "None of the selected links are redirects!"
+msgstr "هیچ‌کدام از پیوندهای انتخاب شده بازهدایت شونده نیستند!"
+
+#: legacy/Controller/BrokenLinkChecker.php:2480
+#: legacy/Controller/BrokenLinkChecker.php:3435
+msgid "This link was manually marked as working by the user."
+msgstr "این پیوند به صورت دستی به عنوان کارکننده توسط بکاربرنده نشانه‌گذاری شده است."
+
+#: legacy/Controller/BrokenLinkChecker.php:2488
+#: legacy/Controller/BrokenLinkChecker.php:2559
+#, php-format
+msgid "Couldn't modify link %d"
+msgstr "پیوند اصلاح نشد %d"
+
+#: legacy/Controller/BrokenLinkChecker.php:2671
+msgid "Table columns"
+msgstr "ستون‌های جدول"
+
+#: legacy/Controller/BrokenLinkChecker.php:2690
+msgid "Show on screen"
+msgstr "روی صفحه به نمایش بگذار"
+
+#: legacy/Controller/BrokenLinkChecker.php:2697
+msgid "links"
+msgstr "پیوندها"
+
+#: legacy/Admin/TablePrinter.php:185
+msgid "Apply"
+msgstr "اعمال"
+
+#: legacy/Controller/BrokenLinkChecker.php:2702
+msgid "Misc"
+msgstr "مختلف"
+
+#: legacy/Controller/BrokenLinkChecker.php:2717
+#, php-format
+msgid "Highlight links broken for at least %s days"
+msgstr "پیوندهای شکسته را پررنگ کن حداقل برای %s روز"
+
+#: legacy/Controller/BrokenLinkChecker.php:2726
+msgid "Color-code status codes"
+msgstr "وضعیت کد رنگ کدهای مخفی"
+
+#: legacy/Admin/ScreenOptions.php:194
+#: legacy/Controller/BrokenLinkChecker.php:2746
+#: legacy/Controller/BrokenLinkChecker.php:3237
+#: legacy/Controller/BrokenLinkChecker.php:3339
+#: legacy/Controller/BrokenLinkChecker.php:3403
+#: legacy/Controller/BrokenLinkChecker.php:3419
+#: legacy/Controller/BrokenLinkChecker.php:3469
+#: legacy/Controller/BrokenLinkChecker.php:3508
+#: legacy/Controller/BrokenLinkChecker.php:3623
+#: legacy/Controller/BrokenLinkChecker.php:3676
+#: legacy/Controller/BrokenLinkChecker.php:3749
+msgid "You're not allowed to do that!"
+msgstr "شما اجازه انجام این کار را ندارید!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3270
+msgid "View broken links"
+msgstr "پیوندهای شکسته را نمایش بده"
+
+#: legacy/Controller/BrokenLinkChecker.php:3277
+msgid "No broken links found."
+msgstr "هیچ پیوند شکسته‌ای یافت نشد."
+
+#: legacy/Controller/BrokenLinkChecker.php:3288
+msgid "No URLs in the work queue."
+msgstr " نشانی‌ای در صف کار وجود ندارد."
+
+#: legacy/Controller/BrokenLinkChecker.php:3316
+msgid "Searching your blog for links..."
+msgstr "در حال جستجو در سایت شما برای پیوندها..."
+
+#: legacy/Controller/BrokenLinkChecker.php:3318
+msgid "No links detected."
+msgstr "هیچ پیوندی پیدا نشد."
+
+#: legacy/Controller/BrokenLinkChecker.php:3427
+#: legacy/Controller/BrokenLinkChecker.php:3477
+#: legacy/Controller/BrokenLinkChecker.php:3527
+#: legacy/Controller/BrokenLinkChecker.php:3635
+#: legacy/Controller/BrokenLinkChecker.php:3695
+#: legacy/Controller/BrokenLinkChecker.php:3768
+#, php-format
+msgid "Oops, I can't find the link %d"
+msgstr "من نمی‌توانم پیوند را پیدا کنم %d"
+
+#: legacy/Controller/BrokenLinkChecker.php:3447
+#: legacy/Controller/BrokenLinkChecker.php:3491
+msgid "Oops, couldn't modify the link!"
+msgstr "اصلاح پیوند مقدور نبود!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3450
+#: legacy/Controller/BrokenLinkChecker.php:3494
+#: legacy/Controller/BrokenLinkChecker.php:3665
+#: legacy/Controller/BrokenLinkChecker.php:3684
+#: legacy/Controller/BrokenLinkChecker.php:3757
+msgid "Error : link_id not specified"
+msgstr "خطا : شناسه پیوند تعیین نشده است"
+
+#: legacy/Controller/BrokenLinkChecker.php:3538
+#: legacy/Controller/BrokenLinkChecker.php:3550
+msgid "Oops, the new URL is invalid!"
+msgstr "نشانی جدید نامعتبر است!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3646
+msgid "An unexpected error occured!"
+msgstr "یک خطای غیرمنتظره رخ داد!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3516
+msgid "Error : link_id or new_url not specified"
+msgstr "خطا : شناسه پیوند یا نشانی جدید تعیین نشده است"
+
+#: legacy/Controller/BrokenLinkChecker.php:3806
+msgid "You don't have sufficient privileges to access this information!"
+msgstr "شما حق کافی برای دسترسی به این اطلاعات را ندارید!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3819
+msgid "Error : link ID not specified"
+msgstr "خطا : شناسه پیوند تعیین نشده است"
+
+#: legacy/Controller/BrokenLinkChecker.php:3830
+#, php-format
+msgid "Failed to load link details (%s)"
+msgstr "بارگذاری جزئیات پیوند با شکست مواجه شد  (%s)"
+
+#: legacy/Controller/BrokenLinkChecker.php:585
+#: legacy/Controller/BrokenLinkChecker.php:3886
+msgid "Broken Link Checker"
+msgstr "بررسی کننده پیوند شکسته"
+
+#: legacy/Controller/BrokenLinkChecker.php:3914
+msgid "PHP version"
+msgstr "نسخه PHP"
+
+#: legacy/Controller/BrokenLinkChecker.php:3920
+msgid "MySQL version"
+msgstr "نسخه MYSQL"
+
+#: legacy/Controller/BrokenLinkChecker.php:3933
+msgid "You have an old version of CURL. Redirect detection may not work properly."
+msgstr "شما داری نسخه قدیمی از حلقه هستید. شاید کشف بازهدایت شونده به خوبی کار نکند."
+
+#: legacy/Controller/BrokenLinkChecker.php:3944
+msgid "Not installed"
+msgstr "نصب نشده"
+
+#: legacy/Controller/BrokenLinkChecker.php:3947
+msgid "CURL version"
+msgstr "نسخه حلقه"
+
+#: legacy/Controller/BrokenLinkChecker.php:3959
+msgid "Off"
+msgstr "خاموش"
+
+#: legacy/Controller/BrokenLinkChecker.php:3953
+#, php-format
+msgid "On ( %s )"
+msgstr "روشن ( %s )"
+
+#: legacy/Controller/BrokenLinkChecker.php:3954
+msgid "Redirects may be detected as broken links when open_basedir is on."
+msgstr "شاید بازهدایت شونده‌ها به عنوان پیوندهای شکسته کشف شوند اگر حالت پایگاه باز روشن باشد."
+
+#: legacy/Controller/BrokenLinkChecker.php:3991
+msgid "If this value is zero even after several page reloads you have probably encountered a bug."
+msgstr "اگر بعد از بارگذاری چندین صفحه این مقدار صفر باشد، احتمالاً شما با یک مشکل رو به رو هستید."
+
+#: legacy/Controller/BrokenLinkChecker.php:4123
+#: legacy/Controller/BrokenLinkChecker.php:4252
+#, php-format
+msgid "[%s] Broken links detected"
+msgstr "[%s] پیوند شکسته کشف شده"
+
+#: legacy/Controller/BrokenLinkChecker.php:4170
+msgid "Here's a list of the new broken links: "
+msgstr "این یک لیست از پیوندهای شکسته جدید می‌باشد : "
+
+#: legacy/Controller/BrokenLinkChecker.php:4180
+#, php-format
+msgid "Link text : %s"
+msgstr "متن پیوند : %s"
+
+#: legacy/Controller/BrokenLinkChecker.php:4197
+msgid "You can see all broken links here:"
+msgstr "شما می‌توانید تمامی پیوندهای شکسته را اینجا ببینید: "
+
+#: legacy/init.php:110
+msgid "Broken Link Checker installation failed. Try deactivating and then reactivating the plugin."
+msgstr "نصب بررسی کننده پیوندهای شکسته، شکست خورد. افزونه را غیرفعال و سپس دوباره فعال کنید."
+
+#: legacy/includes/any-post.php:556
+#: legacy/modules/containers/comment.php:50
+msgid "Nothing to update"
+msgstr "چیزی برای بروزرسانی وجود ندارد"
+
+#: legacy/includes/any-post.php:572
+#, php-format
+msgid "Updating post %d failed"
+msgstr "بروزرسانی پست %d شکست خورد"
+
+#: legacy/Controller/LinkInstance.php:114
+#: legacy/Controller/LinkInstance.php:170
+#, php-format
+msgid "Parser '%s' not found."
+msgstr "تجزیه کننده '%s' پیدا نشد."
+
+#: legacy/Controller/LinkQuery.php:43
+msgid "Broken"
+msgstr "شکسته شده"
+
+#: legacy/Controller/LinkQuery.php:45
+msgid "No broken links found"
+msgstr "هیچ پیوند شکسته‌ای یافت نشد"
+
+#: legacy/Controller/LinkQuery.php:63
+msgid "Redirects"
+msgstr "باز هدایت شونده‌ها"
+
+#: legacy/Controller/LinkQuery.php:64
+msgid "Redirected Links"
+msgstr "پیوندهای باز هدایت شونده"
+
+#: legacy/Controller/LinkQuery.php:65
+msgid "No redirects found"
+msgstr "هیچ باز هدایت شونده‌ای یافت نشد"
+
+#: legacy/Controller/LinkQuery.php:32
+msgid "All"
+msgstr "همه"
+
+#: legacy/Controller/LinkQuery.php:33
+msgid "Detected Links"
+msgstr "پیوندهای کشف شده"
+
+#: legacy/Controller/LinkQuery.php:34
+msgid "No links found (yet)"
+msgstr "هیچ پیوندی یافت نشد (تا کنون)"
+
+#: legacy/Controller/LinkQuery.php:100
+#: legacy/includes/admin/search-form.php:37
+msgid "Search"
+msgstr "جستجو"
+
+#: legacy/Controller/LinkQuery.php:101
+msgid "Search Results"
+msgstr "جستجوی نتایج"
+
+#: legacy/Controller/LinkQuery.php:102
+#: legacy/Controller/LinkQuery.php:153
+msgid "No links found for your query"
+msgstr "هیچ پیوندی برای جستجو شما یافت نشد"
+
+#: legacy/Controller/Link.php:325
+msgid "The plugin script was terminated while trying to check the link."
+msgstr "متن افزونه وقتی که در حال تلاش برای بررسی پیوند بود، متوقف شد."
+
+#: legacy/Controller/Link.php:372
+msgid "The plugin doesn't know how to check this type of link."
+msgstr "افزونه نمی‌داند چطور این نوع از پیوندها را بررسی کند."
+
+#: legacy/Controller/Link.php:610
+msgid "Link is valid."
+msgstr "پیوند معتبر است."
+
+#: legacy/Controller/Link.php:608
+msgid "Link is broken."
+msgstr "پیوند شکسته است."
+
+#: legacy/Controller/Link.php:845
+#: legacy/Controller/Link.php:949
+#: legacy/Controller/Link.php:984
+msgid "Link is not valid"
+msgstr "پیوند نامعتبر است"
+
+#: legacy/Controller/Link.php:862
+msgid "This link can not be edited because it is not used anywhere on this site."
+msgstr "این پیوند را نمی‌توان ویرایش کرد  زیرا در هیچ جایی از این سایت استفاده نشده است."
+
+#: legacy/Controller/Link.php:888
+msgid "Failed to create a DB entry for the new URL."
+msgstr "ایجاد دیتابیس جدید برای نشانی جدید شکست خورد."
+
+#: legacy/Controller/Link.php:956
+msgid "This link is not a redirect"
+msgstr "این پیوند یک باز هدایت شونده نیست"
+
+#: legacy/Controller/Link.php:1011
+#: legacy/Controller/Link.php:1048
+msgid "Couldn't delete the link's database record"
+msgstr "حذف سابقه دیتابیس پیوند مقدور نبود"
+
+#: legacy/Controller/Link.php:1137
+#: legacy/modules/checkers/http.php:497
+#: legacy/modules/checkers/http.php:501
+#: legacy/modules/extras/mediafire.php:116
+#: legacy/modules/extras/youtube.php:150
+#: legacy/modules/extras/youtube.php:243
+msgid "Unknown Error"
+msgstr "خطای نامشخص"
+
+#: legacy/Controller/Link.php:1155
+msgid "Not checked"
+msgstr "بررسی نشده"
+
+#: legacy/Controller/Link.php:1158
+msgid "False positive"
+msgstr "مثبت غلط"
+
+#: legacy/Abstract/Parser.php:130
+#, php-format
+msgid "Editing is not implemented in the '%s' parser"
+msgstr "ویرایش انجام نشد در '%s' تجزیه‌کننده"
+
+#: legacy/Abstract/Parser.php:146
+#, php-format
+msgid "Unlinking is not implemented in the '%s' parser"
+msgstr "بی‌پیوند کردن انجام نشد در '%s' تجزیه‌کننده"
+
+#: legacy/Database/DatabaseUpgrader.php:97
+#, php-format
+msgid "Failed to delete old DB tables. Database error : %s"
+msgstr "حذف جداول دیتاببیس شکست خورد. خطای دیتابیس : %s"
+
+#: legacy/includes/admin/links-page-js.php:64
+#: legacy/includes/admin/links-page-js.php:603
+msgid "Wait..."
+msgstr "منتظر باشید..."
+
+#: legacy/Admin/TablePrinter.php:733
+#: legacy/Controller/BrokenLinkChecker.php:628
+#: legacy/includes/admin/links-page-js.php:110
+msgid "Not broken"
+msgstr "شکسته نیست"
+
+#: legacy/includes/admin/links-page-js.php:472
+#, php-format
+msgid "%d instances of the link were successfully modified."
+msgstr "%d مورد پیوند با موفقیت اصلاح شد."
+
+#: legacy/includes/admin/links-page-js.php:478
+#, php-format
+msgid "However, %d instances couldn't be edited and still point to the old URL."
+msgstr "هنوز، %d مورد ویرایش نشد و به اشاره به پیوند قدیمی ادامه می‌دهد."
+
+#: legacy/includes/admin/links-page-js.php:484
+msgid "The link could not be modified."
+msgstr "اصلاح پیوند مقدور نبود."
+
+#: legacy/includes/admin/links-page-js.php:655
+msgid "The following error(s) occured :"
+msgstr "این خطا (ها) رخ داده‌اند : "
+
+#: legacy/includes/admin/links-page-js.php:641
+#, php-format
+msgid "%d instances of the link were successfully unlinked."
+msgstr "%d مورد پیوند با موفقیت بی‌پیوند شد."
+
+#: legacy/includes/admin/links-page-js.php:647
+#, php-format
+msgid "However, %d instances couldn't be removed."
+msgstr "هنوز، %d حذف مورد مقدور نیست."
+
+#: legacy/includes/admin/links-page-js.php:652
+msgid "The plugin failed to remove the link."
+msgstr "افزونه برای حذف پیوند شکست خورد."
+
+#: legacy/Admin/TablePrinter.php:303
+#: legacy/Admin/TablePrinter.php:727
+#: legacy/Controller/BrokenLinkChecker.php:627
+#: legacy/includes/admin/links-page-js.php:663
+msgid "Unlink"
+msgstr "بی‌پیوند کردن"
+
+#: legacy/includes/admin/links-page-js.php:703
+msgid "Enter a name for the new custom filter"
+msgstr "نامی برای فیلتر دلخواه وارد کنید"
+
+#: legacy/includes/admin/links-page-js.php:715
+msgid ""
+"You are about to delete the current filter.\n"
+"'Cancel' to stop, 'OK' to delete"
+msgstr ""
+"شما در حال حذف فیلتر فعلی هستید.\n"
+"'لغو' برای توقف, 'قبول' برای حذف"
+
+#: legacy/includes/admin/links-page-js.php:740
+msgid ""
+"Are you sure you want to remove the selected links? This action can't be undone.\n"
+"'Cancel' to stop, 'OK' to remove"
+msgstr ""
+"شما مطمئن هستید که می‌خواهید پیوندهای انتخاب شده را حذف کنید؟ این عمل نمی‌تواند ناتمام شود.\n"
+"'لغو' برای توقف, 'قبول' برای حذف"
+
+#: legacy/includes/admin/links-page-js.php:870
+msgid "Enter a search string first."
+msgstr "اول یک رشته جستجو وارد کنید."
+
+#: legacy/includes/admin/links-page-js.php:877
+msgid "Select one or more links to edit."
+msgstr "برای ویرایش یک یا چند پیوند انتخاب  کنید."
+
+#: legacy/includes/admin/search-form.php:47
+msgid "Link text"
+msgstr "متن پیوند"
+
+#: legacy/Admin/TablePrinter.php:225
+#: legacy/includes/admin/search-form.php:50
+msgid "URL"
+msgstr "نشانی"
+
+#: legacy/Admin/TablePrinter.php:568
+#: legacy/includes/admin/search-form.php:53
+msgid "HTTP code"
+msgstr "کد HTTP"
+
+#: legacy/includes/admin/search-form.php:56
+msgid "Link status"
+msgstr "وضعیت پیوند"
+
+#: legacy/includes/admin/search-form.php:73
+#: legacy/includes/admin/search-form.php:90
+msgid "Link type"
+msgstr "نوع پیوند"
+
+#: legacy/includes/admin/search-form.php:75
+msgid "Any"
+msgstr "همه"
+
+#: legacy/includes/admin/search-form.php:79
+msgid "Links used in"
+msgstr "پیوندهای استفاده شده در"
+
+#: legacy/Admin/TablePrinter.php:199
+msgid "Compact View"
+msgstr "نمایش خلاصه"
+
+#: legacy/Admin/TablePrinter.php:201
+msgid "Detailed View"
+msgstr "نمایش با جزئیات"
+
+#: legacy/Admin/TablePrinter.php:232
+msgid "Source"
+msgstr "منبع"
+
+#: legacy/Admin/TablePrinter.php:238
+msgid "Link Text"
+msgstr "متن پیوند"
+
+#: legacy/Admin/TablePrinter.php:297
+msgid "Bulk Actions"
+msgstr "کارهای عمومی"
+
+#: legacy/Admin/TablePrinter.php:298
+#: legacy/Admin/TablePrinter.php:724
+#: legacy/Controller/BrokenLinkChecker.php:626
+msgid "Edit URL"
+msgstr "ویرایش نشانی"
+
+#: legacy/Admin/TablePrinter.php:299
+#: legacy/Admin/TablePrinter.php:753
+#: legacy/Controller/BrokenLinkChecker.php:630
+msgid "Recheck"
+msgstr "بازبررسی"
+
+#: legacy/Admin/TablePrinter.php:300
+msgid "Fix redirects"
+msgstr "ثابت کردن بازهدایت شونده‌ها"
+
+#: legacy/Admin/TablePrinter.php:301
+msgid "Mark as not broken"
+msgstr "نشانه‌گذاری به عنوان شکسته نشده"
+
+#: legacy/Admin/TablePrinter.php:354
+msgid "Bulk Edit URLs"
+msgstr "ویرایش اکثریت نشانی‌ها"
+
+#: legacy/Admin/TablePrinter.php:356
+msgid "Find"
+msgstr "پیدا کن"
+
+#: legacy/Admin/TablePrinter.php:360
+msgid "Replace with"
+msgstr "جابجا کن با"
+
+#: legacy/Admin/TablePrinter.php:368
+msgid "Case sensitive"
+msgstr "حساس نسبت به بزرگ يا کوچک بودن حرف"
+
+#: legacy/Admin/TablePrinter.php:372
+msgid "Regular expression"
+msgstr "بیان با قاعده"
+
+#: legacy/Admin/TablePrinter.php:378
+#: legacy/Admin/TablePrinter.php:793
+#: legacy/Admin/TablePrinter.php:923
+#: legacy/includes/admin/search-form.php:118
+msgid "Cancel"
+msgstr "لغو"
+
+#: legacy/Admin/TablePrinter.php:381
+#: legacy/Admin/TablePrinter.php:924
+msgid "Update"
+msgstr "بروزرسانی"
+
+#: legacy/Admin/TablePrinter.php:543
+msgid "Post published on"
+msgstr "پست منتشر شده در"
+
+#: legacy/Admin/TablePrinter.php:551
+msgid "Link last checked"
+msgstr "آخرین بررسی پیوند"
+
+#: legacy/Admin/TablePrinter.php:556
+msgid "Never"
+msgstr "هرگز"
+
+#: legacy/Admin/TablePrinter.php:576
+msgid "Response time"
+msgstr "زمان پاسخ"
+
+#: legacy/Admin/TablePrinter.php:579
+#, php-format
+msgid "%2.3f seconds"
+msgstr "%2.3f ثانیه"
+
+#: legacy/Admin/TablePrinter.php:584
+msgid "Final URL"
+msgstr "نشانی نهایی"
+
+#: legacy/Admin/TablePrinter.php:592
+msgid "Redirect count"
+msgstr "شمارش باز هدایت شونده"
+
+#: legacy/Admin/TablePrinter.php:600
+msgid "Instance count"
+msgstr "شمارش مورد"
+
+#: legacy/Admin/TablePrinter.php:620
+#, php-format
+msgid "This link has been broken for %s."
+msgstr "این پیوند شکسته شده زیرا %s."
+
+#: legacy/Admin/TablePrinter.php:631
+msgid "Log"
+msgstr "ثبت وقایع"
+
+#: legacy/Admin/TablePrinter.php:661
+#: legacy/Admin/TablePrinter.php:705
+msgid "Show more info about this link"
+msgstr "اطلاعات بیشتری در مورد این پیوند نشان بده"
+
+#: legacy/Admin/TablePrinter.php:694
+msgid "Broken for"
+msgstr "شکسته شده زیرا"
+
+#: legacy/Admin/TablePrinter.php:726
+msgid "Remove this link from all posts"
+msgstr "این پیوند را از تمامی پست‌ها حذف کن"
+
+#: legacy/Admin/TablePrinter.php:732
+msgid "Remove this link from the list of broken links and mark it as valid"
+msgstr "این پیوند را از لیست پیوندهای شکسته حذف کن و به عنوان پیوند معتبر نشانی‌گذاری کن"
+
+#: legacy/Admin/TablePrinter.php:794
+msgid "Update URL"
+msgstr "بروزرسانی نشانی"
+
+#: legacy/Admin/TablePrinter.php:821
+msgid "[An orphaned link! This is a bug.]"
+msgstr "[یک پیوند پرت! این یک اشکال است.]"
+
+#: legacy/modules/checkers/http.php:467
+msgid "Server Not Found"
+msgstr "سرور یافت نشد"
+
+#: legacy/modules/checkers/http.php:483
+msgid "Connection Failed"
+msgstr "اتصال شکست خورد"
+
+#: legacy/modules/checkers/http.php:545
+#: legacy/modules/checkers/http.php:636
+#, php-format
+msgid "HTTP code : %d"
+msgstr "HTTP کد : %d"
+
+#: legacy/modules/checkers/http.php:547
+#: legacy/modules/checkers/http.php:638
+msgid "(No response)"
+msgstr "(بدون پاسخ)"
+
+#: legacy/modules/checkers/http.php:570
+msgid "Most likely the connection timed out or the domain doesn't exist."
+msgstr "شاید در اتصال وقفه ایجاد شده یا دامنه وجود ندارد. "
+
+#: legacy/modules/checkers/http.php:647
+msgid "Request timed out."
+msgstr "درخواست متوقف شد."
+
+#: legacy/modules/containers/comment.php:60
+#, php-format
+msgid "Updating comment %d failed"
+msgstr "بروزرسانی توضیح %d شکست خورد"
+
+#: legacy/modules/containers/comment.php:114
+msgid "View comment"
+msgstr "نمایش توضیح"
+
+#: legacy/modules/containers/comment.php:132
+msgid "Comment"
+msgstr "توضیح"
+
+#: legacy/modules/containers/acf_field.php:252
+#: legacy/modules/containers/custom_field.php:273
+#, php-format
+msgid "View \"%s\""
+msgstr "نمایش \"%s\""
+
+#: legacy/modules/extras/dailymotion-embed.php:25
+msgid "DailyMotion Video"
+msgstr "ویدیو حرکت روزانه"
+
+#: legacy/modules/extras/dailymotion-embed.php:26
+msgid "Embedded DailyMotion video"
+msgstr "ویدیو حرکت روزانه جاسازی شده"
+
+#: legacy/Abstract/EmbedParser.php:210
+msgid "Embedded videos can't be edited using Broken Link Checker. Please edit or replace the video in question manually."
+msgstr "ویدیو جاسازی شده نمی‌تواند با بررسی کننده پیوندها ویرایش شود. لطفاً ویدیو مورد بحث را به صورت دستی ویرایش یا تعویض کنید."
+
+#: legacy/modules/extras/mediafire.php:101
+#: legacy/modules/extras/mediafire.php:106
+#: legacy/modules/extras/rapidshare.php:142
+msgid "Not Found"
+msgstr "یافت نشد"
+
+#: legacy/modules/extras/rapidshare.php:161
+msgid "RS Server Down"
+msgstr "RS سرور از کار افتاده"
+
+#: legacy/modules/extras/rapidshare.php:168
+msgid "File Blocked"
+msgstr "پرونده بلوکه شد"
+
+#: legacy/modules/extras/rapidshare.php:175
+msgid "File Locked"
+msgstr "پرونده قفل شد"
+
+#: legacy/modules/extras/rapidshare.php:186
+#, php-format
+msgid "RapidShare : %s"
+msgstr "رپیدشیر : %s"
+
+#: legacy/modules/extras/rapidshare.php:191
+#, php-format
+msgid "RapidShare API error: %s"
+msgstr "خطای رابط برنامه کاربردی رپیدشیر: %s"
+
+#: legacy/modules/extras/vimeo-embed.php:25
+msgid "Vimeo Video"
+msgstr "ویدیو ویمئو"
+
+#: legacy/modules/extras/vimeo-embed.php:26
+msgid "Embedded Vimeo video"
+msgstr "ویدیو ویمئو جاسازی شده"
+
+#: legacy/modules/extras/youtube-embed.php:26
+#: legacy/modules/extras/youtube-iframe.php:29
+msgid "YouTube Video"
+msgstr "ویدیو یوتیوب"
+
+#: legacy/modules/extras/youtube-embed.php:27
+#: legacy/modules/extras/youtube-iframe.php:30
+msgid "Embedded YouTube video"
+msgstr "ویدیو یوتیوب جاسازی شده"
+
+#: legacy/modules/extras/youtube.php:165
+#: legacy/modules/extras/youtube.php:168
+msgid "Video Not Found"
+msgstr "ویدیو یافت نشد"
+
+#: legacy/modules/extras/youtube.php:154
+msgid "Video OK"
+msgstr "ویدیو درست است"
+
+#: legacy/modules/extras/youtube.php:220
+msgid "Video Restricted"
+msgstr "ویدیو محصور"
+
+#: legacy/modules/parsers/image.php:206
+msgid "Image"
+msgstr "عکس"
+
+#: legacy/modules/parsers/acf_field.php:129
+#: legacy/modules/parsers/metadata.php:151
+msgid "Custom field"
+msgstr "زمینه دلخواه"
+
+#. Plugin URI of the plugin
+#: link-checker.php
+msgid "https://brokenlinkchecker.dev/wordpress/broken-link-checker"
+msgstr ""
+
+#. Description of the plugin
+#: link-checker.php
+msgid "Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version."
+msgstr ""
+
+#. Author of the plugin
+#: link-checker.php
+msgid "Bram Brambring"
+msgstr ""
+
+#. Author URI of the plugin
+#: link-checker.php
+msgid "https://brambring.nl/"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:245
+msgid "Redirect URL"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:302
+#: legacy/Admin/TablePrinter.php:741
+#: legacy/Controller/BrokenLinkChecker.php:629
+msgid "Dismiss"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:329
+#, php-format
+msgid "Displaying %1$s&#8211;%2$s of <span class=\"current-link-count\">%3$s</span>"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:612
+#, php-format
+msgid "This link has failed %d time."
+msgid_plural "This link has failed %d times."
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Admin/TablePrinter.php:679
+msgctxt "checked how long ago"
+msgid "Checked"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:706
+msgctxt "link in the \"Status\" column"
+msgid "Details"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:724
+msgid "Edit this link"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:740
+msgid "Hide this link and do not report it again unless its status changes"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:746
+msgid "Undismiss this link"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:747
+msgid "Undismiss"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:760
+msgid "Replace this redirect with a direct link"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:761
+#: legacy/Controller/BrokenLinkChecker.php:631
+msgctxt "link action; replace one redirect with a direct link"
+msgid "Fix redirect"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:903
+msgctxt "inline editor title"
+msgid "Edit Link"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:906
+msgctxt "inline link editor"
+msgid "Text"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:911
+msgctxt "inline link editor"
+msgid "URL"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:916
+msgctxt "inline link editor"
+msgid "Suggestions"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:937
+msgid "Use this URL"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:334
+msgid "Show a badge with the number of broken links in the title"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1063
+msgid "Send authors e-mail notifications about broken links in their posts"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1070
+msgid "Count bubbles"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1076
+msgid "Show a bubble with number of found broken links in the menu bar"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1083
+msgid "Show a bubble with number of found broken links in the dashboard widget"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1092
+msgid "Notification e-mail address"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1099
+msgid "Leave empty to use the e-mail address specified in Settings &rarr; General."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1142
+#, php-format
+msgid "Example : Lorem ipsum <a %s>broken link</a>, dolor sit amet."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1145
+#: legacy/Controller/BrokenLinkChecker.php:1187
+msgid "Click \"Save Changes\" to update example output."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1184
+#, php-format
+msgid "Example : Lorem ipsum <span %s>removed link</span>, dolor sit amet."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1206
+msgctxt "\"Link tweaks\" settings"
+msgid "These settings only apply to the content of posts, not comments or custom fields."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1217
+msgctxt "settings page"
+msgid "Warnings"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1221
+msgid "Show uncertain or minor problems as \"warnings\" instead of \"broken\""
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1225
+msgid "Turning off this option will make the plugin report all problems as broken links."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1232
+msgid "YouTube API Key"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1239
+#, php-format
+msgid "Use your own %1$sapi key%2$s for checking youtube links."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1246
+msgid "Post Modified Date"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1250
+msgid "Disable post modified date change when link is edited"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1423
+msgid "Show the dashboard widget for"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1428
+msgctxt "dashboard widget visibility"
+msgid "Administrator"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1429
+msgctxt "dashboard widget visibility"
+msgid "Editor and above"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1430
+msgctxt "dashboard widget visibility"
+msgid "Nobody (disables the widget)"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1446
+msgctxt "settings page"
+msgid "Show link actions"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1528
+msgid "Target resource usage"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1548
+msgid "Logging"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1553
+msgid "Enable logging"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1559
+msgid "Log file location"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1566
+#: legacy/Controller/BrokenLinkChecker.php:1623
+msgid "Leave blank for default location: "
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1575
+msgid "Log file clear schedule"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1602
+msgid "Cookies"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1607
+msgid "Enable Cookies"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1615
+msgid "Cookie file location"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1829
+msgid "Enter the names of custom fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_name</code>."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1845
+msgid "Enter the keys of acf fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_586a3eaa4091b</code>."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2155
+#, php-format
+msgid "Replaced %d redirect with a direct link"
+msgid_plural "Replaced %d redirects with direct links"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2166
+#, php-format
+msgid "Failed to fix %d redirect"
+msgid_plural "Failed to fix %d redirects"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2264
+#, php-format
+msgid "%d link updated."
+msgid_plural "%d links updated."
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2275
+#, php-format
+msgid "Failed to update %d link."
+msgid_plural "Failed to update %d links."
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2367
+#, php-format
+msgid "%d link removed"
+msgid_plural "%d links removed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2378
+#, php-format
+msgid "Failed to remove %d link"
+msgid_plural "Failed to remove %d links"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2428
+#, php-format
+msgid "%d link scheduled for rechecking"
+msgid_plural "%d links scheduled for rechecking"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2499
+#, php-format
+msgid "%d link marked as not broken"
+msgid_plural "%d links marked as not broken"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2570
+#, php-format
+msgid "%d link dismissed"
+msgid_plural "%d links dismissed"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2634
+msgid "The \"Warnings\" page lists problems that are probably temporary or suspected to be false positives.<br> Warnings that persist for a long time will usually be reclassified as broken links."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2639
+msgctxt "admin notice under Tools - Broken links - Warnings"
+msgid "Hide notice"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2645
+msgctxt "a link from the admin notice under Tools - Broken links - Warnings"
+msgid "Change warning settings"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3271
+#, php-format
+msgid "Found %d broken link"
+msgid_plural "Found %d broken links"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3284
+#, php-format
+msgid "%d URL in the work queue"
+msgid_plural "%d URLs in the work queue"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3294
+#, php-format
+msgctxt "for the \"Detected X unique URLs in Y links\" message"
+msgid "%d unique URL"
+msgid_plural "%d unique URLs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3298
+#, php-format
+msgctxt "for the \"Detected X unique URLs in Y links\" message"
+msgid "%d link"
+msgid_plural "%d links"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3304
+#, php-format
+msgid "Detected %1$s in %2$s and still searching..."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3310
+#, php-format
+msgid "Detected %1$s in %2$s."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3348
+msgctxt "current load"
+msgid "Unknown"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3568
+msgid "An unexpected error occurred!"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3972
+msgid "Database character set"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4128
+#, php-format
+msgid "Broken Link Checker has detected %d new broken link on your site."
+msgid_plural "Broken Link Checker has detected %d new broken links on your site."
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4161
+#, php-format
+msgid "Here's a list of the first %d broken links:"
+msgid_plural "Here's a list of the first %d broken links:"
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4181
+#, php-format
+msgid "Link URL : <a href=\"%1$s\">%2$s</a>"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4182
+#, php-format
+msgid "Source : View: %s | Edit: %s"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4257
+#, php-format
+msgid "Broken Link Checker has detected %d new broken link in your posts."
+msgid_plural "Broken Link Checker has detected %d new broken links in your posts."
+msgstr[0] ""
+msgstr[1] ""
+
+#: legacy/Controller/Link.php:1128
+msgctxt "link status"
+msgid "Unknown"
+msgstr ""
+
+#: legacy/Controller/Link.php:1161
+#: legacy/modules/extras/rapidshare.php:148
+#: legacy/modules/extras/rapidshare.php:154
+#: legacy/modules/extras/rapidshare.php:181
+#: legacy/modules/extras/youtube.php:155
+#: legacy/modules/extras/youtube.php:230
+msgctxt "link status"
+msgid "OK"
+msgstr ""
+
+#: legacy/Controller/LinkInstance.php:105
+#: legacy/Controller/LinkInstance.php:161
+#, php-format
+msgid "Container %1$s[%2$d] not found"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:53
+msgctxt "filter name"
+msgid "Warnings"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:54
+msgctxt "filter heading"
+msgid "Warnings"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:55
+msgid "No warnings found"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:73
+msgid "Dismissed"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:74
+msgid "Dismissed Links"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:75
+msgid "No dismissed links found"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:84
+msgid "Parking"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:85
+msgid "Possible Parked Domain"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:86
+msgid "No parked links found"
+msgstr ""
+
+#: legacy/includes/admin/links-page-js.php:368
+msgctxt "link text"
+msgid "(None)"
+msgstr ""
+
+#: legacy/includes/admin/links-page-js.php:369
+msgctxt "link text"
+msgid "(Multiple links)"
+msgstr ""
+
+#: legacy/includes/admin/links-page-js.php:487
+msgid "The following error(s) occurred :"
+msgstr ""
+
+#: legacy/includes/admin/links-page-js.php:559
+msgid "Error: Link URL must not be empty."
+msgstr ""
+
+#: legacy/includes/admin/links-page-js.php:598
+msgid "Are you sure you want to unlink and remove this link from all posts?"
+msgstr ""
+
+#: legacy/includes/admin/search-form.php:21
+msgid "Save This Search As a Filter"
+msgstr ""
+
+#: legacy/includes/admin/search-form.php:31
+msgid "Delete This Filter"
+msgstr ""
+
+#: legacy/includes/admin/search-form.php:117
+msgid "Search Links"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:3
+msgctxt "module name"
+msgid "Basic HTTP"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:4
+msgctxt "module name"
+msgid "Blogroll items"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:5
+msgctxt "module name"
+msgid "Comments"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:6
+msgctxt "module name"
+msgid "Custom fields"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:7
+msgctxt "module name"
+msgid "Embedded DailyMotion videos"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:8
+msgctxt "module name"
+msgid "Embedded GoogleVideo videos"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:9
+msgctxt "module name"
+msgid "Embedded Vimeo videos"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:10
+msgctxt "module name"
+msgid "Embedded YouTube playlists (old embed code)"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:11
+msgctxt "module name"
+msgid "Embedded YouTube videos"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:12
+msgctxt "module name"
+msgid "Embedded YouTube videos (old embed code)"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:13
+msgctxt "module name"
+msgid "HTML images"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:14
+msgctxt "module name"
+msgid "HTML links"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:15
+msgctxt "module name"
+msgid "MediaFire API"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:16
+msgctxt "module name"
+msgid "Plaintext URLs"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:17
+msgctxt "module name"
+msgid "RapidShare API"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:18
+msgctxt "module name"
+msgid "Smart YouTube httpv:// URLs"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:19
+msgctxt "module name"
+msgid "YouTube API"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:20
+msgctxt "module name"
+msgid "Posts"
+msgstr ""
+
+#: legacy/includes/extra-strings.php:21
+msgctxt "module name"
+msgid "Pages"
+msgstr ""
+
+#: legacy/modules/checkers/http.php:290
+msgid "Invalid URL"
+msgstr ""
+
+#: legacy/modules/checkers/http.php:654
+msgid "Using WP HTTP"
+msgstr ""
+
+#: legacy/modules/containers/acf_field.php:115
+#: legacy/modules/containers/custom_field.php:121
+#, php-format
+msgid "Failed to update the meta field '%1$s' on %2$s [%3$d]"
+msgstr ""
+
+#: legacy/modules/containers/acf_field.php:146
+#: legacy/modules/containers/custom_field.php:152
+#, php-format
+msgid "Failed to delete the meta field '%1$s' on %2$s [%3$d]"
+msgstr ""
+
+#: legacy/modules/containers/comment.php:137
+msgid "Comment not found"
+msgstr ""
+
+#: legacy/modules/containers/dummy.php:40
+#: legacy/modules/containers/dummy.php:52
+#, php-format
+msgid "I don't know how to edit a '%1$s' [%2$d]."
+msgstr ""
+
+#: legacy/modules/extras/googlevideo-embed.php:25
+msgid "GoogleVideo Video"
+msgstr ""
+
+#: legacy/modules/extras/googlevideo-embed.php:26
+msgid "Embedded GoogleVideo video"
+msgstr ""
+
+#: legacy/modules/extras/mediafire.php:111
+msgid "Permission Denied"
+msgstr ""
+
+#: legacy/modules/extras/rapidshare.php:55
+msgid "Using RapidShare API"
+msgstr ""
+
+#: legacy/modules/extras/youtube-playlist-embed.php:25
+msgid "YouTube Playlist"
+msgstr ""
+
+#: legacy/modules/extras/youtube-playlist-embed.php:26
+msgid "Embedded YouTube playlist"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:188
+#: legacy/modules/extras/youtube.php:191
+msgid "Playlist Not Found"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:197
+msgid "Playlist Restricted"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:203
+msgid "This playlist has no entries or all entries have been deleted."
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:204
+msgctxt "link status"
+msgid "Empty Playlist"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:214
+#, php-format
+msgid "Video status : %1$s%2$s"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:229
+msgid "Playlist OK"
+msgstr ""

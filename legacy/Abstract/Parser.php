@@ -127,7 +127,7 @@ abstract class Parser extends Module
     {
         return new \WP_Error(
             'not_implemented',
-            sprintf(__("Editing is not implemented in the '%s' parser", 'broken-link-checker'), $this->parser_type)
+            sprintf(__("Editing is not implemented in the '%s' parser", 'link-checker'), $this->parser_type)
         );
     }
 
@@ -143,7 +143,7 @@ abstract class Parser extends Module
     {
         return new \WP_Error(
             'not_implemented',
-            sprintf(__("Unlinking is not implemented in the '%s' parser", 'broken-link-checker'), $this->parser_type)
+            sprintf(__("Unlinking is not implemented in the '%s' parser", 'link-checker'), $this->parser_type)
         );
     }
 
@@ -274,59 +274,5 @@ abstract class Parser extends Module
         return $url;
     }
 
-    /**
-     * Apply a callback function to all links found in a string and return the results.
-     *
-     * The first argument passed to the callback function will be an associative array
-     * of link data. If the optional $extra parameter is set, it will be passed as the
-     * second argument to the callback function.
-     *
-     * The link data array will contain at least these keys :
-     *  'href' - the URL of the link, as-is (i.e. without any sanitization or relative-to-absolute translation).
-     *  '#raw' - the raw link code, e.g. the entire '<a href="...">...</a>' tag of a HTML link.
-     *
-     * Sub-classes may also set additional keys.
-     *
-     * This method is currently used only internally, so sub-classes are not required
-     * to implement it.
-     *
-     * @param string   $content A text string to parse for links.
-     * @param callback $callback Callback function to apply to all found links.
-     * @param mixed    $extra If the optional $extra param. is supplied, it will be passed as the second parameter to the function $callback.
-     * @return array An array of all detected links after applying $callback to each of them.
-     */
-    public function map($content, $callback, $extra = null)
-    {
-        return array();
-    }
-
-    /**
-     * Modify all links found in a string using a callback function.
-     *
-     * The first argument passed to the callback function will be an associative array
-     * of link data. If the optional $extra parameter is set, it will be passed as the
-     * second argument to the callback function. See the map() method of this class for
-     * details on the first argument.
-     *
-     * The callback function should return either an associative array or a string. If
-     * a string is returned, the parser will replace the current link with the contents
-     * of that string. If an array is returned, the current link will be modified/rebuilt
-     * by substituting the new values for the old ones (e.g. returning array with the key
-     * 'href' set to 'http://example.com/' will replace the current link's URL with
-     * http://example.com/).
-     *
-     * This method is currently only used internally, so sub-classes are not required
-     * to implement it.
-     *
-     * @see Parser::map()
-     *
-     * @param string   $content A text string containing the links to edit.
-     * @param callback $callback Callback function used to modify the links.
-     * @param mixed    $extra If supplied, $extra will be passed as the second parameter to the function $callback.
-     * @return string The modified input string.
-     */
-    public function multi_edit($content, $callback, $extra = null)
-    {
-        return $content; // No-op
-    }
+  
 }

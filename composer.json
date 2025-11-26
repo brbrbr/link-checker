@@ -4,7 +4,8 @@
     "license": "GPL v3",
     "autoload": {
         "psr-4": {
-            "Blc\\": "legacy/"
+            "Blc\\": "legacy/",
+            "LinkChecker\\Tests\\": "tests/"
         }
     },
     "authors": [

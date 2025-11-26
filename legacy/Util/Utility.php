@@ -261,7 +261,7 @@ class Utility
                 $templates[$units][$template][0], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralSingle
                 $templates[$units][$template][1], //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralPlural
                 $delta,
-                'broken-link-checker'
+                'link-checker'
             ),
             $delta
         );

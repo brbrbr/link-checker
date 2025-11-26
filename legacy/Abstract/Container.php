@@ -15,6 +15,7 @@ use Blc\Controller\ModuleManager;
  * @package Broken Link Checker
  * @access public
  */
+#[\AllowDynamicProperties]
 abstract class Container
 {
     var $fields        = array();
@@ -175,6 +176,35 @@ abstract class Container
         }
 
         $this->mark_as_synched();
+    }
+
+    /**
+     * get the synch state.
+     *
+     * @return array
+     */
+    public function get_synched_state(): array
+    {
+        global $wpdb; /* @var wpdb $wpdb */
+
+       
+
+        $arr = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT `synched`,`last_synch` FROM `{$wpdb->prefix}blc_synch`
+				where `container_id`  = %d
+                AND
+                container_type = %s
+               ",
+                $this->container_id,
+                $this->container_type,
+
+            ),
+            ARRAY_A
+        );
+
+        
+        return $arr??[];
     }
 
     /**
@@ -411,7 +441,7 @@ abstract class Container
             return $new_value;
         }
         //2.4.3 / 2.4.6
-        if ( property_exists( $parser, 'modified_links' ) && is_array( $parser->modified_links ) ) {
+        if (property_exists($parser, 'modified_links') && is_array($parser->modified_links)) {
             $this->updating_urls = $parser->modified_links;
         }
 

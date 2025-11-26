@@ -12,13 +12,13 @@
  * Donate link:		  https://www.paypal.com/donate/?hosted_button_id=MV4L54K4UUF8W
  * Plugin URI:        https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * Description:       Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version. 
- * Version:           2.4.6.7452
+ * Version:           2.4.7.7906
  * Requires at least: 6.5
  * Requires PHP:      8.1
  * Author:            Bram Brambring
  * Author URI:        https://brambring.nl/
  * Update URI:        https://downloads.brokenlinkchecker.dev/link-checker.json
- * Text Domain:       broken-link-checker
+ * Text Domain:       link-checker
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,7 +73,6 @@ if (! defined('BLC_DIRECTORY_LEGACY')) {
 
 // Path to legacy file.
 if (! defined('BLC_PLUGIN_FILE_LEGACY')) {
-	//define( 'BLC_PLUGIN_FILE_LEGACY', BLC_DIRECTORY_LEGACY . '/init.php' );
 	define('BLC_PLUGIN_FILE_LEGACY', BLC_DIRECTORY_LEGACY . '/init.php');
 }
 
@@ -87,7 +86,7 @@ require_once BLC_BASENAME_DIR . '/vendor/autoload.php';
 add_action(
 	'plugins_loaded',
 	function () {
-		require_once 'legacy/init.php';
+		require_once BLC_DIRECTORY_LEGACY . '/init.php';
 	},
 	11
 );

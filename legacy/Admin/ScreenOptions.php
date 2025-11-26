@@ -191,7 +191,7 @@ class ScreenOptions
             wp_die(
                 json_encode(
                     array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                        'error' => __("You're not allowed to do that!", 'link-checker'),
                     )
                 ),
                 403

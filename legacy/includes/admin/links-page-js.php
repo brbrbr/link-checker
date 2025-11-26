@@ -42,7 +42,7 @@
         var details_row = jQuery('#link-details-' + link_id);
 
         //Load up the new link info                     (so sue me)
-        details_row.find('td').html('<center><?php echo esc_js(__('Loading...', 'broken-link-checker')); ?></center>').on('load', function() {
+        details_row.find('td').html('<center><?php echo esc_js(__('Loading...', 'link-checker')); ?></center>').on('load', function() {
             "<?php echo admin_url('admin-ajax.php'); ?>",
             {
                 'action': 'blc_link_details',
@@ -61,7 +61,7 @@
             return false;
         });
 
-        var ajaxInProgressHtml = '<?php echo esc_js(__('Wait...', 'broken-link-checker')); ?>';
+        var ajaxInProgressHtml = '<?php echo esc_js(__('Wait...', 'link-checker')); ?>';
 
         //The "Not broken" button - manually mark the link as valid. The link will be checked again later.
         $(".blc-discard-button").click(function() {
@@ -107,7 +107,7 @@
                             alterLinkCounter(-1);
                         }
                     } else {
-                        me.html('<?php echo esc_js(__('Not broken', 'broken-link-checker')); ?>');
+                        me.html('<?php echo esc_js(__('Not broken', 'link-checker')); ?>');
                         alert(data);
                     }
                 }
@@ -365,8 +365,8 @@
             var linkText = master.data('link-text'),
                 canEditText = master.data('can-edit-text') == 1, //jQuery will convert a '1' to 1 (number) when reading a data attribute.
                 canEditUrl = master.data('can-edit-url') == 1,
-                noneText = '<?php echo esc_js(_x('(None)', 'link text', 'broken-link-checker')); ?>',
-                multipleLinksText = '<?php echo esc_js(_x('(Multiple links)', 'link text', 'broken-link-checker')); ?>';
+                noneText = '<?php echo esc_js(_x('(None)', 'link text', 'link-checker')); ?>',
+                multipleLinksText = '<?php echo esc_js(_x('(Multiple links)', 'link text', 'link-checker')); ?>';
 
             titleInput.prop('readonly', !canEditText);
             urlInput.prop('readonly', !canEditUrl);
@@ -469,22 +469,22 @@
 
                 if (response.cnt_okay > 0) {
                     var fragment = sprintf(
-                        '<?php echo esc_js(__('%d instances of the link were successfully modified.', 'broken-link-checker')); ?>',
+                        '<?php echo esc_js(__('%d instances of the link were successfully modified.', 'link-checker')); ?>',
                         response.cnt_okay
                     );
                     msg = msg + fragment + '\n';
                     if (response.cnt_error > 0) {
                         fragment = sprintf(
-                            '<?php echo esc_js(__("However, %d instances couldn't be edited and still point to the old URL.", 'broken-link-checker')); ?>',
+                            '<?php echo esc_js(__("However, %d instances couldn't be edited and still point to the old URL.", 'link-checker')); ?>',
                             response.cnt_error
                         );
                         msg = msg + fragment + "\n";
                     }
                 } else {
-                    msg = msg + '<?php echo esc_js(__('The link could not be modified.', 'broken-link-checker')); ?>\n';
+                    msg = msg + '<?php echo esc_js(__('The link could not be modified.', 'link-checker')); ?>\n';
                 }
 
-                msg = msg + '\n<?php echo esc_js(__('The following error(s) occurred :', 'broken-link-checker')); ?>\n* ';
+                msg = msg + '\n<?php echo esc_js(__('The following error(s) occurred :', 'link-checker')); ?>\n* ';
                 msg = msg + response.errors.join('\n* ');
 
                 alert(msg);
@@ -556,7 +556,7 @@
             var urlField = editRow.find('.blc-link-url-field');
             var newUrl = urlField.val();
             if ($.trim(newUrl) == '') {
-                alert('<?php echo esc_js(__('Error: Link URL must not be empty.', 'broken-link-checker')); ?>');
+                alert('<?php echo esc_js(__('Error: Link URL must not be empty.', 'link-checker')); ?>');
                 urlField.focus();
                 return;
             }
@@ -595,12 +595,12 @@
             var me = this;
             var master = $(me).parents('.blc-row');
 
-            var confirm_msg = "<?php echo esc_js(__('Are you sure you want to unlink and remove this link from all posts?', 'broken-link-checker')); ?>";
+            var confirm_msg = "<?php echo esc_js(__('Are you sure you want to unlink and remove this link from all posts?', 'link-checker')); ?>";
 
             if (confirm(confirm_msg)) {
                 //Find the link ID
                 var link_id = master.attr('id').split('-')[2];
-                $(me).html('<?php echo esc_js(__('Wait...', 'broken-link-checker')); ?>');
+                $(me).html('<?php echo esc_js(__('Wait...', 'link-checker')); ?>');
 
                 $.post(
                     "<?php echo admin_url('admin-ajax.php'); ?>", {
@@ -638,21 +638,21 @@
 
                                 if (data.cnt_okay > 0) {
                                     msg = msg + sprintf(
-                                        '<?php echo esc_js(__('%d instances of the link were successfully unlinked.', 'broken-link-checker')); ?>\n',
+                                        '<?php echo esc_js(__('%d instances of the link were successfully unlinked.', 'link-checker')); ?>\n',
                                         data.cnt_okay
                                     );
 
                                     if (data.cnt_error > 0) {
                                         msg = msg + sprintf(
-                                            '<?php echo esc_js(__("However, %d instances couldn't be removed.", 'broken-link-checker')); ?>\n',
+                                            '<?php echo esc_js(__("However, %d instances couldn't be removed.", 'link-checker')); ?>\n',
                                             data.cnt_error
                                         );
                                     }
                                 } else {
-                                    msg = msg + '<?php echo esc_js(__('The plugin failed to remove the link.', 'broken-link-checker')); ?>\n';
+                                    msg = msg + '<?php echo esc_js(__('The plugin failed to remove the link.', 'link-checker')); ?>\n';
                                 }
 
-                                msg = msg + '\n<?php echo esc_js(__('The following error(s) occured :', 'broken-link-checker')); ?>\n* ';
+                                msg = msg + '\n<?php echo esc_js(__('The following error(s) occured :', 'link-checker')); ?>\n* ';
                                 msg = msg + data.errors.join('\n* ');
 
                                 //Show the error message
@@ -660,7 +660,7 @@
                             }
                         }
 
-                        $(me).html('<?php echo esc_js(__('Unlink', 'broken-link-checker')); ?>');
+                        $(me).html('<?php echo esc_js(__('Unlink', 'link-checker')); ?>');
                     }
                 );
 
@@ -700,7 +700,7 @@
 
         //The "Save This Search Query" button creates a new custom filter based on the current search
         $('#blc-create-filter').click(function() {
-            var filter_name = prompt("<?php echo esc_js(__('Enter a name for the new custom filter', 'broken-link-checker')); ?>", "");
+            var filter_name = prompt("<?php echo esc_js(__('Enter a name for the new custom filter', 'link-checker')); ?>", "");
             if (filter_name) {
                 $('#blc-custom-filter-name').val(filter_name);
                 $('#custom-filter-form').submit();
@@ -712,7 +712,7 @@
             var message = '<?php
                             echo esc_js(
                                 html_entity_decode(
-                                    __("You are about to delete the current filter.\n'Cancel' to stop, 'OK' to delete", 'broken-link-checker'),
+                                    __("You are about to delete the current filter.\n'Cancel' to stop, 'OK' to delete", 'link-checker'),
                                     ENT_QUOTES,
                                     get_bloginfo('charset')
                                 )
@@ -737,7 +737,7 @@
                 message = '<?php
                             echo esc_js(
                                 html_entity_decode(
-                                    __("Are you sure you want to remove the selected links? This action can't be undone.\n'Cancel' to stop, 'OK' to remove", 'broken-link-checker'),
+                                    __("Are you sure you want to remove the selected links? This action can't be undone.\n'Cancel' to stop, 'OK' to remove", 'link-checker'),
                                     ENT_QUOTES,
                                     get_bloginfo('charset')
                                 )
@@ -867,14 +867,14 @@
         //Minimal input validation for the bulk edit form
         $('#bulk-edit input[type="submit"]').click(function(e) {
             if ($('#bulk-edit input[name="search"]').val() == '') {
-                alert('<?php echo esc_js(__('Enter a search string first.', 'broken-link-checker')); ?>');
+                alert('<?php echo esc_js(__('Enter a search string first.', 'link-checker')); ?>');
                 $('#bulk-edit input[name="search"]').focus();
                 e.preventDefault();
                 return;
             }
 
             if ($('tbody th.check-column input:checked').length == 0) {
-                alert('<?php echo esc_js(__('Select one or more links to edit.', 'broken-link-checker')); ?>');
+                alert('<?php echo esc_js(__('Select one or more links to edit.', 'link-checker')); ?>');
                 e.preventDefault();
             }
         });

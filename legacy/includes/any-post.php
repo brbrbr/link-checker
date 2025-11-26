@@ -37,6 +37,7 @@ class blcPostTypeOverlord
     {
 
         $this->plugin_conf = ConfigurationManager::getInstance();
+      
 
         if (isset($this->plugin_conf->options['enabled_post_statuses'])) {
             $this->enabled_post_statuses = $this->plugin_conf->options['enabled_post_statuses'];
@@ -462,12 +463,21 @@ class blcAnyPostContainer extends Container
     function ui_get_source($container_field = '', $context = 'display')
     {
         $source = '<a class="row-title" href="%s" title="%s">%s</a>';
-        $source = sprintf(
-            $source,
-            $this->get_edit_url(),
-            esc_attr(__('Edit this item')),
-            get_the_title($this->container_id)
-        );
+        if ('email' === $context) {
+            $source = sprintf(
+                $source,
+                get_the_permalink($this->container_id),
+                esc_attr(__('View this item')),
+                get_the_title($this->container_id)
+            );
+        } else {
+            $source = sprintf(
+                $source,
+                $this->get_edit_url(),
+                esc_attr(__('Edit this item')),
+                get_the_title($this->container_id)
+            );
+        }
 
         return $source;
     }
@@ -544,7 +554,7 @@ class blcAnyPostContainer extends Container
         if (is_null($this->wrapped_object)) {
             return new \WP_Error(
                 'no_wrapped_object',
-                __('Nothing to update', 'broken-link-checker')
+                __('Nothing to update', 'link-checker')
             );
         }
 
@@ -560,7 +570,7 @@ class blcAnyPostContainer extends Container
         } elseif ($post_id == 0) {
             return new \WP_Error(
                 'update_failed',
-                sprintf(__('Updating post %d failed', 'broken-link-checker'), $this->container_id)
+                sprintf(__('Updating post %d failed', 'link-checker'), $this->container_id)
             );
         } else {
             $this->update_pagebuilders($post_id);
@@ -674,7 +684,7 @@ class blcAnyPostContainerManager extends ContainerManager
      */
     function get_containers($containers, $purpose = '', $load_wrapped_objects = false)
     {
-        global $blclog;
+       
         $containers = $this->make_containers($containers);
 
         // Preload post data if it is likely to be useful later

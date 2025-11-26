@@ -98,22 +98,22 @@ class blcMediaFireChecker extends Checker
                     $result['log']      .= "\nFull URL: " . $rez['headers']['location'];
                 } elseif (str_contains($rez['headers']['location'], 'errno=320')) {
                     $result['status_code'] = BLC_LINK_STATUS_ERROR;
-                    $result['status_text'] = __('Not Found', 'broken-link-checker');
+                    $result['status_text'] = __('Not Found', 'link-checker');
                     $result['http_code']   = 0;
                     $result['log']        .= 'The file is invalid or has been removed.';
                 } elseif (str_contains($rez['headers']['location'], 'errno=378')) {
                     $result['status_code'] = BLC_LINK_STATUS_ERROR;
-                    $result['status_text'] = __('Not Found', 'broken-link-checker');
+                    $result['status_text'] = __('Not Found', 'link-checker');
                     $result['http_code']   = 0;
                     $result['log']        .= 'The file has been removed due to a violation of MediaFire ToS.';
                 } elseif (str_contains($rez['headers']['location'], 'errno=388')) {
                     $result['status_code'] = BLC_LINK_STATUS_WARNING;
-                    $result['status_text'] = __('Permission Denied', 'broken-link-checker');
+                    $result['status_text'] = __('Permission Denied', 'link-checker');
                     $result['http_code']   = 0;
                     $result['log']        .= 'Permission denied. Most likely the plugin sent too many requests too quickly. Try again later.';
                 } else {
                     $result['status_code'] = BLC_LINK_STATUS_INFO;
-                    $result['status_text'] = __('Unknown Error', 'broken-link-checker');
+                    $result['status_text'] = __('Unknown Error', 'link-checker');
                     $result['log']        .= "Unknown error.\n\n";
                     foreach ($rez['headers'] as $name => $value) {
                         $result['log'] .= sprintf("%s: %s\n", $name, $value);

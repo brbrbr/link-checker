@@ -207,7 +207,7 @@ abstract class EmbedParser extends Parser
     {
         return new \WP_Error(
             'not_implemented',
-            sprintf(__("Embedded videos can't be edited using Broken Link Checker. Please edit or replace the video in question manually.", 'broken-link-checker'), $this->parser_type)
+            sprintf(__("Embedded videos can't be edited using Broken Link Checker. Please edit or replace the video in question manually.", 'link-checker'), $this->parser_type)
         );
     }
 

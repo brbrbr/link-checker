@@ -22,8 +22,8 @@ class blcYouTubePlaylistEmbed extends EmbedParser
     function init()
     {
         parent::init();
-        $this->short_title       = __('YouTube Playlist', 'broken-link-checker');
-        $this->long_title        = __('Embedded YouTube playlist', 'broken-link-checker');
+        $this->short_title       = __('YouTube Playlist', 'link-checker');
+        $this->long_title        = __('Embedded YouTube playlist', 'link-checker');
         $this->url_search_string = 'youtube.com/p/';
     }
 

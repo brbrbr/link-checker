@@ -22,8 +22,8 @@ class blcVimeoEmbed extends EmbedParser
     {
         parent::init();
         $this->url_search_string = 'vimeo.com/moogaloop.swf?';
-        $this->short_title       = __('Vimeo Video', 'broken-link-checker');
-        $this->long_title        = __('Embedded Vimeo video', 'broken-link-checker');
+        $this->short_title       = __('Vimeo Video', 'link-checker');
+        $this->long_title        = __('Embedded Vimeo video', 'link-checker');
     }
 
     function link_url_from_src($src)

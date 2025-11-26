@@ -287,7 +287,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             $result = array(
                 'warning'     => true,
                 'log'         => "Invalid URL.\nURL fails to pass validation for safe use in the HTTP API.",
-                'status_text' => __('Invalid URL', 'broken-link-checker'),
+                'status_text' => __('Invalid URL', 'link-checker'),
                 'error_code'  => 'invalid_url',
                 'status_code' => BLC_LINK_STATUS_WARNING,
             );
@@ -464,7 +464,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             switch ($error_code) {
                 case 6: // CURLE_COULDNT_RESOLVE_HOST
                     $result['status_code'] = BLC_LINK_STATUS_WARNING;
-                    $result['status_text'] = __('Server Not Found', 'broken-link-checker');
+                    $result['status_text'] = __('Server Not Found', 'link-checker');
                     $result['error_code']  = 'couldnt_resolve_host';
                     break;
 
@@ -480,7 +480,7 @@ class blcCurlHttp extends blcHttpCheckerBase
                         $result['timeout'] = true;
                     } else {
                         $result['status_code'] = BLC_LINK_STATUS_WARNING;
-                        $result['status_text'] = __('Connection Failed', 'broken-link-checker');
+                        $result['status_text'] = __('Connection Failed', 'link-checker');
                         $result['error_code']  = 'connection_failed';
                     }
                     break;
@@ -494,11 +494,11 @@ class blcCurlHttp extends blcHttpCheckerBase
 
                 default:
                     $result['status_code'] = BLC_LINK_STATUS_WARNING;
-                    $result['status_text'] = __('Unknown Error', 'broken-link-checker');
+                    $result['status_text'] = __('Unknown Error', 'link-checker');
             }
         } elseif (999 === $result['http_code']) {
             $result['status_code'] = BLC_LINK_STATUS_WARNING;
-            $result['status_text'] = __('Unknown Error', 'broken-link-checker');
+            $result['status_text'] = __('Unknown Error', 'link-checker');
             $result['warning']     = true;
         } else {
             $result['broken'] = self::is_error_code($result['http_code']);
@@ -542,9 +542,9 @@ class blcCurlHttp extends blcHttpCheckerBase
         // Build the log from HTTP code and headers.
         $log .= '=== ';
         if ($result['http_code']) {
-            $log .= sprintf(__('HTTP code : %d', 'broken-link-checker'), $result['http_code']);
+            $log .= sprintf(__('HTTP code : %d', 'link-checker'), $result['http_code']);
         } else {
-            $log .= __('(No response)', 'broken-link-checker');
+            $log .= __('(No response)', 'link-checker');
         }
         $log .= " ===\n\n";
 
@@ -567,7 +567,7 @@ class blcCurlHttp extends blcHttpCheckerBase
         }
 
         if (!empty($result['broken']) && !empty($result['timeout'])) {
-            $log .= "\n(" . __("Most likely the connection timed out or the domain doesn't exist.", 'broken-link-checker') . ')';
+            $log .= "\n(" . __("Most likely the connection timed out or the domain doesn't exist.", 'link-checker') . ')';
         }
         $result['log'] = $log;
 
@@ -633,9 +633,9 @@ class blcWPHttp extends blcHttpCheckerBase
         // Build the log
         $log .= '=== ';
         if ($result['http_code']) {
-            $log .= sprintf(__('HTTP code : %d', 'broken-link-checker'), $result['http_code']);
+            $log .= sprintf(__('HTTP code : %d', 'link-checker'), $result['http_code']);
         } else {
-            $log .= __('(No response)', 'broken-link-checker');
+            $log .= __('(No response)', 'link-checker');
         }
         $log .= " ===\n\n";
 
@@ -644,14 +644,14 @@ class blcWPHttp extends blcHttpCheckerBase
         }
 
         if (is_wp_error($request)) {
-            $log              .= __('Request timed out.', 'broken-link-checker') . "\n";
+            $log              .= __('Request timed out.', 'link-checker') . "\n";
             $result['timeout'] = true;
         }
 
         // Determine if the link counts as "broken"
         $result['broken'] = self::is_error_code($result['http_code']) || $result['timeout'];
 
-        $log          .= '<em>(' . __('Using WP HTTP', 'broken-link-checker') . ')</em>';
+        $log          .= '<em>(' . __('Using WP HTTP', 'link-checker') . ')</em>';
         $result['log'] = $log;
 
         $result['final_url'] = $url;

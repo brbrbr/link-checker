@@ -147,12 +147,12 @@ class blcYouTubeChecker extends Checker
             if (isset($api['error']['errors'])) {
                 $result['status_text'] = $api['error']['errors'][0]['reason'];
             } else {
-                $result['status_text'] = __('Unknown Error', 'broken-link-checker');
+                $result['status_text'] = __('Unknown Error', 'link-checker');
             }
             $result['log'] .= $this->format_api_error($response, $api);
         } elseif ($videoFound) {
-            $result['log']        .= __('Video OK', 'broken-link-checker');
-            $result['status_text'] = _x('OK', 'link status', 'broken-link-checker');
+            $result['log']        .= __('Video OK', 'link-checker');
+            $result['status_text'] = _x('OK', 'link status', 'link-checker');
             $result['status_code'] = BLC_LINK_STATUS_OK;
             $result['http_code']   = 0;
 
@@ -162,10 +162,10 @@ class blcYouTubeChecker extends Checker
                 $result['log'] .= "\n\nTitle : \"" . htmlentities($title) . '"';
             }
         } else {
-            $result['log']        .= __('Video Not Found', 'broken-link-checker');
+            $result['log']        .= __('Video Not Found', 'link-checker');
             $result['broken']      = true;
             $result['http_code']   = 0;
-            $result['status_text'] = __('Video Not Found', 'broken-link-checker');
+            $result['status_text'] = __('Video Not Found', 'link-checker');
             $result['status_code'] = BLC_LINK_STATUS_ERROR;
         }
 
@@ -185,23 +185,23 @@ class blcYouTubeChecker extends Checker
 
         if (404 === $result['http_code']) {
             // Not found.
-            $result['log']        .= __('Playlist Not Found', 'broken-link-checker');
+            $result['log']        .= __('Playlist Not Found', 'link-checker');
             $result['broken']      = true;
             $result['http_code']   = 0;
-            $result['status_text'] = __('Playlist Not Found', 'broken-link-checker');
+            $result['status_text'] = __('Playlist Not Found', 'link-checker');
             $result['status_code'] = BLC_LINK_STATUS_ERROR;
         } elseif (403 === $result['http_code']) {
             // Forbidden. We're unlikely to see this code for playlists, but lets allow it.
             $result['log']        .= htmlentities($response['body']);
             $result['broken']      = true;
-            $result['status_text'] = __('Playlist Restricted', 'broken-link-checker');
+            $result['status_text'] = __('Playlist Restricted', 'link-checker');
             $result['status_code'] = BLC_LINK_STATUS_ERROR;
         } elseif ((200 === $result['http_code']) && isset($api['items']) && is_array($api['items'])) {
             // The playlist exists.
             if (empty($api['items'])) {
                 // An empty playlist. It is possible that all of the videos have been deleted.
-                $result['log']        .= __('This playlist has no entries or all entries have been deleted.', 'broken-link-checker');
-                $result['status_text'] = _x('Empty Playlist', 'link status', 'broken-link-checker');
+                $result['log']        .= __('This playlist has no entries or all entries have been deleted.', 'link-checker');
+                $result['status_text'] = _x('Empty Playlist', 'link status', 'link-checker');
                 $result['status_code'] = BLC_LINK_STATUS_WARNING;
                 $result['http_code']   = 0;
                 $result['broken']      = true;
@@ -211,13 +211,13 @@ class blcYouTubeChecker extends Checker
                     $is_private = isset($video['status']['privacyStatus']) && ('private' == $video['status']['privacyStatus']);
                     if ($is_private) {
                         $result['log'] .= sprintf(
-                            __('Video status : %1$s%2$s', 'broken-link-checker'),
+                            __('Video status : %1$s%2$s', 'link-checker'),
                             $video['status']['privacyStatus'],
                             ''
                         );
 
                         $result['broken']      = true;
-                        $result['status_text'] = __('Video Restricted', 'broken-link-checker');
+                        $result['status_text'] = __('Video Restricted', 'link-checker');
                         $result['status_code'] = BLC_LINK_STATUS_WARNING;
                         $result['http_code']   = 0;
                         break;
@@ -226,8 +226,8 @@ class blcYouTubeChecker extends Checker
 
                 if (! $result['broken']) {
                     // All is well.
-                    $result['log']        .= __('Playlist OK', 'broken-link-checker');
-                    $result['status_text'] = _x('OK', 'link status', 'broken-link-checker');
+                    $result['log']        .= __('Playlist OK', 'link-checker');
+                    $result['status_text'] = _x('OK', 'link status', 'link-checker');
                     $result['status_code'] = BLC_LINK_STATUS_OK;
                     $result['http_code']   = 0;
                 }
@@ -240,7 +240,7 @@ class blcYouTubeChecker extends Checker
             if (isset($api['error']['message'])) {
                 $result['status_text'] = $api['error']['message'];
             } else {
-                $result['status_text'] = __('Unknown Error', 'broken-link-checker');
+                $result['status_text'] = __('Unknown Error', 'link-checker');
             }
             $result['log'] .= $this->format_api_error($response, $api);
         }

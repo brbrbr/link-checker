@@ -1,0 +1,1604 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Broken Link Checker 1.8.3\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/broken-link-checker\n"
+"Last-Translator: \n"
+"Language-Team: Localization blog | http://bizover.net <contact@bizover.net>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2013-10-14 09:34:17+00:00\n"
+"PO-Revision-Date: 2014-01-19 17:59+0700\n"
+"Language: \n"
+"X-Generator: Poedit 1.5.7\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: legacy/Controller/BrokenLinkChecker.php:303
+#: legacy/includes/admin/links-page-js.php:45
+msgid "Loading..."
+msgstr "Đang tải..."
+
+#. Plugin Name of the plugin
+#: link-checker.php
+msgid "Link Checker"
+msgstr "Liên kết Checker"
+
+#: legacy/Controller/BrokenLinkChecker.php:491
+#: legacy/Controller/BrokenLinkChecker.php:498
+#: legacy/Controller/BrokenLinkChecker.php:563
+#: legacy/Controller/LinkQuery.php:44
+msgid "Broken Links"
+msgstr "Liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:570
+msgid "Settings"
+msgstr "Cài đặt"
+
+#: legacy/Controller/BrokenLinkChecker.php:908
+msgid "Settings saved."
+msgstr "Cài đặt đã lưu."
+
+#: legacy/Controller/BrokenLinkChecker.php:914
+msgid "Complete site recheck started."
+msgstr "Trang web hoàn chỉnh recheck bắt đầu."
+
+#: legacy/Controller/BrokenLinkChecker.php:937
+msgid "General"
+msgstr "Tổng quát"
+
+#: legacy/Controller/BrokenLinkChecker.php:938
+msgid "Look For Links In"
+msgstr "Tìm kiếm các liên kết trong"
+
+#: legacy/Controller/BrokenLinkChecker.php:939
+msgid "Which Links To Check"
+msgstr "Mà liên kết để kiểm tra"
+
+#: legacy/Controller/BrokenLinkChecker.php:940
+msgid "Protocols & APIs"
+msgstr "Giao thức & APIs"
+
+#: legacy/Controller/BrokenLinkChecker.php:941
+msgid "Advanced"
+msgstr "Nâng cao"
+
+#: legacy/Admin/TablePrinter.php:220
+#: legacy/Controller/BrokenLinkChecker.php:992
+msgid "Status"
+msgstr "Tình trạng"
+
+#: legacy/Controller/BrokenLinkChecker.php:994
+msgid "Show debug info"
+msgstr "Hiển thị thông tin gỡ lỗi"
+
+#: legacy/Controller/BrokenLinkChecker.php:1022
+msgid "Check each link"
+msgstr "Kiểm tra mỗi liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:1027
+#, php-format
+msgid "Every %s hours"
+msgstr "Mọi %s giờ"
+
+#: legacy/Controller/BrokenLinkChecker.php:1036
+msgid "Existing links will be checked this often. New links will usually be checked ASAP."
+msgstr "Liên kết hiện có sẽ được kiểm tra thường xuyên này. Liên kết mới này sẽ thường được kiểm tra càng sớm càng tốt."
+
+#: legacy/Controller/BrokenLinkChecker.php:1043
+msgid "E-mail notifications"
+msgstr "Thông báo bằng e-mail"
+
+#: legacy/Controller/BrokenLinkChecker.php:1052
+msgid "Send me e-mail notifications about newly detected broken links"
+msgstr "Gửi cho tôi e-mail thông báo về vừa được phát hiện các liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:1063
+msgid "Send authors e-mail notifications about broken links in their posts"
+msgstr "Gửi tác giả thông báo bằng e-mail về bị hỏng liên kết trong bài viết của mình"
+
+#: legacy/Controller/BrokenLinkChecker.php:1092
+msgid "Notification e-mail address"
+msgstr "Địa chỉ e-mail thông báo"
+
+#: legacy/Controller/BrokenLinkChecker.php:1099
+msgid "Leave empty to use the e-mail address specified in Settings &rarr; General."
+msgstr "Để trống để sử dụng địa chỉ e-mail được chỉ định trong cài đặt &rarr; Nói chung."
+
+#: legacy/Controller/BrokenLinkChecker.php:1106
+msgid "Link tweaks"
+msgstr "Liên kết chỉnh"
+
+#: legacy/Controller/BrokenLinkChecker.php:1115
+msgid "Apply custom formatting to broken links"
+msgstr "Áp dụng định dạng tùy chỉnh để liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:1120
+#: legacy/Controller/BrokenLinkChecker.php:1162
+msgid "Edit CSS"
+msgstr "Chỉnh sửa CSS"
+
+#: legacy/Controller/BrokenLinkChecker.php:1142
+#, php-format
+msgid "Example : Lorem ipsum <a %s>broken link</a>, dolor sit amet."
+msgstr "Ví dụ: Lorem ipsum <a %s>liên kết bị hỏng</a>, dolor sit amet."
+
+#: legacy/Controller/BrokenLinkChecker.php:1145
+#: legacy/Controller/BrokenLinkChecker.php:1187
+msgid "Click \"Save Changes\" to update example output."
+msgstr "Nhấp vào \"Save Changes\" để Cập Nhật ví dụ ra."
+
+#: legacy/Controller/BrokenLinkChecker.php:1157
+msgid "Apply custom formatting to removed links"
+msgstr "Áp dụng định dạng tùy chỉnh để loại bỏ liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:1184
+#, php-format
+msgid "Example : Lorem ipsum <span %s>removed link</span>, dolor sit amet."
+msgstr "Ví dụ: Lorem ipsum <span %s>bỏ liên kết</span>, dolor sit amet."
+
+#: legacy/Controller/BrokenLinkChecker.php:1200
+msgid "Stop search engines from following broken links"
+msgstr "Ngăn chặn công cụ tìm kiếm từ sau các liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:1265
+msgid "Look for links in"
+msgstr "Tìm kiếm các liên kết trong"
+
+#: legacy/Controller/BrokenLinkChecker.php:1280
+msgid "Post statuses"
+msgstr "Đăng trạng thái"
+
+#: legacy/Controller/BrokenLinkChecker.php:1314
+msgid "Link types"
+msgstr "Các loại liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:1320
+msgid "Error : All link parsers missing!"
+msgstr "Lỗi: Tất cả các liên kết parsers mất tích!"
+
+#: legacy/Controller/BrokenLinkChecker.php:1327
+msgid "Exclusion list"
+msgstr "Loại trừ danh sách"
+
+#: legacy/Controller/BrokenLinkChecker.php:1328
+msgid "Don't check links where the URL contains any of these words (one per line) :"
+msgstr "Không kiểm tra liên kết mà URL có chứa trong các từ (một mỗi dòng):"
+
+#: legacy/Controller/BrokenLinkChecker.php:1351
+msgid "Check links using"
+msgstr "Kiểm tra bằng cách sử dụng liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:1371
+#: legacy/Controller/Link.php:1140
+msgid "Timeout"
+msgstr "Thời gian chờ"
+
+#: legacy/Controller/BrokenLinkChecker.php:1377
+#: legacy/Controller/BrokenLinkChecker.php:1470
+#, php-format
+msgid "%s seconds"
+msgstr "%s giây"
+
+#: legacy/Controller/BrokenLinkChecker.php:1386
+msgid "Links that take longer than this to load will be marked as broken."
+msgstr "Liên kết mất nhiều thời gian hơn để tải sẽ được đánh dấu là bị hỏng."
+
+#: legacy/Controller/BrokenLinkChecker.php:1393
+msgid "Link monitor"
+msgstr "Màn hình liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:1404
+msgid "Run continuously while the Dashboard is open"
+msgstr "Chạy liên tục, trong khi bảng điều khiển mở"
+
+#: legacy/Controller/BrokenLinkChecker.php:1415
+msgid "Run hourly in the background"
+msgstr "Chạy theo giờ trong nền"
+
+#: legacy/Controller/BrokenLinkChecker.php:1423
+msgid "Show the dashboard widget for"
+msgstr "Hiển thị bảng điều khiển widget cho"
+
+#: legacy/Controller/BrokenLinkChecker.php:1428
+msgctxt "dashboard widget visibility"
+msgid "Administrator"
+msgstr "Người quản trị"
+
+#: legacy/Controller/BrokenLinkChecker.php:1429
+msgctxt "dashboard widget visibility"
+msgid "Editor and above"
+msgstr "Chỉnh sửa và ở trên"
+
+#: legacy/Controller/BrokenLinkChecker.php:1430
+msgctxt "dashboard widget visibility"
+msgid "Nobody (disables the widget)"
+msgstr "Không ai (vô hiệu hóa các widget)"
+
+#: legacy/Controller/BrokenLinkChecker.php:1464
+msgid "Max. execution time"
+msgstr "Max. thời gian thực hiện"
+
+#: legacy/Controller/BrokenLinkChecker.php:1481
+msgid "The plugin works by periodically launching a background job that parses your posts for links, checks the discovered URLs, and performs other time-consuming tasks. Here you can set for how long, at most, the link monitor may run each time before stopping."
+msgstr "Các plugin hoạt động bằng cách định kỳ tung ra một công việc nền mà parses bài viết của bạn cho các liên kết, kiểm tra các URL phát hiện, và thực hiện các nhiệm vụ tốn thời gian. Tại đây bạn có thể thiết lập cho bao lâu, tối đa, màn hình liên kết có thể chạy mỗi lần trước khi dừng lại."
+
+#: legacy/Controller/BrokenLinkChecker.php:1490
+msgid "Server load limit"
+msgstr "Máy chủ tải giới hạn"
+
+#: legacy/Controller/BrokenLinkChecker.php:1505
+#, php-format
+msgid "Current load : %s"
+msgstr "Hiện tại tải: %s"
+
+#: legacy/Controller/BrokenLinkChecker.php:1510
+#, php-format
+msgid "Link checking will be suspended if the average <a href=\"%s\">server load</a> rises above this number. Leave this field blank to disable load limiting."
+msgstr "Kiểm tra liên kết sẽ bị đình chỉ nếu trung bình <a href=\"%s\">server load</a> lên trên con số này. Lĩnh vực này để trống để vô hiệu hóa hạn chế tải."
+
+#: legacy/Controller/BrokenLinkChecker.php:1518
+msgid "Not available"
+msgstr "Không có sẵn"
+
+#: legacy/Controller/BrokenLinkChecker.php:1520
+msgid "Load limiting only works on Linux-like systems where <code>/proc/loadavg</code> is present and accessible."
+msgstr "Tải hạn chế chỉ hoạt động trên hệ thống Linux như nơi <code>/proc/loadavg</code> là hiện tại và có thể truy cập."
+
+#: legacy/Controller/BrokenLinkChecker.php:1634
+msgid "Forced recheck"
+msgstr "Bắt buộc recheck"
+
+#: legacy/Controller/BrokenLinkChecker.php:1636
+msgid "Re-check all pages"
+msgstr "Kiểm tra lại tất cả các trang"
+
+#: legacy/Controller/BrokenLinkChecker.php:1641
+msgid "The \"Nuclear Option\". Click this button to make the plugin empty its link database and recheck the entire site from scratch."
+msgstr "\"Nuclear Option\". Nhấp vào nút này để làm cho các plugin rỗng cơ sở dữ liệu liên kết của nó và kiểm tra lại toàn bộ trang web từ đầu."
+
+#: legacy/Controller/BrokenLinkChecker.php:1731
+msgid "Configure"
+msgstr "Đặt cấu hình"
+
+#: legacy/Controller/BrokenLinkChecker.php:1829
+msgid "Enter the names of custom fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_name</code>."
+msgstr "Nhập tên của lĩnh vực tùy chỉnh bạn muốn kiểm tra (một mỗi dòng). Nếu một trường chứa mã HTML, tiền tố tên nhãn <code>html:</code>. For example, <code>html:field_name</code>."
+
+#: legacy/Controller/BrokenLinkChecker.php:1989
+#: legacy/Controller/BrokenLinkChecker.php:2075
+#: legacy/Controller/BrokenLinkChecker.php:2107
+#, php-format
+msgid "Database error : %s"
+msgstr "Cơ sở dữ liệu lỗi: %s"
+
+#: legacy/Controller/BrokenLinkChecker.php:2056
+msgid "You must enter a filter name!"
+msgstr "Bạn phải nhập tên bộ lọc!"
+
+#: legacy/Controller/BrokenLinkChecker.php:2060
+msgid "Invalid search query."
+msgstr "Truy vấn không hợp lệ tìm kiếm."
+
+#: legacy/Controller/BrokenLinkChecker.php:2070
+#, php-format
+msgid "Filter \"%s\" created"
+msgstr "Bộ lọc \"%s\" được tạo"
+
+#: legacy/Controller/BrokenLinkChecker.php:2097
+msgid "Filter ID not specified."
+msgstr "Lọc ID không xác định."
+
+#: legacy/Controller/BrokenLinkChecker.php:2104
+msgid "Filter deleted"
+msgstr "Bộ lọc đã xóa"
+
+#: legacy/Controller/BrokenLinkChecker.php:2155
+#, php-format
+msgid "Replaced %d redirect with a direct link"
+msgid_plural "Replaced %d redirects with direct links"
+msgstr[0] "Thay thế %d chuyển hướng với một liên kết trực tiếpThay thế %d chuyển hướng với một liên kết trực tiếp"
+
+#: legacy/Controller/BrokenLinkChecker.php:2166
+#, php-format
+msgid "Failed to fix %d redirect"
+msgid_plural "Failed to fix %d redirects"
+msgstr[0] "Thất bại trong việc sửa chữa %d chuyển hướngThất bại trong việc sửa chữa %d chuyển hướng"
+
+#: legacy/Controller/BrokenLinkChecker.php:2177
+msgid "None of the selected links are redirects!"
+msgstr "Không có các liên kết được chọn là chuyển hướng!"
+
+#: legacy/Controller/BrokenLinkChecker.php:2264
+#, php-format
+msgid "%d link updated."
+msgid_plural "%d links updated."
+msgstr[0] "%d liên kết Cập Nhật.%d liên kết Cập Nhật."
+
+#: legacy/Controller/BrokenLinkChecker.php:2275
+#, php-format
+msgid "Failed to update %d link."
+msgid_plural "Failed to update %d links."
+msgstr[0] "Thất bại trong việc Cập Nhật %d liên kết.Thất bại trong việc Cập Nhật %d liên kết."
+
+#: legacy/Controller/BrokenLinkChecker.php:2367
+#, php-format
+msgid "%d link removed"
+msgid_plural "%d links removed"
+msgstr[0] "%d liên kết loại bỏ%d liên kết loại bỏ"
+
+#: legacy/Controller/BrokenLinkChecker.php:2378
+#, php-format
+msgid "Failed to remove %d link"
+msgid_plural "Failed to remove %d links"
+msgstr[0] "Thất bại trong việc loại bỏ %d liên kếtThất bại trong việc loại bỏ %d liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:2428
+#, php-format
+msgid "%d link scheduled for rechecking"
+msgid_plural "%d links scheduled for rechecking"
+msgstr[0] "%d liên kết lên kế hoạch cho rechecking%d liên kết lên kế hoạch cho rechecking"
+
+#: legacy/Controller/BrokenLinkChecker.php:2480
+#: legacy/Controller/BrokenLinkChecker.php:3435
+msgid "This link was manually marked as working by the user."
+msgstr "Liên kết này sửa đánh dấu bằng tay bởi người dùng, là làm việc."
+
+#: legacy/Controller/BrokenLinkChecker.php:2488
+#: legacy/Controller/BrokenLinkChecker.php:2559
+#, php-format
+msgid "Couldn't modify link %d"
+msgstr "Không thể sửa đổi liên kết %d"
+
+#: legacy/Controller/BrokenLinkChecker.php:2499
+#, php-format
+msgid "%d link marked as not broken"
+msgid_plural "%d links marked as not broken"
+msgstr[0] "%d liên kết được đánh dấu là không bị hỏng%d liên kết được đánh dấu là không bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:2671
+msgid "Table columns"
+msgstr "Bảng cột"
+
+#: legacy/Controller/BrokenLinkChecker.php:2690
+msgid "Show on screen"
+msgstr "Hiển thị trên màn hình"
+
+#: legacy/Controller/BrokenLinkChecker.php:2697
+msgid "links"
+msgstr "liên kết"
+
+#: legacy/Admin/TablePrinter.php:185
+msgid "Apply"
+msgstr "Áp dụng"
+
+#: legacy/Controller/BrokenLinkChecker.php:2702
+msgid "Misc"
+msgstr "Linh tinh"
+
+#: legacy/Controller/BrokenLinkChecker.php:2717
+#, php-format
+msgid "Highlight links broken for at least %s days"
+msgstr "Tô sáng liên kết bị hỏng cho ít %s ngày"
+
+#: legacy/Controller/BrokenLinkChecker.php:2726
+msgid "Color-code status codes"
+msgstr "Color-Code Mã trạng thái"
+
+#: legacy/Admin/ScreenOptions.php:194
+#: legacy/Controller/BrokenLinkChecker.php:2746
+#: legacy/Controller/BrokenLinkChecker.php:3237
+#: legacy/Controller/BrokenLinkChecker.php:3339
+#: legacy/Controller/BrokenLinkChecker.php:3403
+#: legacy/Controller/BrokenLinkChecker.php:3419
+#: legacy/Controller/BrokenLinkChecker.php:3469
+#: legacy/Controller/BrokenLinkChecker.php:3508
+#: legacy/Controller/BrokenLinkChecker.php:3623
+#: legacy/Controller/BrokenLinkChecker.php:3676
+#: legacy/Controller/BrokenLinkChecker.php:3749
+msgid "You're not allowed to do that!"
+msgstr "Bạn không được phép làm điều đó!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3270
+msgid "View broken links"
+msgstr "Xem liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:3271
+#, php-format
+msgid "Found %d broken link"
+msgid_plural "Found %d broken links"
+msgstr[0] "Tìm thấy %d liên kết bị hỏngTìm thấy %d liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:3277
+msgid "No broken links found."
+msgstr "Không có liên kết bị hỏng tìm thấy."
+
+#: legacy/Controller/BrokenLinkChecker.php:3284
+#, php-format
+msgid "%d URL in the work queue"
+msgid_plural "%d URLs in the work queue"
+msgstr[0] "%d URL trong hàng đợi công việc%d URL trong hàng đợi công việc"
+
+#: legacy/Controller/BrokenLinkChecker.php:3288
+msgid "No URLs in the work queue."
+msgstr "Không có URL trong hàng công việc."
+
+#: legacy/Controller/BrokenLinkChecker.php:3294
+#, php-format
+msgctxt "for the \"Detected X unique URLs in Y links\" message"
+msgid "%d unique URL"
+msgid_plural "%d unique URLs"
+msgstr[0] "%d URL duy nhất%d URL duy nhất"
+
+#: legacy/Controller/BrokenLinkChecker.php:3298
+#, php-format
+msgctxt "for the \"Detected X unique URLs in Y links\" message"
+msgid "%d link"
+msgid_plural "%d links"
+msgstr[0] "%d liên kết%d liên kết"
+
+#: legacy/Controller/BrokenLinkChecker.php:3304
+#, php-format
+msgid "Detected %1$s in %2$s and still searching..."
+msgstr "Phát hiện %1$s ở %2$s và vẫn còn tìm kiếm..."
+
+#: legacy/Controller/BrokenLinkChecker.php:3310
+#, php-format
+msgid "Detected %1$s in %2$s."
+msgstr "Phát hiện %1$s ở %2$s."
+
+#: legacy/Controller/BrokenLinkChecker.php:3316
+msgid "Searching your blog for links..."
+msgstr "Tìm kiếm blog của bạn cho các liên kết..."
+
+#: legacy/Controller/BrokenLinkChecker.php:3318
+msgid "No links detected."
+msgstr "Không phát hiện các liên kết."
+
+#: legacy/Controller/BrokenLinkChecker.php:3348
+msgctxt "current load"
+msgid "Unknown"
+msgstr "Chưa biết"
+
+#: legacy/Controller/BrokenLinkChecker.php:3427
+#: legacy/Controller/BrokenLinkChecker.php:3477
+#: legacy/Controller/BrokenLinkChecker.php:3527
+#: legacy/Controller/BrokenLinkChecker.php:3635
+#: legacy/Controller/BrokenLinkChecker.php:3695
+#: legacy/Controller/BrokenLinkChecker.php:3768
+#, php-format
+msgid "Oops, I can't find the link %d"
+msgstr "Rất tiếc, tôi không thể tìm thấy các liên kết %d"
+
+#: legacy/Controller/BrokenLinkChecker.php:3447
+#: legacy/Controller/BrokenLinkChecker.php:3491
+msgid "Oops, couldn't modify the link!"
+msgstr "Rất tiếc, không thể đổi liên kết!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3450
+#: legacy/Controller/BrokenLinkChecker.php:3494
+#: legacy/Controller/BrokenLinkChecker.php:3665
+#: legacy/Controller/BrokenLinkChecker.php:3684
+#: legacy/Controller/BrokenLinkChecker.php:3757
+msgid "Error : link_id not specified"
+msgstr "Lỗi: link_id không được chỉ định"
+
+#: legacy/Controller/BrokenLinkChecker.php:3516
+msgid "Error : link_id or new_url not specified"
+msgstr "Lỗi: link_id hoặc new_url không được chỉ định"
+
+#: legacy/Controller/BrokenLinkChecker.php:3538
+#: legacy/Controller/BrokenLinkChecker.php:3550
+msgid "Oops, the new URL is invalid!"
+msgstr "Rất tiếc, URL mới là không hợp lệ!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3568
+msgid "An unexpected error occurred!"
+msgstr "Lỗi bất ngờ xảy ra!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3646
+msgid "An unexpected error occured!"
+msgstr "Lỗi bất ngờ xảy ra!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3806
+msgid "You don't have sufficient privileges to access this information!"
+msgstr "Bạn không có đủ quyền để truy cập vào thông tin này!"
+
+#: legacy/Controller/BrokenLinkChecker.php:3819
+msgid "Error : link ID not specified"
+msgstr "Lỗi: liên kết ID không xác định"
+
+#: legacy/Controller/BrokenLinkChecker.php:3830
+#, php-format
+msgid "Failed to load link details (%s)"
+msgstr "Không thể tải liên kết thông tin chi tiết (%s)"
+
+#: legacy/Controller/BrokenLinkChecker.php:585
+#: legacy/Controller/BrokenLinkChecker.php:3886
+msgid "Broken Link Checker"
+msgstr "Bị hỏng liên kết Checker"
+
+#: legacy/Controller/BrokenLinkChecker.php:3914
+msgid "PHP version"
+msgstr "PHP phiên bản"
+
+#: legacy/Controller/BrokenLinkChecker.php:3920
+msgid "MySQL version"
+msgstr "Phiên bản MySQL"
+
+#: legacy/Controller/BrokenLinkChecker.php:3933
+msgid "You have an old version of CURL. Redirect detection may not work properly."
+msgstr "Bạn có một phiên bản cũ của CURL. Phát hiện chuyển hướng có thể không hoạt động đúng."
+
+#: legacy/Controller/BrokenLinkChecker.php:3944
+msgid "Not installed"
+msgstr "Không được cài đặt"
+
+#: legacy/Controller/BrokenLinkChecker.php:3947
+msgid "CURL version"
+msgstr "Phiên bản CURL"
+
+#: legacy/Controller/BrokenLinkChecker.php:3959
+msgid "Off"
+msgstr "Tắt"
+
+#: legacy/Controller/BrokenLinkChecker.php:3953
+#, php-format
+msgid "On ( %s )"
+msgstr "On ( %s )"
+
+#: legacy/Controller/BrokenLinkChecker.php:3954
+msgid "Redirects may be detected as broken links when open_basedir is on."
+msgstr "Chuyển hướng có thể được phát hiện như liên kết bị hỏng khi open_basedir bên trong."
+
+#: legacy/Controller/BrokenLinkChecker.php:3991
+msgid "If this value is zero even after several page reloads you have probably encountered a bug."
+msgstr "Nếu giá trị này là 0 ngay cả sau khi tải lại trang một số bạn có thể đã gặp phải một lỗi."
+
+#: legacy/Controller/BrokenLinkChecker.php:4123
+#: legacy/Controller/BrokenLinkChecker.php:4252
+#, php-format
+msgid "[%s] Broken links detected"
+msgstr "[%s] Phát hiện liên kết bị hỏng"
+
+#: legacy/Controller/BrokenLinkChecker.php:4128
+#, php-format
+msgid "Broken Link Checker has detected %d new broken link on your site."
+msgid_plural "Broken Link Checker has detected %d new broken links on your site."
+msgstr[0] "Bị hỏng liên kết Checker đã phát hiện %d mới bị hỏng liên kết trên trang web của bạn.Bị hỏng liên kết Checker đã phát hiện %d mới bị hỏng liên kết trên trang web của bạn."
+
+#: legacy/Controller/BrokenLinkChecker.php:4161
+#, php-format
+msgid "Here's a list of the first %d broken links:"
+msgid_plural "Here's a list of the first %d broken links:"
+msgstr[0] "Đây là một danh sách đầu tiên %d bị hỏng liên kết:Đây là một danh sách đầu tiên %d bị hỏng liên kết:"
+
+#: legacy/Controller/BrokenLinkChecker.php:4170
+msgid "Here's a list of the new broken links: "
+msgstr "Dưới đây là một danh sách các liên kết mới bị hỏng:"
+
+#: legacy/Controller/BrokenLinkChecker.php:4180
+#, php-format
+msgid "Link text : %s"
+msgstr "Liên kết văn bản: %s"
+
+#: legacy/Controller/BrokenLinkChecker.php:4197
+msgid "You can see all broken links here:"
+msgstr "Bạn có thể xem tất cả các liên kết bị hỏng ở đây:"
+
+#: legacy/Controller/BrokenLinkChecker.php:4257
+#, php-format
+msgid "Broken Link Checker has detected %d new broken link in your posts."
+msgid_plural "Broken Link Checker has detected %d new broken links in your posts."
+msgstr[0] "Bị hỏng liên kết Checker đã phát hiện %d mới bị hỏng liên kết trong bài viết của bạn.Bị hỏng liên kết Checker đã phát hiện %d mới bị hỏng liên kết trong bài viết của bạn."
+
+#: legacy/init.php:110
+msgid "Broken Link Checker installation failed. Try deactivating and then reactivating the plugin."
+msgstr "Bị hỏng liên kết cài đặt Checker bị lỗi. Hãy thử tắt và sau đó phục hồi các plugin."
+
+#: legacy/Database/DatabaseUpgrader.php:97
+#, php-format
+msgid "Failed to delete old DB tables. Database error : %s"
+msgstr "Không xóa cũ DB bảng. Cơ sở dữ liệu lỗi: %s"
+
+#: legacy/includes/admin/links-page-js.php:64
+#: legacy/includes/admin/links-page-js.php:603
+msgid "Wait..."
+msgstr "Đợi..."
+
+#: legacy/Admin/TablePrinter.php:733
+#: legacy/Controller/BrokenLinkChecker.php:628
+#: legacy/includes/admin/links-page-js.php:110
+msgid "Not broken"
+msgstr "Không bị hỏng"
+
+#: legacy/includes/admin/links-page-js.php:368
+msgctxt "link text"
+msgid "(None)"
+msgstr "(Không có)"
+
+#: legacy/includes/admin/links-page-js.php:369
+msgctxt "link text"
+msgid "(Multiple links)"
+msgstr "(Nhiều liên kết)"
+
+#: legacy/includes/admin/links-page-js.php:472
+#, php-format
+msgid "%d instances of the link were successfully modified."
+msgstr "%d trường hợp của liên kết đã thay đổi thành công."
+
+#: legacy/includes/admin/links-page-js.php:478
+#, php-format
+msgid "However, %d instances couldn't be edited and still point to the old URL."
+msgstr "Tuy nhiên, %d trường hợp không thể chỉnh sửa và vẫn còn điểm đến URL cũ."
+
+#: legacy/includes/admin/links-page-js.php:484
+msgid "The link could not be modified."
+msgstr "Liên kết không thể sửa đổi được."
+
+#: legacy/includes/admin/links-page-js.php:487
+msgid "The following error(s) occurred :"
+msgstr "Các lỗi đã xảy ra:"
+
+#: legacy/includes/admin/links-page-js.php:559
+msgid "Error: Link URL must not be empty."
+msgstr "Lỗi: Liên kết URL không phải là sản phẩm nào."
+
+#: legacy/includes/admin/links-page-js.php:641
+#, php-format
+msgid "%d instances of the link were successfully unlinked."
+msgstr "%d trường hợp của các liên kết đã bỏ liên kết thành công."
+
+#: legacy/includes/admin/links-page-js.php:647
+#, php-format
+msgid "However, %d instances couldn't be removed."
+msgstr "Tuy nhiên, %d trường hợp không thể được gỡ bỏ."
+
+#: legacy/includes/admin/links-page-js.php:652
+msgid "The plugin failed to remove the link."
+msgstr "Các plugin không thể loại bỏ các liên kết."
+
+#: legacy/includes/admin/links-page-js.php:655
+msgid "The following error(s) occured :"
+msgstr "Các lỗi đã xảy ra:"
+
+#: legacy/Admin/TablePrinter.php:303
+#: legacy/Admin/TablePrinter.php:727
+#: legacy/Controller/BrokenLinkChecker.php:627
+#: legacy/includes/admin/links-page-js.php:663
+msgid "Unlink"
+msgstr "Hủy liên kết"
+
+#: legacy/includes/admin/links-page-js.php:703
+msgid "Enter a name for the new custom filter"
+msgstr "Nhập tên cho bộ lọc tuỳ chỉnh mới"
+
+#: legacy/includes/admin/links-page-js.php:715
+msgid ""
+"You are about to delete the current filter.\n"
+"'Cancel' to stop, 'OK' to delete"
+msgstr ""
+"Bạn đang định xóa bỏ các bộ lọc hiện tại.\n"
+"'Hủy bỏ ' để ngăn chặn, 'OK' để xóa"
+
+#: legacy/includes/admin/links-page-js.php:740
+msgid ""
+"Are you sure you want to remove the selected links? This action can't be undone.\n"
+"'Cancel' to stop, 'OK' to remove"
+msgstr ""
+"Bạn có chắc bạn muốn loại bỏ các liên kết đã chọn không? Hành động này không thể hoàn tác.\n"
+"'Hủy bỏ' để ngăn chặn, 'OK' để loại bỏ"
+
+#: legacy/includes/admin/links-page-js.php:870
+msgid "Enter a search string first."
+msgstr "Nhập một chuỗi tìm kiếm đầu tiên."
+
+#: legacy/includes/admin/links-page-js.php:877
+msgid "Select one or more links to edit."
+msgstr "Chọn một hoặc nhiều liên kết để chỉnh sửa."
+
+#: legacy/includes/admin/search-form.php:21
+msgid "Save This Search As a Filter"
+msgstr "Lưu tìm kiếm này như một bộ lọc"
+
+#: legacy/includes/admin/search-form.php:31
+msgid "Delete This Filter"
+msgstr "Xoá bộ lọc này"
+
+#: legacy/Controller/LinkQuery.php:100
+#: legacy/includes/admin/search-form.php:37
+msgid "Search"
+msgstr "Tìm"
+
+#: legacy/includes/admin/search-form.php:47
+msgid "Link text"
+msgstr "Văn bản liên kết"
+
+#: legacy/Admin/TablePrinter.php:225
+#: legacy/includes/admin/search-form.php:50
+msgid "URL"
+msgstr "URL"
+
+#: legacy/Admin/TablePrinter.php:568
+#: legacy/includes/admin/search-form.php:53
+msgid "HTTP code"
+msgstr "Mã HTTP"
+
+#: legacy/includes/admin/search-form.php:56
+msgid "Link status"
+msgstr "Tình trạng Liên kết"
+
+#: legacy/includes/admin/search-form.php:73
+#: legacy/includes/admin/search-form.php:90
+msgid "Link type"
+msgstr "Kiểu liên kết"
+
+#: legacy/includes/admin/search-form.php:75
+msgid "Any"
+msgstr "Bất kỳ"
+
+#: legacy/includes/admin/search-form.php:79
+msgid "Links used in"
+msgstr "Liên kết được sử dụng trong"
+
+#: legacy/includes/admin/search-form.php:117
+msgid "Search Links"
+msgstr "Tìm liên kết"
+
+#: legacy/Admin/TablePrinter.php:378
+#: legacy/Admin/TablePrinter.php:793
+#: legacy/Admin/TablePrinter.php:923
+#: legacy/includes/admin/search-form.php:118
+msgid "Cancel"
+msgstr "Hủy bỏ"
+
+#: legacy/Admin/TablePrinter.php:199
+msgid "Compact View"
+msgstr "Xem gọn"
+
+#: legacy/Admin/TablePrinter.php:201
+msgid "Detailed View"
+msgstr "Xem chi tiết"
+
+#: legacy/Admin/TablePrinter.php:232
+msgid "Source"
+msgstr "Nguồn"
+
+#: legacy/Admin/TablePrinter.php:238
+msgid "Link Text"
+msgstr "Văn bản liên kết"
+
+#: legacy/Admin/TablePrinter.php:245
+msgid "Redirect URL"
+msgstr "URL chuyển hướng"
+
+#: legacy/Admin/TablePrinter.php:297
+msgid "Bulk Actions"
+msgstr "Số lượng lớn hành động"
+
+#: legacy/Admin/TablePrinter.php:298
+#: legacy/Admin/TablePrinter.php:724
+#: legacy/Controller/BrokenLinkChecker.php:626
+msgid "Edit URL"
+msgstr "Chỉnh sửa URL"
+
+#: legacy/Admin/TablePrinter.php:299
+#: legacy/Admin/TablePrinter.php:753
+#: legacy/Controller/BrokenLinkChecker.php:630
+msgid "Recheck"
+msgstr "Kiểm tra lại"
+
+#: legacy/Admin/TablePrinter.php:300
+msgid "Fix redirects"
+msgstr "Sửa chữa chuyển hướng"
+
+#: legacy/Admin/TablePrinter.php:301
+msgid "Mark as not broken"
+msgstr "Đánh dấu là không bị hỏng"
+
+#: legacy/Admin/TablePrinter.php:354
+msgid "Bulk Edit URLs"
+msgstr "Số lượng lớn chỉnh sửa URL"
+
+#: legacy/Admin/TablePrinter.php:356
+msgid "Find"
+msgstr "Tìm thấy"
+
+#: legacy/Admin/TablePrinter.php:360
+msgid "Replace with"
+msgstr "Thay thế bằng"
+
+#: legacy/Admin/TablePrinter.php:368
+msgid "Case sensitive"
+msgstr "Trường hợp nhạy cảm"
+
+#: legacy/Admin/TablePrinter.php:372
+msgid "Regular expression"
+msgstr "Cụm từ thông dụng"
+
+#: legacy/Admin/TablePrinter.php:381
+#: legacy/Admin/TablePrinter.php:924
+msgid "Update"
+msgstr "Cập Nhật"
+
+#: legacy/Admin/TablePrinter.php:543
+msgid "Post published on"
+msgstr "Bài viết đăng trên"
+
+#: legacy/Admin/TablePrinter.php:551
+msgid "Link last checked"
+msgstr "Liên kết kiểm tra cuối"
+
+#: legacy/Admin/TablePrinter.php:556
+msgid "Never"
+msgstr "Không bao giờ"
+
+#: legacy/Admin/TablePrinter.php:576
+msgid "Response time"
+msgstr "Thời gian đáp ứng"
+
+#: legacy/Admin/TablePrinter.php:579
+#, php-format
+msgid "%2.3f seconds"
+msgstr "%2.3f giây"
+
+#: legacy/Admin/TablePrinter.php:584
+msgid "Final URL"
+msgstr "URL cuối cùng"
+
+#: legacy/Admin/TablePrinter.php:592
+msgid "Redirect count"
+msgstr "Chuyển hướng tính"
+
+#: legacy/Admin/TablePrinter.php:600
+msgid "Instance count"
+msgstr "Trường hợp tính"
+
+#: legacy/Admin/TablePrinter.php:612
+#, php-format
+msgid "This link has failed %d time."
+msgid_plural "This link has failed %d times."
+msgstr[0] "Liên kết này đã không %d thời gian.Liên kết này đã không %d thời gian."
+
+#: legacy/Admin/TablePrinter.php:620
+#, php-format
+msgid "This link has been broken for %s."
+msgstr "Liên kết này đã bị phá vỡ cho %s."
+
+#: legacy/Admin/TablePrinter.php:631
+msgid "Log"
+msgstr "Đăng nhập"
+
+#: legacy/Admin/TablePrinter.php:661
+#: legacy/Admin/TablePrinter.php:705
+msgid "Show more info about this link"
+msgstr "Hiển thị thông tin thêm về liên kết này"
+
+#: legacy/Admin/TablePrinter.php:679
+msgctxt "checked how long ago"
+msgid "Checked"
+msgstr "Kiểm tra"
+
+#: legacy/Admin/TablePrinter.php:694
+msgid "Broken for"
+msgstr "Bị hỏng cho"
+
+#: legacy/Admin/TablePrinter.php:724
+msgid "Edit this link"
+msgstr "Chỉnh sửa liên kết này"
+
+#: legacy/Admin/TablePrinter.php:726
+msgid "Remove this link from all posts"
+msgstr "Loại bỏ các liên kết này từ tất cả các bài viết"
+
+#: legacy/Admin/TablePrinter.php:732
+msgid "Remove this link from the list of broken links and mark it as valid"
+msgstr "Loại bỏ các liên kết này từ danh sách các liên kết bị hỏng và đánh dấu nó là hợp lệ"
+
+#: legacy/Admin/TablePrinter.php:740
+msgid "Hide this link and do not report it again unless its status changes"
+msgstr "Ẩn liên kết này và không báo cáo nó một lần nữa trừ khi tình trạng của nó thay đổi"
+
+#: legacy/Admin/TablePrinter.php:302
+#: legacy/Admin/TablePrinter.php:741
+#: legacy/Controller/BrokenLinkChecker.php:629
+msgid "Dismiss"
+msgstr "Bỏ qua"
+
+#: legacy/Admin/TablePrinter.php:746
+msgid "Undismiss this link"
+msgstr "Undismiss liên kết này"
+
+#: legacy/Admin/TablePrinter.php:747
+msgid "Undismiss"
+msgstr "Undismiss"
+
+#: legacy/Admin/TablePrinter.php:794
+msgid "Update URL"
+msgstr "Cập Nhật URL"
+
+#: legacy/Admin/TablePrinter.php:821
+msgid "[An orphaned link! This is a bug.]"
+msgstr "[Một liên kết đơn! Đây là một lỗi.]"
+
+#: legacy/Admin/TablePrinter.php:903
+msgctxt "inline editor title"
+msgid "Edit Link"
+msgstr "Chỉnh sửa liên kết"
+
+#: legacy/Admin/TablePrinter.php:906
+msgctxt "inline link editor"
+msgid "Text"
+msgstr "Văn bản"
+
+#: legacy/Admin/TablePrinter.php:911
+msgctxt "inline link editor"
+msgid "URL"
+msgstr "URL"
+
+#: legacy/Admin/TablePrinter.php:916
+msgctxt "inline link editor"
+msgid "Suggestions"
+msgstr "Đề xuất"
+
+#: legacy/Admin/TablePrinter.php:937
+msgid "Use this URL"
+msgstr "Sử dụng URL này"
+
+#: legacy/includes/any-post.php:556
+#: legacy/modules/containers/comment.php:50
+msgid "Nothing to update"
+msgstr "Không có gì để Cập Nhật"
+
+#: legacy/includes/any-post.php:572
+#, php-format
+msgid "Updating post %d failed"
+msgstr "Cập Nhật bài viết %d thất bại"
+
+#: legacy/includes/extra-strings.php:3
+msgctxt "module name"
+msgid "Basic HTTP"
+msgstr "HTTP cơ bản"
+
+#: legacy/includes/extra-strings.php:4
+msgctxt "module name"
+msgid "Blogroll items"
+msgstr "Danh sách mục blog"
+
+#: legacy/includes/extra-strings.php:5
+msgctxt "module name"
+msgid "Comments"
+msgstr "Ý kiến"
+
+#: legacy/includes/extra-strings.php:6
+msgctxt "module name"
+msgid "Custom fields"
+msgstr "Lĩnh vực tùy chỉnh"
+
+#: legacy/includes/extra-strings.php:7
+msgctxt "module name"
+msgid "Embedded DailyMotion videos"
+msgstr "DailyMotion video được nhúng"
+
+#: legacy/includes/extra-strings.php:8
+msgctxt "module name"
+msgid "Embedded GoogleVideo videos"
+msgstr "GoogleVideo video được nhúng"
+
+#: legacy/includes/extra-strings.php:9
+msgctxt "module name"
+msgid "Embedded Vimeo videos"
+msgstr "Nhúng video Vimeo"
+
+#: legacy/includes/extra-strings.php:10
+msgctxt "module name"
+msgid "Embedded YouTube playlists (old embed code)"
+msgstr "Danh sách nhạc YouTube nhúng (mã nhúng cũ)"
+
+#: legacy/includes/extra-strings.php:11
+msgctxt "module name"
+msgid "Embedded YouTube videos"
+msgstr "Nhúng YouTube video"
+
+#: legacy/includes/extra-strings.php:12
+msgctxt "module name"
+msgid "Embedded YouTube videos (old embed code)"
+msgstr "Nhúng video trên YouTube (mã nhúng cũ)"
+
+#: legacy/includes/extra-strings.php:13
+msgctxt "module name"
+msgid "HTML images"
+msgstr "HTML hình ảnh"
+
+#: legacy/includes/extra-strings.php:14
+msgctxt "module name"
+msgid "HTML links"
+msgstr "Liên kết HTML"
+
+#: legacy/includes/extra-strings.php:15
+msgctxt "module name"
+msgid "MediaFire API"
+msgstr "MediaFire API"
+
+#: legacy/includes/extra-strings.php:16
+msgctxt "module name"
+msgid "Plaintext URLs"
+msgstr "Văn bản thuần URL"
+
+#: legacy/includes/extra-strings.php:17
+msgctxt "module name"
+msgid "RapidShare API"
+msgstr "RapidShare API"
+
+#: legacy/includes/extra-strings.php:18
+msgctxt "module name"
+msgid "Smart YouTube httpv:// URLs"
+msgstr "Thông minh YouTube httpv: / / URL"
+
+#: legacy/includes/extra-strings.php:19
+msgctxt "module name"
+msgid "YouTube API"
+msgstr "YouTube API"
+
+#: legacy/includes/extra-strings.php:20
+msgctxt "module name"
+msgid "Posts"
+msgstr "Bài viết"
+
+#: legacy/includes/extra-strings.php:21
+msgctxt "module name"
+msgid "Pages"
+msgstr "Trang"
+
+#: legacy/Controller/LinkInstance.php:114
+#: legacy/Controller/LinkInstance.php:170
+#, php-format
+msgid "Parser '%s' not found."
+msgstr "Phân tích cú pháp '%s' không tìm thấy."
+
+#: legacy/Controller/LinkQuery.php:43
+msgid "Broken"
+msgstr "Bị hỏng"
+
+#: legacy/Controller/LinkQuery.php:45
+msgid "No broken links found"
+msgstr "Không có liên kết bị hỏng tìm thấy"
+
+#: legacy/Controller/LinkQuery.php:63
+msgid "Redirects"
+msgstr "Chuyển hướng"
+
+#: legacy/Controller/LinkQuery.php:64
+msgid "Redirected Links"
+msgstr "Chuyển hướng liên kết"
+
+#: legacy/Controller/LinkQuery.php:65
+msgid "No redirects found"
+msgstr "Chuyển hướng không tìm thấy"
+
+#: legacy/Controller/LinkQuery.php:73
+msgid "Dismissed"
+msgstr "Sa thải"
+
+#: legacy/Controller/LinkQuery.php:74
+msgid "Dismissed Links"
+msgstr "Bỏ liên kết"
+
+#: legacy/Controller/LinkQuery.php:75
+msgid "No dismissed links found"
+msgstr "Không tìm thấy liên kết bị bỏ"
+
+#: legacy/Controller/LinkQuery.php:32
+msgid "All"
+msgstr "Tất cả"
+
+#: legacy/Controller/LinkQuery.php:33
+msgid "Detected Links"
+msgstr "Phát hiện liên kết"
+
+#: legacy/Controller/LinkQuery.php:34
+msgid "No links found (yet)"
+msgstr "Không có liên kết tìm thấy (chưa)"
+
+#: legacy/Controller/LinkQuery.php:101
+msgid "Search Results"
+msgstr "Kết quả tìm kiếm"
+
+#: legacy/Controller/LinkQuery.php:102
+#: legacy/Controller/LinkQuery.php:153
+msgid "No links found for your query"
+msgstr "Không có liên kết tìm thấy cho truy vấn của bạn"
+
+#: legacy/Controller/Link.php:325
+msgid "The plugin script was terminated while trying to check the link."
+msgstr "Kịch bản plugin được chấm dứt trong khi cố gắng kiểm tra các liên kết."
+
+#: legacy/Controller/Link.php:372
+msgid "The plugin doesn't know how to check this type of link."
+msgstr "Các plugin không biết làm thế nào để kiểm tra này loại hình liên kết."
+
+#: legacy/Controller/Link.php:610
+msgid "Link is valid."
+msgstr "Liên kết là hợp lệ."
+
+#: legacy/Controller/Link.php:608
+msgid "Link is broken."
+msgstr "Liên kết bị phá vỡ."
+
+#: legacy/Controller/Link.php:845
+#: legacy/Controller/Link.php:949
+#: legacy/Controller/Link.php:984
+msgid "Link is not valid"
+msgstr "Liên kết là không hợp lệ"
+
+#: legacy/Controller/Link.php:862
+msgid "This link can not be edited because it is not used anywhere on this site."
+msgstr "Liên kết này có thể không được chỉnh sửa bởi vì nó không sử dụng bất cứ nơi nào trên trang web này."
+
+#: legacy/Controller/Link.php:888
+msgid "Failed to create a DB entry for the new URL."
+msgstr "Thất bại trong việc tạo ra một DB đầu vào cho URL mới."
+
+#: legacy/Controller/Link.php:956
+msgid "This link is not a redirect"
+msgstr "Liên kết này không phải là một trang chuyển hướng"
+
+#: legacy/Controller/Link.php:1011
+#: legacy/Controller/Link.php:1048
+msgid "Couldn't delete the link's database record"
+msgstr "Không thể xoá bản ghi cơ sở dữ liệu của liên kết"
+
+#: legacy/Controller/Link.php:1128
+msgctxt "link status"
+msgid "Unknown"
+msgstr "Chưa biết"
+
+#: legacy/Controller/Link.php:1137
+#: legacy/modules/checkers/http.php:497
+#: legacy/modules/checkers/http.php:501
+#: legacy/modules/extras/mediafire.php:116
+#: legacy/modules/extras/youtube.php:150
+#: legacy/modules/extras/youtube.php:243
+msgid "Unknown Error"
+msgstr "Lỗi không xác định"
+
+#: legacy/Controller/Link.php:1155
+msgid "Not checked"
+msgstr "Không kiểm tra"
+
+#: legacy/Controller/Link.php:1158
+msgid "False positive"
+msgstr "Sai tích cực"
+
+#: legacy/Controller/Link.php:1161
+#: legacy/modules/extras/rapidshare.php:148
+#: legacy/modules/extras/rapidshare.php:154
+#: legacy/modules/extras/rapidshare.php:181
+#: legacy/modules/extras/youtube.php:155
+#: legacy/modules/extras/youtube.php:230
+msgctxt "link status"
+msgid "OK"
+msgstr "OK"
+
+#: legacy/Abstract/Parser.php:130
+#, php-format
+msgid "Editing is not implemented in the '%s' parser"
+msgstr "Chỉnh sửa không thực hiện trong các '%s' phân tích cú pháp"
+
+#: legacy/Abstract/Parser.php:146
+#, php-format
+msgid "Unlinking is not implemented in the '%s' parser"
+msgstr "Hủy liên kết không thực hiện trong các '%s' phân tích cú pháp"
+
+#: legacy/modules/checkers/http.php:467
+msgid "Server Not Found"
+msgstr "Máy chủ không tìm thấy"
+
+#: legacy/modules/checkers/http.php:483
+msgid "Connection Failed"
+msgstr "Kết nối không thành công"
+
+#: legacy/modules/checkers/http.php:545
+#: legacy/modules/checkers/http.php:636
+#, php-format
+msgid "HTTP code : %d"
+msgstr "Mã HTTP: %d"
+
+#: legacy/modules/checkers/http.php:547
+#: legacy/modules/checkers/http.php:638
+msgid "(No response)"
+msgstr "(Không có phản ứng)"
+
+#: legacy/modules/checkers/http.php:570
+msgid "Most likely the connection timed out or the domain doesn't exist."
+msgstr "Nhiều khả năng kết nối hêt hoặc tên miền không tồn tại."
+
+#: legacy/modules/checkers/http.php:647
+msgid "Request timed out."
+msgstr "Yêu cầu hết thời gian."
+
+#: legacy/modules/containers/comment.php:60
+#, php-format
+msgid "Updating comment %d failed"
+msgstr "Cập Nhật bình luận %d thất bại"
+
+#: legacy/modules/containers/comment.php:114
+msgid "View comment"
+msgstr "Xem bình luận"
+
+#: legacy/modules/containers/comment.php:132
+msgid "Comment"
+msgstr "Bình luận"
+
+#: legacy/modules/containers/acf_field.php:252
+#: legacy/modules/containers/custom_field.php:273
+#, php-format
+msgid "View \"%s\""
+msgstr "Xem \"%s\""
+
+#: legacy/modules/extras/dailymotion-embed.php:25
+msgid "DailyMotion Video"
+msgstr "DailyMotion Video"
+
+#: legacy/modules/extras/dailymotion-embed.php:26
+msgid "Embedded DailyMotion video"
+msgstr "DailyMotion video nhúng"
+
+#: legacy/Abstract/EmbedParser.php:210
+msgid "Embedded videos can't be edited using Broken Link Checker. Please edit or replace the video in question manually."
+msgstr "Nhúng video không thể sửa bằng cách sử dụng hỏng liên kết Checker. Xin vui lòng chỉnh sửa hoặc thay thế video đã được đề cập theo cách thủ công."
+
+#: legacy/modules/extras/mediafire.php:101
+#: legacy/modules/extras/mediafire.php:106
+#: legacy/modules/extras/rapidshare.php:142
+msgid "Not Found"
+msgstr "Không tìm thấy"
+
+#: legacy/modules/extras/googlevideo-embed.php:25
+msgid "GoogleVideo Video"
+msgstr "GoogleVideo Video"
+
+#: legacy/modules/extras/googlevideo-embed.php:26
+msgid "Embedded GoogleVideo video"
+msgstr "GoogleVideo video nhúng"
+
+#: legacy/modules/extras/rapidshare.php:55
+msgid "Using RapidShare API"
+msgstr "Bằng cách sử dụng RapidShare API"
+
+#: legacy/modules/extras/rapidshare.php:161
+msgid "RS Server Down"
+msgstr "RS máy chủ xuống"
+
+#: legacy/modules/extras/rapidshare.php:168
+msgid "File Blocked"
+msgstr "Tập tin bị chặn"
+
+#: legacy/modules/extras/rapidshare.php:175
+msgid "File Locked"
+msgstr "Tập tin bị khóa"
+
+#: legacy/modules/extras/rapidshare.php:186
+#, php-format
+msgid "RapidShare : %s"
+msgstr "RapidShare: %s"
+
+#: legacy/modules/extras/rapidshare.php:191
+#, php-format
+msgid "RapidShare API error: %s"
+msgstr "RapidShare API lỗi: %s"
+
+#: legacy/modules/extras/vimeo-embed.php:25
+msgid "Vimeo Video"
+msgstr "Vimeo Video"
+
+#: legacy/modules/extras/vimeo-embed.php:26
+msgid "Embedded Vimeo video"
+msgstr "Nhúng video Vimeo"
+
+#: legacy/modules/extras/youtube-embed.php:26
+#: legacy/modules/extras/youtube-iframe.php:29
+msgid "YouTube Video"
+msgstr "YouTube Video"
+
+#: legacy/modules/extras/youtube-embed.php:27
+#: legacy/modules/extras/youtube-iframe.php:30
+msgid "Embedded YouTube video"
+msgstr "Nhúng YouTube video"
+
+#: legacy/modules/extras/youtube-playlist-embed.php:25
+msgid "YouTube Playlist"
+msgstr "Danh sách phát của YouTube"
+
+#: legacy/modules/extras/youtube-playlist-embed.php:26
+msgid "Embedded YouTube playlist"
+msgstr "Nhúng YouTube playlist"
+
+#: legacy/modules/extras/youtube.php:165
+#: legacy/modules/extras/youtube.php:168
+msgid "Video Not Found"
+msgstr "Video không tìm thấy"
+
+#: legacy/modules/extras/youtube.php:154
+msgid "Video OK"
+msgstr "Video OK"
+
+#: legacy/modules/extras/youtube.php:220
+msgid "Video Restricted"
+msgstr "Video bị giới hạn"
+
+#: legacy/modules/extras/youtube.php:188
+#: legacy/modules/extras/youtube.php:191
+msgid "Playlist Not Found"
+msgstr "Danh sách bài hát không tìm thấy"
+
+#: legacy/modules/extras/youtube.php:197
+msgid "Playlist Restricted"
+msgstr "Danh sách chơi bị giới hạn"
+
+#: legacy/modules/extras/youtube.php:229
+msgid "Playlist OK"
+msgstr "Danh sách OK"
+
+#: legacy/modules/extras/youtube.php:203
+msgid "This playlist has no entries or all entries have been deleted."
+msgstr "Danh sách phát này có khoản mục nào hoặc tất cả các mục đã bị xóa."
+
+#: legacy/modules/parsers/image.php:206
+msgid "Image"
+msgstr "Hình ảnh"
+
+#: legacy/modules/parsers/acf_field.php:129
+#: legacy/modules/parsers/metadata.php:151
+msgid "Custom field"
+msgstr "Lĩnh vực tùy chỉnh"
+
+#. Plugin URI of the plugin
+#: link-checker.php
+msgid "https://brokenlinkchecker.dev/wordpress/broken-link-checker"
+msgstr ""
+
+#. Description of the plugin
+#: link-checker.php
+msgid "Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version."
+msgstr ""
+
+#. Author of the plugin
+#: link-checker.php
+msgid "Bram Brambring"
+msgstr ""
+
+#. Author URI of the plugin
+#: link-checker.php
+msgid "https://brambring.nl/"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:329
+#, php-format
+msgid "Displaying %1$s&#8211;%2$s of <span class=\"current-link-count\">%3$s</span>"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:706
+msgctxt "link in the \"Status\" column"
+msgid "Details"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:760
+msgid "Replace this redirect with a direct link"
+msgstr ""
+
+#: legacy/Admin/TablePrinter.php:761
+#: legacy/Controller/BrokenLinkChecker.php:631
+msgctxt "link action; replace one redirect with a direct link"
+msgid "Fix redirect"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:334
+msgid "Show a badge with the number of broken links in the title"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1070
+msgid "Count bubbles"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1076
+msgid "Show a bubble with number of found broken links in the menu bar"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1083
+msgid "Show a bubble with number of found broken links in the dashboard widget"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1206
+msgctxt "\"Link tweaks\" settings"
+msgid "These settings only apply to the content of posts, not comments or custom fields."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1217
+msgctxt "settings page"
+msgid "Warnings"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1221
+msgid "Show uncertain or minor problems as \"warnings\" instead of \"broken\""
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1225
+msgid "Turning off this option will make the plugin report all problems as broken links."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1232
+msgid "YouTube API Key"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1239
+#, php-format
+msgid "Use your own %1$sapi key%2$s for checking youtube links."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1246
+msgid "Post Modified Date"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1250
+msgid "Disable post modified date change when link is edited"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1446
+msgctxt "settings page"
+msgid "Show link actions"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1528
+msgid "Target resource usage"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1548
+msgid "Logging"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1553
+msgid "Enable logging"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1559
+msgid "Log file location"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1566
+#: legacy/Controller/BrokenLinkChecker.php:1623
+msgid "Leave blank for default location: "
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1575
+msgid "Log file clear schedule"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1602
+msgid "Cookies"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1607
+msgid "Enable Cookies"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1615
+msgid "Cookie file location"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:1845
+msgid "Enter the keys of acf fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_586a3eaa4091b</code>."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2570
+#, php-format
+msgid "%d link dismissed"
+msgid_plural "%d links dismissed"
+msgstr[0] ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2634
+msgid "The \"Warnings\" page lists problems that are probably temporary or suspected to be false positives.<br> Warnings that persist for a long time will usually be reclassified as broken links."
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2639
+msgctxt "admin notice under Tools - Broken links - Warnings"
+msgid "Hide notice"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:2645
+msgctxt "a link from the admin notice under Tools - Broken links - Warnings"
+msgid "Change warning settings"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:3972
+msgid "Database character set"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4181
+#, php-format
+msgid "Link URL : <a href=\"%1$s\">%2$s</a>"
+msgstr ""
+
+#: legacy/Controller/BrokenLinkChecker.php:4182
+#, php-format
+msgid "Source : View: %s | Edit: %s"
+msgstr ""
+
+#: legacy/Controller/LinkInstance.php:105
+#: legacy/Controller/LinkInstance.php:161
+#, php-format
+msgid "Container %1$s[%2$d] not found"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:53
+msgctxt "filter name"
+msgid "Warnings"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:54
+msgctxt "filter heading"
+msgid "Warnings"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:55
+msgid "No warnings found"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:84
+msgid "Parking"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:85
+msgid "Possible Parked Domain"
+msgstr ""
+
+#: legacy/Controller/LinkQuery.php:86
+msgid "No parked links found"
+msgstr ""
+
+#: legacy/includes/admin/links-page-js.php:598
+msgid "Are you sure you want to unlink and remove this link from all posts?"
+msgstr ""
+
+#: legacy/modules/checkers/http.php:290
+msgid "Invalid URL"
+msgstr ""
+
+#: legacy/modules/checkers/http.php:654
+msgid "Using WP HTTP"
+msgstr ""
+
+#: legacy/modules/containers/acf_field.php:115
+#: legacy/modules/containers/custom_field.php:121
+#, php-format
+msgid "Failed to update the meta field '%1$s' on %2$s [%3$d]"
+msgstr ""
+
+#: legacy/modules/containers/acf_field.php:146
+#: legacy/modules/containers/custom_field.php:152
+#, php-format
+msgid "Failed to delete the meta field '%1$s' on %2$s [%3$d]"
+msgstr ""
+
+#: legacy/modules/containers/comment.php:137
+msgid "Comment not found"
+msgstr ""
+
+#: legacy/modules/containers/dummy.php:40
+#: legacy/modules/containers/dummy.php:52
+#, php-format
+msgid "I don't know how to edit a '%1$s' [%2$d]."
+msgstr ""
+
+#: legacy/modules/extras/mediafire.php:111
+msgid "Permission Denied"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:204
+msgctxt "link status"
+msgid "Empty Playlist"
+msgstr ""
+
+#: legacy/modules/extras/youtube.php:214
+#, php-format
+msgid "Video status : %1$s%2$s"
+msgstr ""

@@ -22,8 +22,8 @@ class blcDailyMotionEmbed extends EmbedParser
     {
         parent::init();
         $this->url_search_string = 'dailymotion.com/swf/video/';
-        $this->short_title       = __('DailyMotion Video', 'broken-link-checker');
-        $this->long_title        = __('Embedded DailyMotion video', 'broken-link-checker');
+        $this->short_title       = __('DailyMotion Video', 'link-checker');
+        $this->long_title        = __('Embedded DailyMotion video', 'link-checker');
     }
 
     function link_url_from_src($src)

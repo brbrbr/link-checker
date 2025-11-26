@@ -281,7 +281,7 @@ class blcHTMLLink extends Parser
      * @param mixed    $extra If the optional $extra param. is supplied, it will be passed as the second parameter to the function $callback.
      * @return array An array of all detected links after applying $callback to each of them.
      */
-    function map($content, $callback, $extra = null)
+    private function map($content, $callback, $extra = null)
     {
         $results = array();
 
@@ -332,7 +332,7 @@ class blcHTMLLink extends Parser
      * @param mixed    $extra If supplied, $extra will be passed as the second parameter to the function $callback.
      * @return string The modified input string.
      */
-    function multi_edit($content, $callback, $extra = null)
+    private function multi_edit($content, $callback, $extra = null)
     {
         //2.4.3
         $content = apply_filters('blc_parser_html_link_pre_content', $content);
@@ -365,7 +365,7 @@ class blcHTMLLink extends Parser
 
         //2.4.3
         $content = apply_filters('blc_parser_html_link_post_content', $content);
-        
+
         return $content;
     }
 

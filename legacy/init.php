@@ -107,7 +107,7 @@ if (defined('BLC_ACTIVE')) {
 
                 $plugin_config = ConfigurationManager::getInstance();
                 $messages = array(
-                    '<strong>' . __('Broken Link Checker installation failed. Try deactivating and then reactivating the plugin.', 'broken-link-checker') . '</strong>',
+                    '<strong>' . __('Broken Link Checker installation failed. Try deactivating and then reactivating the plugin.', 'link-checker') . '</strong>',
                 );
 
                 $logger   = new CachedOptionLogger('blc_installation_log');

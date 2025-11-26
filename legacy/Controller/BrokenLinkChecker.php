@@ -3,11 +3,10 @@
 namespace Blc\Controller;
 
 /**
- * Simple function to replicate PHP 5 behaviour
  *
- * @link    https://wordpress.org/plugins/broken-link-checker/
+ * @link    https://brokenlinkchecker.dev/wordpress/broken-link-checker
  * @since   1.0.0
- * @package broken-link-checker
+ * @package link-checker
  */
 
 use Blc\Database\WPMutex;
@@ -82,7 +81,7 @@ class BrokenLinkChecker
         'koopdomeinnaam.nl' => "`final_url` like '%koopdomeinnaam.nl%'",
         'hugedomains.com' => "`final_url` like '%hugedomains.com%'",
 
-       
+
     );
     protected $plugin_config;
 
@@ -140,7 +139,8 @@ class BrokenLinkChecker
 
         // The dashboard widget.
         add_action('wp_dashboard_setup', $this->hook_wp_dashboard_setup(...));
-
+   
+        //add_action('blc_test', $this->test(...));
         // AJAXy hooks.
         add_action('wp_ajax_blc_full_status', $this->ajax_full_status(...));
         add_action('wp_ajax_blc_work', $this->ajax_work(...));
@@ -300,7 +300,7 @@ class BrokenLinkChecker
 
         $this->addStatusAssets();
 ?>
-        <p id="wsblc_activity_box" class="blc_full_status"><?php esc_html_e('Loading...', 'broken-link-checker'); ?></p>
+        <p id="wsblc_activity_box" class="blc_full_status"><?php esc_html_e('Loading...', 'link-checker'); ?></p>
 
     <?php
     }
@@ -331,7 +331,7 @@ class BrokenLinkChecker
                                                                                                     echo 'checked="checked"';
                                                                                                 }
                                                                                                 ?> />
-                <?php esc_html_e('Show a badge with the number of broken links in the title', 'broken-link-checker'); ?>
+                <?php esc_html_e('Show a badge with the number of broken links in the title', 'link-checker'); ?>
             </label></p>
     <?php
 
@@ -354,7 +354,7 @@ class BrokenLinkChecker
             'ajaxurl' => admin_url('admin-ajax.php'),
 
         ));
-        wp_set_script_translations('options-page-js', 'broken-link-checker');
+        wp_set_script_translations('options-page-js', 'link-checker');
     }
 
     /**
@@ -488,14 +488,14 @@ class BrokenLinkChecker
             add_filter('plugin_action_links', $this->plugin_action_links(...), 10, 2);
         }
 
-        $menu_title = __('Broken Links', 'broken-link-checker');
+        $menu_title = __('Broken Links', 'link-checker');
         if ($this->plugin_config->options['show_link_count_bubble']) {
             $this->addStatusAssets();
             $menu_title .= ' <span class="blc-broken-count"></span>';
         }
 
         $links_page_hook = add_menu_page(
-            __('Broken Links', 'broken-link-checker'),
+            __('Broken Links', 'link-checker'),
             $menu_title,
             'edit_others_posts',
             'blc_local',
@@ -560,14 +560,14 @@ class BrokenLinkChecker
                                         echo 'active';
                                     }
                                     ?>
-                    " aria-current="true"><?php echo esc_html__('Broken Links', 'broken-link-checker'); ?></a>
+                    " aria-current="true"><?php echo esc_html__('Broken Links', 'link-checker'); ?></a>
                 <a href="<?php echo admin_url('admin.php?page=blc_local&local-settings=true'); ?>" class="wpmudev-blc-local-nav-item blc-local-settings 
                                     <?php
                                     if ($this->is_settings_tab) {
                                         echo 'active';
                                     }
                                     ?>
-                    " aria-current="true"><?php echo esc_html__('Settings', 'broken-link-checker'); ?></a>
+                    " aria-current="true"><?php echo esc_html__('Settings', 'link-checker'); ?></a>
             </nav>
         </div>
     <?php
@@ -582,7 +582,7 @@ class BrokenLinkChecker
         <div class="sui-wrap wrap-blc wrap-blc-local-page wrap-blc_local">
             <div class="sui-box local-blc-header-wrap">
                 <div class="sui-box-header">
-                    <h2 class="local-blc-heading"><?php echo esc_html__('Broken Link Checker', 'broken-link-checker'); ?></h2>
+                    <h2 class="local-blc-heading"><?php echo esc_html__('Broken Link Checker', 'link-checker'); ?></h2>
                 </div>
             </div>
         </div>
@@ -623,12 +623,12 @@ class BrokenLinkChecker
         }
 
         $available_link_actions = array(
-            'edit'                  => __('Edit URL', 'broken-link-checker'),
-            'delete'                => __('Unlink', 'broken-link-checker'),
-            'blc-discard-action'    => __('Not broken', 'broken-link-checker'),
-            'blc-dismiss-action'    => __('Dismiss', 'broken-link-checker'),
-            'blc-recheck-action'    => __('Recheck', 'broken-link-checker'),
-            'blc-deredirect-action' => _x('Fix redirect', 'link action; replace one redirect with a direct link', 'broken-link-checker'),
+            'edit'                  => __('Edit URL', 'link-checker'),
+            'delete'                => __('Unlink', 'link-checker'),
+            'blc-discard-action'    => __('Not broken', 'link-checker'),
+            'blc-dismiss-action'    => __('Dismiss', 'link-checker'),
+            'blc-recheck-action'    => __('Recheck', 'link-checker'),
+            'blc-deredirect-action' => _x('Fix redirect', 'link action; replace one redirect with a direct link', 'link-checker'),
         );
 
         if (isset($_POST['submit'])) {
@@ -905,13 +905,13 @@ class BrokenLinkChecker
 
         // Show a confirmation message when settings are saved.
         if (!empty($_GET['settings-updated'])) {
-            echo '<div id="message" class="updated fade"><p><strong>', __('Settings saved.', 'broken-link-checker'), '</strong></p></div>';
+            echo '<div id="message" class="updated fade"><p><strong>', __('Settings saved.', 'link-checker'), '</strong></p></div>';
         }
 
         // Show one when recheck is started, too.
         if (!empty($_GET['recheck-initiated'])) {
             echo '<div id="message" class="updated fade"><p><strong>',
-            __('Complete site recheck started.', 'broken-link-checker'), // -- Yoda
+            __('Complete site recheck started.', 'link-checker'), // -- Yoda
             '</strong></p></div>';
         }
 
@@ -928,17 +928,17 @@ class BrokenLinkChecker
 
         // Output the custom broken link/removed link styles for example links
         printf(
-            '<style type="text/css">%s %s</style>',
+            '<style>%s %s</style>',
             $this->plugin_config->options['broken_link_css'],
             $this->plugin_config->options['removed_link_css']
         );
 
         $section_names = array(
-            'general'  => __('General', 'broken-link-checker'),
-            'where'    => __('Look For Links In', 'broken-link-checker'),
-            'which'    => __('Which Links To Check', 'broken-link-checker'),
-            'how'      => __('Protocols & APIs', 'broken-link-checker'),
-            'advanced' => __('Advanced', 'broken-link-checker'),
+            'general'  => __('General', 'link-checker'),
+            'where'    => __('Look For Links In', 'link-checker'),
+            'which'    => __('Which Links To Check', 'link-checker'),
+            'how'      => __('Protocols & APIs', 'link-checker'),
+            'advanced' => __('Advanced', 'link-checker'),
         );
 
 
@@ -948,7 +948,7 @@ class BrokenLinkChecker
         <div class="wrap" id="blc-settings-wrap">
             <!-- <h2>
             <?php
-            // _e( 'Broken Link Checker Options', 'broken-link-checker' );
+            // _e( 'Broken Link Checker Options', 'link-checker' );
             ?>
                         </h2>-->
 
@@ -989,9 +989,9 @@ class BrokenLinkChecker
 
                                 <tr valign="top">
                                     <th scope="row">
-                                        <?php _e('Status', 'broken-link-checker'); ?>
+                                        <?php _e('Status', 'link-checker'); ?>
                                         <br>
-                                        <a href="javascript:void(0)" id="blc-debug-info-toggle"><?php _e('Show debug info', 'broken-link-checker'); ?></a>
+                                        <a href="javascript:void(0)" id="blc-debug-info-toggle"><?php _e('Show debug info', 'link-checker'); ?></a>
                                     </th>
                                     <td>
 
@@ -1019,12 +1019,12 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Check each link', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Check each link', 'link-checker'); ?></th>
                                     <td>
 
                                         <?php
                                         printf(
-                                            __('Every %s hours', 'broken-link-checker'),
+                                            __('Every %s hours', 'link-checker'),
                                             sprintf(
                                                 '<input type="text" name="check_threshold" id="check_threshold" value="%d" size="5" maxlength="5" />',
                                                 $this->plugin_config->options['check_threshold']
@@ -1033,14 +1033,14 @@ class BrokenLinkChecker
                                         ?>
                                         <br />
                                         <span class="description">
-                                            <?php _e('Existing links will be checked this often. New links will usually be checked ASAP.', 'broken-link-checker'); ?>
+                                            <?php _e('Existing links will be checked this often. New links will usually be checked ASAP.', 'link-checker'); ?>
                                         </span>
 
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('E-mail notifications', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('E-mail notifications', 'link-checker'); ?></th>
                                     <td>
                                         <p style="margin-top: 0;">
                                             <label for='send_email_notifications'>
@@ -1049,7 +1049,7 @@ class BrokenLinkChecker
                                                                                                                                             echo ' checked="checked"';
                                                                                                                                         }
                                                                                                                                         ?> />
-                                                <?php _e('Send me e-mail notifications about newly detected broken links', 'broken-link-checker'); ?>
+                                                <?php _e('Send me e-mail notifications about newly detected broken links', 'link-checker'); ?>
                                             </label><br />
                                         </p>
 
@@ -1060,27 +1060,27 @@ class BrokenLinkChecker
                                                                                                                                                             echo ' checked="checked"';
                                                                                                                                                         }
                                                                                                                                                         ?> />
-                                                <?php _e('Send authors e-mail notifications about broken links in their posts', 'broken-link-checker'); ?>
+                                                <?php _e('Send authors e-mail notifications about broken links in their posts', 'link-checker'); ?>
                                             </label><br />
                                         </p>
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Count bubbles', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Count bubbles', 'link-checker'); ?></th>
                                     <td>
                                         <p style="margin-top: 0;">
                                             <label for='show_link_count_bubble'>
 
                                                 <input type="checkbox" name="show_link_count_bubble" id="show_link_count_bubble" <?php checked($this->plugin_config->options['show_link_count_bubble'] ?? true); ?> />
-                                                <?php _e('Show a bubble with number of found broken links in the menu bar', 'broken-link-checker'); ?>
+                                                <?php _e('Show a bubble with number of found broken links in the menu bar', 'link-checker'); ?>
                                             </label><br />
                                         </p>
 
                                         <p>
                                             <label for='show_widget_count_bubble'>
                                                 <input type="checkbox" name="show_widget_count_bubble" id="show_widget_count_bubble" <?php checked($this->plugin_config->options['show_widget_count_bubble'] ?? true); ?> />
-                                                <?php _e('Show a bubble with number of found broken links in the dashboard widget', 'broken-link-checker'); ?>
+                                                <?php _e('Show a bubble with number of found broken links in the dashboard widget', 'link-checker'); ?>
                                             </label><br />
                                         </p>
                                     </td>
@@ -1089,21 +1089,21 @@ class BrokenLinkChecker
 
 
                                 <tr valign="top">
-                                    <th scope="row"><?php echo __('Notification e-mail address', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php echo __('Notification e-mail address', 'link-checker'); ?></th>
                                     <td>
                                         <p>
                                             <label>
                                                 <input type="text" name="notification_email_address" id="notification_email_address" value="<?php echo esc_attr($this->plugin_config->get('notification_email_address', '')); ?>" class="regular-text ltr">
                                             </label><br>
                                             <span class="description">
-                                                <?php echo __('Leave empty to use the e-mail address specified in Settings &rarr; General.', 'broken-link-checker'); ?>
+                                                <?php echo __('Leave empty to use the e-mail address specified in Settings &rarr; General.', 'link-checker'); ?>
                                             </span>
                                         </p>
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Link tweaks', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Link tweaks', 'link-checker'); ?></th>
                                     <td>
                                         <p style="margin-top: 0; margin-bottom: 0.5em;">
                                             <label for='mark_broken_links'>
@@ -1112,12 +1112,12 @@ class BrokenLinkChecker
                                                                                                                             echo ' checked="checked"';
                                                                                                                         }
                                                                                                                         ?> />
-                                                <?php _e('Apply custom formatting to broken links', 'broken-link-checker'); ?>
+                                                <?php _e('Apply custom formatting to broken links', 'link-checker'); ?>
                                             </label>
                                             |
                                             <a id="toggle-broken-link-css-editor" href="#" class="blc-toggle-link">
                                                 <?php
-                                                _e('Edit CSS', 'broken-link-checker');
+                                                _e('Edit CSS', 'link-checker');
                                                 ?>
                                             </a>
                                         </p>
@@ -1139,10 +1139,10 @@ class BrokenLinkChecker
                                             <p class="description">
                                                 <?php
                                                 printf(
-                                                    __('Example : Lorem ipsum <a %s>broken link</a>, dolor sit amet.', 'broken-link-checker'),
+                                                    __('Example : Lorem ipsum <a %s>broken link</a>, dolor sit amet.', 'link-checker'),
                                                     ' href="#" class="broken_link" onclick="return false;"'
                                                 );
-                                                echo ' ', __('Click "Save Changes" to update example output.', 'broken-link-checker');
+                                                echo ' ', __('Click "Save Changes" to update example output.', 'link-checker');
                                                 ?>
                                             </p>
                                         </div>
@@ -1154,12 +1154,12 @@ class BrokenLinkChecker
                                                                                                                                 echo ' checked="checked"';
                                                                                                                             }
                                                                                                                             ?> />
-                                                <?php _e('Apply custom formatting to removed links', 'broken-link-checker'); ?>
+                                                <?php _e('Apply custom formatting to removed links', 'link-checker'); ?>
                                             </label>
                                             |
                                             <a id="toggle-removed-link-css-editor" href="#" class="blc-toggle-link">
                                                 <?php
-                                                _e('Edit CSS', 'broken-link-checker');
+                                                _e('Edit CSS', 'link-checker');
                                                 ?>
                                             </a>
                                         </p>
@@ -1181,10 +1181,10 @@ class BrokenLinkChecker
                                             <p class="description">
                                                 <?php
                                                 printf(
-                                                    __('Example : Lorem ipsum <span %s>removed link</span>, dolor sit amet.', 'broken-link-checker'),
+                                                    __('Example : Lorem ipsum <span %s>removed link</span>, dolor sit amet.', 'link-checker'),
                                                     ' class="removed_link"'
                                                 );
-                                                echo ' ', __('Click "Save Changes" to update example output.', 'broken-link-checker');
+                                                echo ' ', __('Click "Save Changes" to update example output.', 'link-checker');
                                                 ?>
 
                                             </p>
@@ -1197,7 +1197,7 @@ class BrokenLinkChecker
                                                                                                                                     echo ' checked="checked"';
                                                                                                                                 }
                                                                                                                                 ?> />
-                                                <?php _e('Stop search engines from following broken links', 'broken-link-checker'); ?>
+                                                <?php _e('Stop search engines from following broken links', 'link-checker'); ?>
                                             </label>
                                         </p>
 
@@ -1206,7 +1206,7 @@ class BrokenLinkChecker
                                             echo _x(
                                                 'These settings only apply to the content of posts, not comments or custom fields.',
                                                 '"Link tweaks" settings',
-                                                'broken-link-checker'
+                                                'link-checker'
                                             );
                                             ?>
                                         </p>
@@ -1214,40 +1214,40 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php echo _x('Warnings', 'settings page', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php echo _x('Warnings', 'settings page', 'link-checker'); ?></th>
                                     <td id="blc_warning_settings">
                                         <label>
                                             <input type="checkbox" name="warnings_enabled" id="warnings_enabled" <?php checked($this->plugin_config->options['warnings_enabled']); ?> />
-                                            <?php _e('Show uncertain or minor problems as "warnings" instead of "broken"', 'broken-link-checker'); ?>
+                                            <?php _e('Show uncertain or minor problems as "warnings" instead of "broken"', 'link-checker'); ?>
                                         </label>
                                         <p class="description">
                                             <?php
-                                            _e('Turning off this option will make the plugin report all problems as broken links.', 'broken-link-checker');
+                                            _e('Turning off this option will make the plugin report all problems as broken links.', 'link-checker');
                                             ?>
                                         </p>
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php echo __('YouTube API Key', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php echo __('YouTube API Key', 'link-checker'); ?></th>
                                     <td>
                                         <p>
                                             <label>
                                                 <input type="text" name="youtube_api_key" id="youtube_api_key" value="<?php echo esc_html($this->plugin_config->options['youtube_api_key']); ?>" class="regular-text ltr">
                                             </label><br>
                                             <span class="description">
-                                                <?php printf(__('Use your own %1$sapi key%2$s for checking youtube links.', 'broken-link-checker'), '<a href="https://developers.google.com/youtube/v3/getting-started">', '</a>'); ?>
+                                                <?php printf(__('Use your own %1$sapi key%2$s for checking youtube links.', 'link-checker'), '<a href="https://developers.google.com/youtube/v3/getting-started">', '</a>'); ?>
                                             </span>
                                         </p>
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php echo esc_html__('Post Modified Date', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php echo esc_html__('Post Modified Date', 'link-checker'); ?></th>
                                     <td>
                                         <label>
                                             <input type="checkbox" name="blc_post_modified" id="blc_post_modified" <?php checked($this->plugin_config->options['blc_post_modified']); ?> />
-                                            <?php esc_html_e('Disable post modified date change when link is edited', 'broken-link-checker'); ?>
+                                            <?php esc_html_e('Disable post modified date change when link is edited', 'link-checker'); ?>
                                         </label>
                                     </td>
                                 </tr>
@@ -1262,7 +1262,7 @@ class BrokenLinkChecker
                             <table class="form-table">
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Look for links in', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Look for links in', 'link-checker'); ?></th>
                                     <td>
                                         <?php
                                         if (!empty($modules['container'])) {
@@ -1277,7 +1277,7 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Post statuses', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Post statuses', 'link-checker'); ?></th>
                                     <td>
                                         <?php
                                         $available_statuses = get_post_stati(array('internal' => false), 'objects');
@@ -1311,21 +1311,21 @@ class BrokenLinkChecker
                             <table class="form-table">
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Link types', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Link types', 'link-checker'); ?></th>
                                     <td>
                                         <?php
                                         if (!empty($modules['parser'])) {
                                             $this->print_module_list($modules['parser'], $this->plugin_config->options);
                                         } else {
-                                            echo __('Error : All link parsers missing!', 'broken-link-checker');
+                                            echo __('Error : All link parsers missing!', 'link-checker');
                                         }
                                         ?>
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Exclusion list', 'broken-link-checker'); ?></th>
-                                    <td><?php _e("Don't check links where the URL contains any of these words (one per line) :", 'broken-link-checker'); ?>
+                                    <th scope="row"><?php _e('Exclusion list', 'link-checker'); ?></th>
+                                    <td><?php _e("Don't check links where the URL contains any of these words (one per line) :", 'link-checker'); ?>
                                         <br />
                                         <?php
                                         if (isset($this->plugin_config->options['exclusion_list'])) {
@@ -1348,7 +1348,7 @@ class BrokenLinkChecker
                             <table class="form-table">
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Check links using', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Check links using', 'link-checker'); ?></th>
                                     <td>
                                         <?php
                                         if (!empty($modules['checker'])) {
@@ -1368,13 +1368,13 @@ class BrokenLinkChecker
                             <table class="form-table">
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Timeout', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Timeout', 'link-checker'); ?></th>
                                     <td>
 
                                         <?php
 
                                         printf(
-                                            __('%s seconds', 'broken-link-checker'),
+                                            __('%s seconds', 'link-checker'),
                                             sprintf(
                                                 '<input type="text" name="timeout" id="blc_timeout" value="%d" size="5" maxlength="3" />',
                                                 $this->plugin_config->options['timeout']
@@ -1383,14 +1383,14 @@ class BrokenLinkChecker
 
                                         ?>
                                         <br /><span class="description">
-                                            <?php _e('Links that take longer than this to load will be marked as broken.', 'broken-link-checker'); ?>
+                                            <?php _e('Links that take longer than this to load will be marked as broken.', 'link-checker'); ?>
                                         </span>
 
                                     </td>
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Link monitor', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Link monitor', 'link-checker'); ?></th>
                                     <td>
 
                                         <p>
@@ -1401,7 +1401,7 @@ class BrokenLinkChecker
                                                                                                                             echo ' checked="checked"';
                                                                                                                         }
                                                                                                                         ?> />
-                                                <?php _e('Run continuously while the Dashboard is open', 'broken-link-checker'); ?>
+                                                <?php _e('Run continuously while the Dashboard is open', 'link-checker'); ?>
                                             </label>
                                         </p>
 
@@ -1412,7 +1412,7 @@ class BrokenLinkChecker
                                                                                                                     echo ' checked="checked"';
                                                                                                                 }
                                                                                                                 ?> />
-                                                <?php _e('Run hourly in the background', 'broken-link-checker'); ?>
+                                                <?php _e('Run hourly in the background', 'link-checker'); ?>
                                             </label>
                                         </p>
 
@@ -1420,14 +1420,14 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Show the dashboard widget for', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Show the dashboard widget for', 'link-checker'); ?></th>
                                     <td>
 
                                         <?php
                                         $widget_caps = array(
-                                            _x('Administrator', 'dashboard widget visibility', 'broken-link-checker')                => 'manage_options',
-                                            _x('Editor and above', 'dashboard widget visibility', 'broken-link-checker')             => 'edit_others_posts',
-                                            _x('Nobody (disables the widget)', 'dashboard widget visibility', 'broken-link-checker') => 'do_not_allow',
+                                            _x('Administrator', 'dashboard widget visibility', 'link-checker')                => 'manage_options',
+                                            _x('Editor and above', 'dashboard widget visibility', 'link-checker')             => 'edit_others_posts',
+                                            _x('Nobody (disables the widget)', 'dashboard widget visibility', 'link-checker') => 'do_not_allow',
                                         );
 
                                         foreach ($widget_caps as $title => $capability) {
@@ -1443,7 +1443,7 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php echo _x('Show link actions', 'settings page', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php echo _x('Show link actions', 'settings page', 'link-checker'); ?></th>
                                     <td>
                                         <?php
                                         $show_link_actions = $this->plugin_config->get('show_link_actions', array());
@@ -1461,13 +1461,13 @@ class BrokenLinkChecker
                                 </tr>
                                 <?php if (!Utility::is_host_wp_engine() && !Utility::is_host_flywheel()) : ?>
                                     <tr valign="top">
-                                        <th scope="row"><?php _e('Max. execution time', 'broken-link-checker'); ?></th>
+                                        <th scope="row"><?php _e('Max. execution time', 'link-checker'); ?></th>
                                         <td>
 
                                             <?php
 
                                             printf(
-                                                __('%s seconds', 'broken-link-checker'),
+                                                __('%s seconds', 'link-checker'),
                                                 sprintf(
                                                     '<input type="text" name="max_execution_time" id="max_execution_time" value="%d" size="5" maxlength="5" />',
                                                     $this->max_execution_time_option()
@@ -1478,7 +1478,7 @@ class BrokenLinkChecker
                                             <br /><span class="description">
                                                 <?php
 
-                                                _e('The plugin works by periodically launching a background job that parses your posts for links, checks the discovered URLs, and performs other time-consuming tasks. Here you can set for how long, at most, the link monitor may run each time before stopping.', 'broken-link-checker');
+                                                _e('The plugin works by periodically launching a background job that parses your posts for links, checks the discovered URLs, and performs other time-consuming tasks. Here you can set for how long, at most, the link monitor may run each time before stopping.', 'link-checker');
 
                                                 ?>
                                             </span>
@@ -1487,7 +1487,7 @@ class BrokenLinkChecker
                                     </tr>
                                 <?php endif; ?>
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Server load limit', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Server load limit', 'link-checker'); ?></th>
                                     <td>
                                         <?php
 
@@ -1502,22 +1502,22 @@ class BrokenLinkChecker
                                             );
 
                                             printf(
-                                                __('Current load : %s', 'broken-link-checker'),
+                                                __('Current load : %s', 'link-checker'),
                                                 '<span id="wsblc_current_load">...</span>'
                                             );
                                             echo '<br/><span class="description">';
                                             printf(
                                                 __(
                                                     'Link checking will be suspended if the average <a href="%s">server load</a> rises above this number. Leave this field blank to disable load limiting.',
-                                                    'broken-link-checker'
+                                                    'link-checker'
                                                 ),
                                                 'http://en.wikipedia.org/wiki/Load_(computing)'
                                             );
                                             echo '</span>';
                                         } else {
-                                            echo '<input type="text" disabled="disabled" value="', esc_attr(__('Not available', 'broken-link-checker')), '" size="13"/><br>';
+                                            echo '<input type="text" disabled="disabled" value="', esc_attr(__('Not available', 'link-checker')), '" size="13"/><br>';
                                             echo '<span class="description">';
-                                            _e('Load limiting only works on Linux-like systems where <code>/proc/loadavg</code> is present and accessible.', 'broken-link-checker');
+                                            _e('Load limiting only works on Linux-like systems where <code>/proc/loadavg</code> is present and accessible.', 'link-checker');
                                             echo '</span>';
                                         }
                                         ?>
@@ -1525,7 +1525,7 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Target resource usage', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Target resource usage', 'link-checker'); ?></th>
                                     <td>
                                         <?php
                                         $target_resource_usage = $this->plugin_config->get('target_resource_usage', 0.25);
@@ -1545,25 +1545,25 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Logging', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Logging', 'link-checker'); ?></th>
                                     <td>
                                         <p>
                                             <label for='logging_enabled'>
                                                 <input type="checkbox" name="logging_enabled" id="logging_enabled" <?php checked($this->plugin_config->options['logging_enabled']); ?> />
-                                                <?php _e('Enable logging', 'broken-link-checker'); ?>
+                                                <?php _e('Enable logging', 'link-checker'); ?>
                                             </label>
                                         </p>
                                     </td>
                                 </tr>
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Log file location', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Log file location', 'link-checker'); ?></th>
                                     <td>
                                         <div class="blc-logging-options">
                                             <p>
                                                 <input type="text" name="log_file" id="log_file" size="90" value="<?php echo esc_attr($this->plugin_config->options['log_file']); ?>">
                                                 <br /><span class="description">
                                                     <?php
-                                                    _e('Leave blank for default location: ', 'broken-link-checker');
+                                                    _e('Leave blank for default location: ', 'link-checker');
                                                     echo ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_log_basename();
                                                     ?>
                                                 </span>
@@ -1572,7 +1572,7 @@ class BrokenLinkChecker
                                     </td>
                                 </tr>
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Log file clear schedule', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Log file clear schedule', 'link-checker'); ?></th>
                                     <td>
                                         <div class="blc-logging-options">
                                             <p>
@@ -1599,12 +1599,12 @@ class BrokenLinkChecker
                                 </tr>
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Cookies', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Cookies', 'link-checker'); ?></th>
                                     <td>
                                         <p>
                                             <label for='cookies_enabled'>
                                                 <input type="checkbox" name="cookies_enabled" id="cookies_enabled" <?php checked($this->plugin_config->options['cookies_enabled']); ?> />
-                                                <?php _e('Enable Cookies', 'broken-link-checker'); ?>
+                                                <?php _e('Enable Cookies', 'link-checker'); ?>
                                             </label>
                                         </p>
                                     </td>
@@ -1612,7 +1612,7 @@ class BrokenLinkChecker
 
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Cookie file location', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Cookie file location', 'link-checker'); ?></th>
                                     <td>
 
                                         <div class="blc-cookie-options">
@@ -1620,7 +1620,7 @@ class BrokenLinkChecker
                                                 <input type="text" name="cookie_jar" id="cookie_jar" size="90" value="<?php echo esc_attr($this->plugin_config->options['cookie_jar']); ?>">
                                                 <br /><span class="description">
                                                     <?php
-                                                    _e('Leave blank for default location: ', 'broken-link-checker');
+                                                    _e('Leave blank for default location: ', 'link-checker');
                                                     echo ConfigurationManager::get_default_log_directory() . '/' . ConfigurationManager::get_default_cookie_basename();
                                                     ?>
                                                 </span>
@@ -1631,14 +1631,14 @@ class BrokenLinkChecker
 
 
                                 <tr valign="top">
-                                    <th scope="row"><?php _e('Forced recheck', 'broken-link-checker'); ?></th>
+                                    <th scope="row"><?php _e('Forced recheck', 'link-checker'); ?></th>
                                     <td>
-                                        <input class="button" type="button" name="start-recheck" id="start-recheck" value="<?php _e('Re-check all pages', 'broken-link-checker'); ?>" />
+                                        <input class="button" type="button" name="start-recheck" id="start-recheck" value="<?php _e('Re-check all pages', 'link-checker'); ?>" />
                                         <input type="hidden" name="recheck" value="" id="recheck" />
                                         <br />
                                         <span class="description">
                                             <?php
-                                            _e('The "Nuclear Option". Click this button to make the plugin empty its link database and recheck the entire site from scratch.', 'broken-link-checker');
+                                            _e('The "Nuclear Option". Click this button to make the plugin empty its link database and recheck the entire site from scratch.', 'link-checker');
 
                                             ?>
                                         </span>
@@ -1728,7 +1728,7 @@ class BrokenLinkChecker
                 printf(
                     ' | <a class="blc-toggle-link toggle-module-settings" id="toggle-module-settings-%s" href="#">%s</a>',
                     esc_attr($module_id),
-                    __('Configure', 'broken-link-checker')
+                    __('Configure', 'link-checker')
                 );
 
                 // The plugin remembers the last open/closed state of module configuration boxes
@@ -1828,7 +1828,7 @@ class BrokenLinkChecker
         $html .= '<span class="description">' .
             __(
                 'Enter the names of custom fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_name</code>.',
-                'broken-link-checker'
+                'link-checker'
             ) .
             '</span>';
         $html .= '<br><textarea name="blc_custom_fields" id="blc_custom_fields" cols="45" rows="4">';
@@ -1842,7 +1842,7 @@ class BrokenLinkChecker
 
     function make_acf_field_input($html, $current_settings)
     {
-        $html .= '<span class="description">' . __('Enter the keys of acf fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_586a3eaa4091b</code>.', 'broken-link-checker') . '</span>';
+        $html .= '<span class="description">' . __('Enter the keys of acf fields you want to check (one per line). If a field contains HTML code, prefix its name with <code>html:</code>. For example, <code>html:field_586a3eaa4091b</code>.', 'link-checker') . '</span>';
         $html .= '<br><textarea name="blc_acf_fields" id="blc_acf_fields" cols="45" rows="4">';
         if (isset($current_settings['acf_fields'])) {
             $html .= esc_textarea(implode("\n", $current_settings['acf_fields']));
@@ -1986,7 +1986,7 @@ class BrokenLinkChecker
 
         // Error?
         if (empty($current_filter['links']) && !empty($wpdb->last_error)) {
-            printf(__('Database error : %s', 'broken-link-checker'), $wpdb->last_error);
+            printf(__('Database error : %s', 'link-checker'), $wpdb->last_error);
         }
     ?>
 
@@ -2053,11 +2053,11 @@ class BrokenLinkChecker
 
         // Filter name must be set
         if (empty($_POST['name'])) {
-            $message   = __('You must enter a filter name!', 'broken-link-checker');
+            $message   = __('You must enter a filter name!', 'link-checker');
             $msg_class = 'error';
             // Filter parameters (a search query) must also be set
         } elseif (empty($_POST['params'])) {
-            $message   = __('Invalid search query.', 'broken-link-checker');
+            $message   = __('Invalid search query.', 'link-checker');
             $msg_class = 'error';
         } else {
             // Save the new filter
@@ -2067,12 +2067,12 @@ class BrokenLinkChecker
 
             if ($filter_id) {
                 // Saved
-                $message = sprintf(__('Filter "%s" created', 'broken-link-checker'), $name);
+                $message = sprintf(__('Filter "%s" created', 'link-checker'), $name);
                 // A little hack to make the filter active immediately
                 $_GET['filter_id'] = $filter_id;
             } else {
                 // Error
-                $message   = sprintf(__('Database error : %s', 'broken-link-checker'), $wpdb->last_error);
+                $message   = sprintf(__('Database error : %s', 'link-checker'), $wpdb->last_error);
                 $msg_class = 'error';
             }
         }
@@ -2094,17 +2094,17 @@ class BrokenLinkChecker
 
         // Filter ID must be set
         if (empty($_POST['filter_id'])) {
-            $message   = __('Filter ID not specified.', 'broken-link-checker');
+            $message   = __('Filter ID not specified.', 'link-checker');
             $msg_class = 'error';
         } else {
             // Try to delete the filter
             $blc_link_query = LinkQuery::getInstance();
             if ($blc_link_query->delete_custom_filter()) {
                 // Success
-                $message = __('Filter deleted', 'broken-link-checker');
+                $message = __('Filter deleted', 'link-checker');
             } else {
                 // Either the ID is wrong or there was some other error
-                $message   = __('Database error : %s', 'broken-link-checker');
+                $message   = __('Database error : %s', 'link-checker');
                 $msg_class = 'error';
             }
         }
@@ -2156,7 +2156,7 @@ class BrokenLinkChecker
                         'Replaced %d redirect with a direct link',
                         'Replaced %d redirects with direct links',
                         $processed_links,
-                        'broken-link-checker'
+                        'link-checker'
                     ),
                     $processed_links
                 );
@@ -2167,14 +2167,14 @@ class BrokenLinkChecker
                             'Failed to fix %d redirect',
                             'Failed to fix %d redirects',
                             $failed_links,
-                            'broken-link-checker'
+                            'link-checker'
                         ),
                         $failed_links
                     );
                     $msg_class = 'error';
                 }
             } else {
-                $message = __('None of the selected links are redirects!', 'broken-link-checker');
+                $message = __('None of the selected links are redirects!', 'link-checker');
             }
         }
 
@@ -2265,7 +2265,7 @@ class BrokenLinkChecker
                         '%d link updated.',
                         '%d links updated.',
                         $processed_links,
-                        'broken-link-checker'
+                        'link-checker'
                     ),
                     $processed_links
                 );
@@ -2276,7 +2276,7 @@ class BrokenLinkChecker
                             'Failed to update %d link.',
                             'Failed to update %d links.',
                             $failed_links,
-                            'broken-link-checker'
+                            'link-checker'
                         ),
                         $failed_links
                     );
@@ -2368,7 +2368,7 @@ class BrokenLinkChecker
                         '%d link removed',
                         '%d links removed',
                         $processed_links,
-                        'broken-link-checker'
+                        'link-checker'
                     ),
                     $processed_links
                 );
@@ -2379,7 +2379,7 @@ class BrokenLinkChecker
                             'Failed to remove %d link',
                             'Failed to remove %d links',
                             $failed_links,
-                            'broken-link-checker'
+                            'link-checker'
                         ),
                         $failed_links
                     );
@@ -2429,7 +2429,7 @@ class BrokenLinkChecker
                     '%d link scheduled for rechecking',
                     '%d links scheduled for rechecking',
                     $changes,
-                    'broken-link-checker'
+                    'link-checker'
                 ),
                 $changes
             );
@@ -2477,7 +2477,7 @@ class BrokenLinkChecker
                 $link->warning            = false;
                 $link->false_positive     = true;
                 $link->last_check_attempt = time();
-                $link->log                = __('This link was manually marked as working by the user.', 'broken-link-checker');
+                $link->log                = __('This link was manually marked as working by the user.', 'link-checker');
 
                 $link->isOptionLinkChanged = true;
                 // Save the changes
@@ -2485,7 +2485,7 @@ class BrokenLinkChecker
                     ++$processed_links;
                 } else {
                     $messages[] = sprintf(
-                        __("Couldn't modify link %d", 'broken-link-checker'),
+                        __("Couldn't modify link %d", 'link-checker'),
                         $link_id
                     );
                     $msg_class  = 'error';
@@ -2500,7 +2500,7 @@ class BrokenLinkChecker
                         '%d link marked as not broken',
                         '%d links marked as not broken',
                         $processed_links,
-                        'broken-link-checker'
+                        'link-checker'
                     ),
                     $processed_links
                 );
@@ -2556,7 +2556,7 @@ class BrokenLinkChecker
                     ++$processed_links;
                 } else {
                     $messages[] = sprintf(
-                        __("Couldn't modify link %d", 'broken-link-checker'),
+                        __("Couldn't modify link %d", 'link-checker'),
                         $link_id
                     );
                     $msg_class  = 'error';
@@ -2571,7 +2571,7 @@ class BrokenLinkChecker
                         '%d link dismissed',
                         '%d links dismissed',
                         $processed_links,
-                        'broken-link-checker'
+                        'link-checker'
                     ),
                     $processed_links
                 );
@@ -2633,19 +2633,19 @@ class BrokenLinkChecker
 					</div>',
             __(
                 'The "Warnings" page lists problems that are probably temporary or suspected to be false positives.<br> Warnings that persist for a long time will usually be reclassified as broken links.',
-                'broken-link-checker'
+                'link-checker'
             ),
             esc_attr(add_query_arg($notice_name, '0')),
             _x(
                 'Hide notice',
                 'admin notice under Tools - Broken links - Warnings',
-                'broken-link-checker'
+                'link-checker'
             ),
             esc_attr(admin_url('admin.php?page=link-checker-settings#blc_warning_settings')),
             _x(
                 'Change warning settings',
                 'a link from the admin notice under Tools - Broken links - Warnings',
-                'broken-link-checker'
+                'link-checker'
             )
         );
     }
@@ -2668,7 +2668,7 @@ class BrokenLinkChecker
         }
 
         // Let the user show/hide individual table columns
-        $html = '<h5>' . __('Table columns', 'broken-link-checker') . '</h5>';
+        $html = '<h5>' . __('Table columns', 'link-checker') . '</h5>';
 
 
         $table             = new TablePrinter($this);
@@ -2687,19 +2687,19 @@ class BrokenLinkChecker
 
         $html .= '</div>';
 
-        $html .= '<h5>' . __('Show on screen', 'broken-link-checker') . '</h5>';
+        $html .= '<h5>' . __('Show on screen', 'link-checker') . '</h5>';
         $html .= '<div class="screen-options">';
         $html .= sprintf(
             '<input type="text" name="per_page" maxlength="3" value="%d" class="screen-per-page" id="blc_links_per_page" />
 				<label for="blc_links_per_page">%s</label>
 				<input type="button" class="button" value="%s" id="blc-per-page-apply-button" /><br />',
             $this->plugin_config->options['table_links_per_page'],
-            __('links', 'broken-link-checker'),
+            __('links', 'link-checker'),
             __('Apply')
         );
         $html .= '</div>';
 
-        $html .= '<h5>' . __('Misc', 'broken-link-checker') . '</h5>';
+        $html .= '<h5>' . __('Misc', 'link-checker') . '</h5>';
         $html .= '<div class="screen-options">';
         /*
             Display a checkbox in "Screen Options" that lets the user highlight links that
@@ -2714,7 +2714,7 @@ class BrokenLinkChecker
             $this->plugin_config->options['failure_duration_threshold']
         );
         $html     .= sprintf(
-            __('Highlight links broken for at least %s days', 'broken-link-checker'),
+            __('Highlight links broken for at least %s days', 'link-checker'),
             $input_box
         );
         $html     .= '</label>';
@@ -2723,7 +2723,7 @@ class BrokenLinkChecker
         $html .= sprintf(
             '<br/><label><input type="checkbox" id="table_color_code_status" name="table_color_code_status"%s> %s</label>',
             $this->plugin_config->options['table_color_code_status'] ? ' checked="checked"' : '',
-            __('Color-code status codes', 'broken-link-checker')
+            __('Color-code status codes', 'link-checker')
         );
 
         $html .= '</div>';
@@ -2743,7 +2743,7 @@ class BrokenLinkChecker
         if (!current_user_can('edit_others_posts')) {
             die(json_encode(
                 array(
-                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    'error' => __("You're not allowed to do that!", 'link-checker'),
                 )
             ));
         }
@@ -2791,7 +2791,7 @@ class BrokenLinkChecker
         if (session_id() != '') {
             session_write_close();
         }
-
+  
         if (!$this->acquire_lock()) {
             // FB::warn("Another instance of BLC is already working. Stop.");
             $blclog->info('Another instance of BLC is already working. Stop.');
@@ -2869,7 +2869,7 @@ class BrokenLinkChecker
 
         $orphans_possible   = false;
         $still_need_resynch = $this->plugin_config->options['need_resynch'];
-       
+
         if ($still_need_resynch) {
 
             $start               = microtime(true);
@@ -2895,6 +2895,7 @@ class BrokenLinkChecker
 
                 foreach ($containers as $container) {
                     $synch_start_time = microtime(true);
+                   
 
                     // FB::log($container, "Parsing container");
                     $container->synch();
@@ -3233,7 +3234,7 @@ class BrokenLinkChecker
             wp_die(
                 json_encode(
                     array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                        'error' => __("You're not allowed to do that!", 'link-checker'),
                     )
                 ),
                 403
@@ -3266,55 +3267,55 @@ class BrokenLinkChecker
 
         if ($status['broken_links'] > 0) {
             $text .= sprintf(
-                "<a href='%s' title='" . __('View broken links', 'broken-link-checker') . "'><strong>" .
-                    _n('Found %d broken link', 'Found %d broken links', $status['broken_links'], 'broken-link-checker') .
+                "<a href='%s' title='" . __('View broken links', 'link-checker') . "'><strong>" .
+                    _n('Found %d broken link', 'Found %d broken links', $status['broken_links'], 'link-checker') .
                     '</strong></a>',
                 esc_attr(admin_url('admin.php?page=blc_local')),
                 $status['broken_links']
             );
         } else {
-            $text .= __('No broken links found.', 'broken-link-checker');
+            $text .= __('No broken links found.', 'link-checker');
         }
 
         $text .= '<br/>';
 
         if ($status['unchecked_links'] > 0) {
             $text .= sprintf(
-                _n('%d URL in the work queue', '%d URLs in the work queue', $status['unchecked_links'], 'broken-link-checker'),
+                _n('%d URL in the work queue', '%d URLs in the work queue', $status['unchecked_links'], 'link-checker'),
                 $status['unchecked_links']
             );
         } else {
-            $text .= __('No URLs in the work queue.', 'broken-link-checker');
+            $text .= __('No URLs in the work queue.', 'link-checker');
         }
 
         $text .= '<br/>';
         if ($status['known_links'] > 0) {
             $url_count  = sprintf(
-                _nx('%d unique URL', '%d unique URLs', $status['known_links'], 'for the "Detected X unique URLs in Y links" message', 'broken-link-checker'),
+                _nx('%d unique URL', '%d unique URLs', $status['known_links'], 'for the "Detected X unique URLs in Y links" message', 'link-checker'),
                 $status['known_links']
             );
             $link_count = sprintf(
-                _nx('%d link', '%d links', $status['known_instances'], 'for the "Detected X unique URLs in Y links" message', 'broken-link-checker'),
+                _nx('%d link', '%d links', $status['known_instances'], 'for the "Detected X unique URLs in Y links" message', 'link-checker'),
                 $status['known_instances']
             );
 
             if ($this->plugin_config->options['need_resynch']) {
                 $text .= sprintf(
-                    __('Detected %1$s in %2$s and still searching...', 'broken-link-checker'),
+                    __('Detected %1$s in %2$s and still searching...', 'link-checker'),
                     $url_count,
                     $link_count
                 );
             } else {
                 $text .= sprintf(
-                    __('Detected %1$s in %2$s.', 'broken-link-checker'),
+                    __('Detected %1$s in %2$s.', 'link-checker'),
                     $url_count,
                     $link_count
                 );
             }
         } elseif ($this->plugin_config->options['need_resynch']) {
-            $text .= __('Searching your blog for links...', 'broken-link-checker');
+            $text .= __('Searching your blog for links...', 'link-checker');
         } else {
-            $text .= __('No links detected.', 'broken-link-checker');
+            $text .= __('No links detected.', 'link-checker');
         }
 
         return $text;
@@ -3335,7 +3336,7 @@ class BrokenLinkChecker
             wp_die(
                 json_encode(
                     array(
-                        'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                        'error' => __("You're not allowed to do that!", 'link-checker'),
                     )
                 ),
                 403
@@ -3344,7 +3345,7 @@ class BrokenLinkChecker
 
         $load = Utility::get_server_load();
         if (empty($load)) {
-            die(_x('Unknown', 'current load', 'broken-link-checker'));
+            die(_x('Unknown', 'current load', 'link-checker'));
         }
 
         $one_minute = reset($load);
@@ -3388,12 +3389,18 @@ class BrokenLinkChecker
         );
     }
 
+     function test()
+    {   
+        $this->work();
+        die();
+    }
+
     function ajax_work()
     {
 
 
         if (! current_user_can('edit_others_posts') || ! check_ajax_referer('blc_work', false, false)) {  //2.4.6
-            die(__("You're not allowed to do that!", 'broken-link-checker'));
+            die(__("You're not allowed to do that!", 'link-checker'));
         }
 
         // Run the worker function
@@ -3409,7 +3416,7 @@ class BrokenLinkChecker
     function ajax_discard()
     {
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_discard', false, false)) {
-            die(__("You're not allowed to do that!", 'broken-link-checker'));
+            die(__("You're not allowed to do that!", 'link-checker'));
         }
 
         if (isset($_POST['link_id'])) {
@@ -3417,7 +3424,7 @@ class BrokenLinkChecker
             $link = new Link(intval($_POST['link_id']));
 
             if (!$link->valid()) {
-                printf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id']));
+                printf(__("Oops, I can't find the link %d", 'link-checker'), intval($_POST['link_id']));
                 die();
             }
             // Make it appear "not broken"
@@ -3425,7 +3432,7 @@ class BrokenLinkChecker
             $link->warning            = false;
             $link->false_positive     = true;
             $link->last_check_attempt = time();
-            $link->log                = __('This link was manually marked as working by the user.', 'broken-link-checker');
+            $link->log                = __('This link was manually marked as working by the user.', 'link-checker');
 
             $link->isOptionLinkChanged = true;
 
@@ -3437,10 +3444,10 @@ class BrokenLinkChecker
                 $transactionManager->commit();
                 die('OK');
             } else {
-                die(__("Oops, couldn't modify the link!", 'broken-link-checker'));
+                die(__("Oops, couldn't modify the link!", 'link-checker'));
             }
         } else {
-            die(__('Error : link_id not specified', 'broken-link-checker'));
+            die(__('Error : link_id not specified', 'link-checker'));
         }
     }
 
@@ -3459,7 +3466,7 @@ class BrokenLinkChecker
         $action = $dismiss ? 'blc_dismiss' : 'blc_undismiss';
 
         if (!current_user_can('edit_others_posts') || !check_ajax_referer($action, false, false)) {
-            die(__("You're not allowed to do that!", 'broken-link-checker'));
+            die(__("You're not allowed to do that!", 'link-checker'));
         }
 
         if (isset($_POST['link_id'])) {
@@ -3467,7 +3474,7 @@ class BrokenLinkChecker
             $link = new Link(intval($_POST['link_id']));
 
             if (!$link->valid()) {
-                printf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id']));
+                printf(__("Oops, I can't find the link %d", 'link-checker'), intval($_POST['link_id']));
                 die();
             }
 
@@ -3481,10 +3488,10 @@ class BrokenLinkChecker
                 $transactionManager->commit();
                 die('OK');
             } else {
-                die(__("Oops, couldn't modify the link!", 'broken-link-checker'));
+                die(__("Oops, couldn't modify the link!", 'link-checker'));
             }
         } else {
-            die(__('Error : link_id not specified', 'broken-link-checker'));
+            die(__('Error : link_id not specified', 'link-checker'));
         }
     }
 
@@ -3498,7 +3505,7 @@ class BrokenLinkChecker
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_edit', false, false)) {
             die(json_encode(
                 array(
-                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    'error' => __("You're not allowed to do that!", 'link-checker'),
                 )
             ));
         }
@@ -3506,7 +3513,7 @@ class BrokenLinkChecker
         if (empty($_POST['link_id']) || empty($_POST['new_url']) || !is_numeric($_POST['link_id'])) {
             die(json_encode(
                 array(
-                    'error' => __('Error : link_id or new_url not specified', 'broken-link-checker'),
+                    'error' => __('Error : link_id or new_url not specified', 'link-checker'),
                 )
             ));
         }
@@ -3517,7 +3524,7 @@ class BrokenLinkChecker
         if (!$link->valid()) {
             die(json_encode(
                 array(
-                    'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id'])),
+                    'error' => sprintf(__("Oops, I can't find the link %d", 'link-checker'), intval($_POST['link_id'])),
                 )
             ));
         }
@@ -3528,7 +3535,7 @@ class BrokenLinkChecker
         if (!$parsed) {
             die(json_encode(
                 array(
-                    'error' => __('Oops, the new URL is invalid!', 'broken-link-checker'),
+                    'error' => __('Oops, the new URL is invalid!', 'link-checker'),
                 )
             ));
         }
@@ -3540,7 +3547,7 @@ class BrokenLinkChecker
             if ($new_url != $good_protocol_url) {
                 die(json_encode(
                     array(
-                        'error' => __('Oops, the new URL is invalid!', 'broken-link-checker'),
+                        'error' => __('Oops, the new URL is invalid!', 'link-checker'),
                     )
                 ));
             }
@@ -3558,7 +3565,7 @@ class BrokenLinkChecker
         if (false === $rez) {
             die(json_encode(
                 array(
-                    'error' => __('An unexpected error occurred!', 'broken-link-checker'),
+                    'error' => __('An unexpected error occurred!', 'link-checker'),
                 )
             ));
         } else {
@@ -3613,7 +3620,7 @@ class BrokenLinkChecker
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_unlink', false, false)) {
             die(json_encode(
                 array(
-                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    'error' => __("You're not allowed to do that!", 'link-checker'),
                 )
             ));
         }
@@ -3625,7 +3632,7 @@ class BrokenLinkChecker
             if (!$link->valid()) {
                 die(json_encode(
                     array(
-                        'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), intval($_POST['link_id'])),
+                        'error' => sprintf(__("Oops, I can't find the link %d", 'link-checker'), intval($_POST['link_id'])),
                     )
                 ));
             }
@@ -3636,7 +3643,7 @@ class BrokenLinkChecker
             if (false === $rez) {
                 die(json_encode(
                     array(
-                        'error' => __('An unexpected error occured!', 'broken-link-checker'),
+                        'error' => __('An unexpected error occured!', 'link-checker'),
                     )
                 ));
             } else {
@@ -3655,7 +3662,7 @@ class BrokenLinkChecker
         } else {
             die(json_encode(
                 array(
-                    'error' => __('Error : link_id not specified', 'broken-link-checker'),
+                    'error' => __('Error : link_id not specified', 'link-checker'),
                 )
             ));
         }
@@ -3666,7 +3673,7 @@ class BrokenLinkChecker
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_deredirect', false, false)) {
             die(json_encode(
                 array(
-                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    'error' => __("You're not allowed to do that!", 'link-checker'),
                 )
             ));
         }
@@ -3674,7 +3681,7 @@ class BrokenLinkChecker
         if (!isset($_POST['link_id']) || !is_numeric($_POST['link_id'])) {
             die(json_encode(
                 array(
-                    'error' => __('Error : link_id not specified', 'broken-link-checker'),
+                    'error' => __('Error : link_id not specified', 'link-checker'),
                 )
             ));
         }
@@ -3685,7 +3692,7 @@ class BrokenLinkChecker
         if (!$link->valid()) {
             die(json_encode(
                 array(
-                    'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), $id),
+                    'error' => sprintf(__("Oops, I can't find the link %d", 'link-checker'), $id),
                 )
             ));
         }
@@ -3739,7 +3746,7 @@ class BrokenLinkChecker
         if (!current_user_can('edit_others_posts') || !check_ajax_referer('blc_recheck', false, false)) {
             die(json_encode(
                 array(
-                    'error' => __("You're not allowed to do that!", 'broken-link-checker'),
+                    'error' => __("You're not allowed to do that!", 'link-checker'),
                 )
             ));
         }
@@ -3747,7 +3754,7 @@ class BrokenLinkChecker
         if (!isset($_POST['link_id']) || !is_numeric($_POST['link_id'])) {
             die(json_encode(
                 array(
-                    'error' => __('Error : link_id not specified', 'broken-link-checker'),
+                    'error' => __('Error : link_id not specified', 'link-checker'),
                 )
             ));
         }
@@ -3758,7 +3765,7 @@ class BrokenLinkChecker
         if (!$link->valid()) {
             die(json_encode(
                 array(
-                    'error' => sprintf(__("Oops, I can't find the link %d", 'broken-link-checker'), $id),
+                    'error' => sprintf(__("Oops, I can't find the link %d", 'link-checker'), $id),
                 )
             ));
         }
@@ -3796,7 +3803,7 @@ class BrokenLinkChecker
         /* @var wpdb $wpdb */
 
         if (!current_user_can('edit_others_posts')) {
-            die(__("You don't have sufficient privileges to access this information!", 'broken-link-checker'));
+            die(__("You don't have sufficient privileges to access this information!", 'link-checker'));
         }
 
         // FB::log("Loading link details via AJAX");
@@ -3809,7 +3816,7 @@ class BrokenLinkChecker
             $link_id = intval($_POST['link_id']);
         } else {
             // FB::error('Link ID not specified, you hacking bastard.');
-            die(__('Error : link ID not specified', 'broken-link-checker'));
+            die(__('Error : link ID not specified', 'link-checker'));
         }
 
         // Load the link.
@@ -3820,7 +3827,7 @@ class BrokenLinkChecker
             TablePrinter::details_row_contents($link);
             die();
         } else {
-            printf(__('Failed to load link details (%s)', 'broken-link-checker'), $wpdb->last_error);
+            printf(__('Failed to load link details (%s)', 'link-checker'), $wpdb->last_error);
             die();
         }
     }
@@ -3876,7 +3883,7 @@ class BrokenLinkChecker
     {
         $show_widget = current_user_can($this->plugin_config->get('dashboard_widget_capability', 'edit_others_posts'));
         if (function_exists('wp_add_dashboard_widget') && $show_widget) {
-            $title = __('Broken Link Checker', 'broken-link-checker');
+            $title = __('Broken Link Checker', 'link-checker');
             if ($this->plugin_config->options['show_widget_count_bubble'] ?? true) {
                 $title .= ' <span class="blc-broken-count"></span>';
             }
@@ -3904,13 +3911,13 @@ class BrokenLinkChecker
         $debug = array();
 
         // PHP version. Any one is fine as long as WP supports it.
-        $debug[__('PHP version', 'broken-link-checker')] = array(
+        $debug[__('PHP version', 'link-checker')] = array(
             'state' => 'ok',
             'value' => phpversion(),
         );
 
         // MySQL version
-        $debug[__('MySQL version', 'broken-link-checker')] = array(
+        $debug[__('MySQL version', 'link-checker')] = array(
             'state' => 'ok',
             'value' => $wpdb->db_version(),
         );
@@ -3923,7 +3930,7 @@ class BrokenLinkChecker
                 $data = array(
                     'state'   => 'warning',
                     'value'   => $version['version'],
-                    'message' => __('You have an old version of CURL. Redirect detection may not work properly.', 'broken-link-checker'),
+                    'message' => __('You have an old version of CURL. Redirect detection may not work properly.', 'link-checker'),
                 );
             } else {
                 $data = array(
@@ -3934,22 +3941,22 @@ class BrokenLinkChecker
         } else {
             $data = array(
                 'state' => 'warning',
-                'value' => __('Not installed', 'broken-link-checker'),
+                'value' => __('Not installed', 'link-checker'),
             );
         }
-        $debug[__('CURL version', 'broken-link-checker')] = $data;
+        $debug[__('CURL version', 'link-checker')] = $data;
 
         // Open_basedir status
         if (Utility::is_open_basedir()) {
             $debug['open_basedir'] = array(
                 'state'   => 'warning',
-                'value'   => sprintf(__('On ( %s )', 'broken-link-checker'), ini_get('open_basedir')),
-                'message' => __('Redirects may be detected as broken links when open_basedir is on.', 'broken-link-checker'),
+                'value'   => sprintf(__('On ( %s )', 'link-checker'), ini_get('open_basedir')),
+                'message' => __('Redirects may be detected as broken links when open_basedir is on.', 'link-checker'),
             );
         } else {
             $debug['open_basedir'] = array(
                 'state' => 'ok',
-                'value' => __('Off', 'broken-link-checker'),
+                'value' => __('Off', 'link-checker'),
             );
         }
 
@@ -3962,7 +3969,7 @@ class BrokenLinkChecker
         // Database character set. Usually it's UTF-8. Setting it to something else can cause problems
         // unless the site owner really knows what they're doing.
         $charset = $wpdb->get_charset_collate();
-        $debug[__('Database character set', 'broken-link-checker')] = array(
+        $debug[__('Database character set', 'link-checker')] = array(
             'state' => 'ok',
             'value' => !empty($charset) ? $charset : '-',
         );
@@ -3981,7 +3988,7 @@ class BrokenLinkChecker
         );
         if (0 === $synch_records) {
             $data['state']   = 'warning';
-            $data['message'] = __('If this value is zero even after several page reloads you have probably encountered a bug.', 'broken-link-checker');
+            $data['message'] = __('If this value is zero even after several page reloads you have probably encountered a bug.', 'link-checker');
         }
         $debug['Synch. records'] = $data;
 
@@ -4113,7 +4120,7 @@ class BrokenLinkChecker
     {
         // Prepare email message
         $subject = sprintf(
-            __('[%s] Broken links detected', 'broken-link-checker'),
+            __('[%s] Broken links detected', 'link-checker'),
             html_entity_decode(get_option('blogname'), ENT_QUOTES)
         );
 
@@ -4122,7 +4129,7 @@ class BrokenLinkChecker
                 'Broken Link Checker has detected %d new broken link on your site.',
                 'Broken Link Checker has detected %d new broken links on your site.',
                 count($links),
-                'broken-link-checker'
+                'link-checker'
             ),
             count($links)
         );
@@ -4155,12 +4162,12 @@ class BrokenLinkChecker
                     "Here's a list of the first %d broken links:",
                     "Here's a list of the first %d broken links:",
                     $max_displayed_links,
-                    'broken-link-checker'
+                    'link-checker'
                 ),
                 $max_displayed_links
             );
         } else {
-            $line = __("Here's a list of the new broken links: ", 'broken-link-checker');
+            $line = __("Here's a list of the new broken links: ", 'link-checker');
         }
 
         $result .= "<p>$line</p>";
@@ -4170,9 +4177,10 @@ class BrokenLinkChecker
         foreach ($instances as $instance) {
 
             $pieces = array(
-                sprintf(__('Link text : %s', 'broken-link-checker'), $instance->ui_get_link_text('email')),
-                sprintf(__('Link URL : <a href="%1$s">%2$s</a>', 'broken-link-checker'), htmlentities($instance->get_url()), Utility::truncate($instance->get_url(), 70, '')),
-                sprintf(__('Source : %s', 'broken-link-checker'), $instance->ui_get_source('email')),
+                sprintf(__('Link text : %s', 'link-checker'), $instance->ui_get_link_text('email')),
+                sprintf(__('Link URL : <a href="%1$s">%2$s</a>', 'link-checker'), htmlentities($instance->get_url()), Utility::truncate($instance->get_url(), 70, '')),
+                sprintf(__('Source : View: %s | Edit: %s', 'link-checker'), $instance->ui_get_source('email'), $instance->ui_get_source()),
+
             );
 
             $link_entry = implode('<br>', $pieces);
@@ -4186,7 +4194,7 @@ class BrokenLinkChecker
 
         // Add a link to the "Broken Links" tab.
         if ($add_admin_link) {
-            $result .= __('You can see all broken links here:', 'broken-link-checker') . '<br>';
+            $result .= __('You can see all broken links here:', 'link-checker') . '<br>';
             $result .= sprintf('<a href="%1$s">%1$s</a>', admin_url('admin.php?page=blc_local'));
         }
 
@@ -4241,7 +4249,7 @@ class BrokenLinkChecker
 
         foreach ($authorInstances as $author_id => $instances) {
             $subject = sprintf(
-                __('[%s] Broken links detected', 'broken-link-checker'),
+                __('[%s] Broken links detected', 'link-checker'),
                 html_entity_decode(get_option('blogname'), ENT_QUOTES)
             );
 
@@ -4250,7 +4258,7 @@ class BrokenLinkChecker
                     'Broken Link Checker has detected %d new broken link in your posts.',
                     'Broken Link Checker has detected %d new broken links in your posts.',
                     count($instances),
-                    'broken-link-checker'
+                    'link-checker'
                 ),
                 count($instances)
             );
@@ -4395,6 +4403,8 @@ class BrokenLinkChecker
      */
     function load_language()
     {
-        $this->is_textdomain_loaded = load_plugin_textdomain('broken-link-checker', false, basename(dirname($this->loader)) . '/languages');
+       
+        $this->is_textdomain_loaded = load_plugin_textdomain('link-checker', false, 'link-checker/languages');
+      
     }
 } //class ends here

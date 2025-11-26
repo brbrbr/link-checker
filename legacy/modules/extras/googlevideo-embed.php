@@ -22,8 +22,8 @@ class blcGoogleVideoEmbed extends EmbedParser
     function init()
     {
         parent::init();
-        $this->short_title       = __('GoogleVideo Video', 'broken-link-checker');
-        $this->long_title        = __('Embedded GoogleVideo video', 'broken-link-checker');
+        $this->short_title       = __('GoogleVideo Video', 'link-checker');
+        $this->long_title        = __('Embedded GoogleVideo video', 'link-checker');
         $this->url_search_string = 'video.google.com/';
     }
 

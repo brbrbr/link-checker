@@ -48,7 +48,7 @@ class ModuleManager
      * @param array|null $default_active_modules
      * @return ModuleManager
      */
-	//phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
+    //phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
     static function getInstance($default_active_modules = null)
     {
         static $instance = null;
@@ -76,6 +76,7 @@ class ModuleManager
                 // BUG: Potentional security flaw/bug. plugin.php is not meant to be loaded outside admin panel.
                 require_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
+
             $modules = get_plugins($relative_path);
 
             $this->_module_cache = array();
@@ -89,7 +90,7 @@ class ModuleManager
                 }
 
                 $module_header                     = $this->normalize_module_header($module_header, $module_id, $module_filename);
-                $this->_module_cache[ $module_id ] = $module_header;
+                $this->_module_cache[$module_id] = $module_header;
             }
 
             $this->_category_cache = null;
@@ -127,12 +128,12 @@ class ModuleManager
                 // Translate/apply markup to module headers
                 $processed = array();
                 foreach ($this->_category_cache as $category_id => $modules) {
-                    $processed[ $category_id ] = array();
+                    $processed[$category_id] = array();
                     foreach ($modules as $module_id => $module_data) {
                         if ($translate) {
-                            $module_data['Name'] = _x($module_data['Name'], 'module name', 'broken-link-checker'); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+                            $module_data['Name'] = _x($module_data['Name'], 'module name', 'link-checker'); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
                         }
-                        $processed[ $category_id ][ $module_id ] = $module_data;
+                        $processed[$category_id][$module_id] = $module_data;
                     }
                 }
 
@@ -140,19 +141,19 @@ class ModuleManager
             } else {
                 return $this->_category_cache;
             }
-        } elseif (isset($this->_category_cache[ $category ])) {
+        } elseif (isset($this->_category_cache[$category])) {
             if ($markup || $translate) {
                 // Translate/apply markup to module headers
                 $processed = array();
-                foreach ($this->_category_cache[ $category ] as $module_id => $module_data) {
+                foreach ($this->_category_cache[$category] as $module_id => $module_data) {
                     if ($translate) {
-                        $module_data['Name'] = _x($module_data['Name'], 'module name', 'broken-link-checker'); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
+                        $module_data['Name'] = _x($module_data['Name'], 'module name', 'link-checker'); //phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText
                     }
-                    $processed[ $module_id ] = $module_data;
+                    $processed[$module_id] = $module_data;
                 }
                 return $processed;
             } else {
-                return $this->_category_cache[ $category ];
+                return $this->_category_cache[$category];
             }
         } else {
             return array();
@@ -175,8 +176,8 @@ class ModuleManager
 
         if (empty($category)) {
             return $this->_category_cache_active;
-        } elseif (isset($this->_category_cache_active[ $category ])) {
-                return $this->_category_cache_active[ $category ];
+        } elseif (isset($this->_category_cache_active[$category])) {
+            return $this->_category_cache_active[$category];
         } else {
             return array();
         }
@@ -219,15 +220,15 @@ class ModuleManager
 
         foreach ($modules as $module_id => $module_data) {
             $cat = $module_data['ModuleCategory'];
-            if (isset($categories[ $cat ])) {
-                $categories[ $cat ][ $module_id ] = $module_data;
+            if (isset($categories[$cat])) {
+                $categories[$cat][$module_id] = $module_data;
             } else {
-                $categories[ $cat ] = array( $module_id => $module_data );
+                $categories[$cat] = array($module_id => $module_data);
             }
         }
 
         foreach ($categories as $cat => $cat_modules) {
-            uasort($categories[ $cat ], $this->compare_priorities(...));
+            uasort($categories[$cat], $this->compare_priorities(...));
         }
 
         return $categories;
@@ -268,9 +269,11 @@ class ModuleManager
             return $no_result;
         }
 
-        if (empty($this->loaded[ $module_id ])) {
+        if (empty($this->loaded[$module_id])) {
             if ($autoload && $this->is_active($module_id)) {
+
                 if (! $this->load_module($module_id)) {
+
                     return $no_result;
                 }
             } else {
@@ -286,6 +289,7 @@ class ModuleManager
         }
 
         $module = $this->init_module($module_id);
+
         return $module;
     }
 
@@ -300,13 +304,13 @@ class ModuleManager
     function get_module_data($module_id, $use_active_cache = true)
     {
         // Check virtual modules
-        if (isset($this->_virtual_modules[ $module_id ])) {
-            return $this->_virtual_modules[ $module_id ];
+        if (isset($this->_virtual_modules[$module_id])) {
+            return $this->_virtual_modules[$module_id];
         }
 
         // Check active modules
-        if ($use_active_cache && isset($this->plugin_conf->options['active_modules'][ $module_id ])) {
-            return $this->plugin_conf->options['active_modules'][ $module_id ];
+        if ($use_active_cache && isset($this->plugin_conf->options['active_modules'][$module_id])) {
+            return $this->plugin_conf->options['active_modules'][$module_id];
         }
 
         // Otherwise, use the general module cache
@@ -314,8 +318,8 @@ class ModuleManager
             $this->get_modules(); // Populates the cache
         }
 
-        if (isset($this->_module_cache[ $module_id ])) {
-            return $this->_module_cache[ $module_id ];
+        if (isset($this->_module_cache[$module_id])) {
+            return $this->_module_cache[$module_id];
         } else {
             return false;
         }
@@ -333,7 +337,7 @@ class ModuleManager
      */
     function get_active_modules()
     {
-       
+
         if (!empty($this->plugin_conf->options['active_modules'])) {
             return $this->plugin_conf->options['active_modules'];
         }
@@ -344,7 +348,7 @@ class ModuleManager
         if (is_array($this->default_active_modules)) {
             foreach ($this->default_active_modules as $module_id) {
                 if (array_key_exists($module_id, $modules)) {
-                    $active[ $module_id ] = $modules[ $module_id ];
+                    $active[$module_id] = $modules[$module_id];
                 }
             }
         }
@@ -375,12 +379,15 @@ class ModuleManager
      */
     function activate($module_id)
     {
+
+
         if ($this->is_active($module_id)) {
             return true;
         }
 
         // Retrieve the module header
         $module_data = $this->get_module_data($module_id, false);
+
         if (! $module_data) {
             return false;
         }
@@ -388,7 +395,7 @@ class ModuleManager
         // Attempt to load the module
         if ($this->load_module($module_id, $module_data)) {
             // Okay, if it loads, we can assume it works.
-            $this->plugin_conf->options['active_modules'][ $module_id ] = $module_data;
+            $this->plugin_conf->options['active_modules'][$module_id] = $module_data;
             $this->plugin_conf->save_options();
             // Invalidate the per-category active module cache
             $this->_category_cache_active = null;
@@ -429,11 +436,11 @@ class ModuleManager
             $module->deactivated();
         }
 
-        unset($this->plugin_conf->options['active_modules'][ $module_id ]);
+        unset($this->plugin_conf->options['active_modules'][$module_id]);
 
         // Keep track of when each module was last deactivated. Used for parser resynchronization.
         if (isset($this->plugin_conf->options['module_deactivated_when'])) {
-            $this->plugin_conf->options['module_deactivated_when'][ $module_id ] = current_time('timestamp');
+            $this->plugin_conf->options['module_deactivated_when'][$module_id] = current_time('timestamp');
         } else {
             $this->plugin_conf->options['module_deactivated_when'] = array(
                 $module_id => current_time('timestamp'),
@@ -453,8 +460,8 @@ class ModuleManager
      */
     function get_last_deactivation_time($module_id)
     {
-        if (isset($this->plugin_conf->options['module_deactivated_when'][ $module_id ])) {
-            return $this->plugin_conf->options['module_deactivated_when'][ $module_id ];
+        if (isset($this->plugin_conf->options['module_deactivated_when'][$module_id])) {
+            return $this->plugin_conf->options['module_deactivated_when'][$module_id];
         } else {
             return 0;
         }
@@ -514,7 +521,7 @@ class ModuleManager
         $blclog->info(sprintf('... %d modules loaded in %.3f seconds', count($this->loaded), microtime(true) - $start));
 
         $active = $this->get_active_modules();
-       
+
         foreach ($active as $module_id => $module_data) {
             $blclog->log(sprintf('... Notifying module "%s"', $module_id));
             $module = $this->get_module($module_id);
@@ -534,10 +541,10 @@ class ModuleManager
     function refresh_active_module_cache()
     {
         $modules = $this->get_modules();
-      
+
         foreach ($this->plugin_conf->options['active_modules'] as $module_id => $module_header) {
             if (array_key_exists($module_id, $modules)) {
-                $this->plugin_conf->options['active_modules'][ $module_id ] = $modules[ $module_id ];
+                $this->plugin_conf->options['active_modules'][$module_id] = $modules[$module_id];
             }
         }
         $this->plugin_conf->save_options();
@@ -559,7 +566,7 @@ class ModuleManager
 
         foreach ($active as $module_id => $module_data) {
             // Load the module
-            $should_load = ( 'all' == $module_data['ModuleContext'] ) || ( ! empty($context) && $module_data['ModuleContext'] == $context );
+            $should_load = ('all' == $module_data['ModuleContext']) || (! empty($context) && $module_data['ModuleContext'] == $context);
             if ($should_load) {
                 $this->load_module($module_id, $module_data);
             }
@@ -579,7 +586,7 @@ class ModuleManager
     {
 
         // Only load each module once.
-        if (! empty($this->loaded[ $module_id ])) {
+        if (! empty($this->loaded[$module_id])) {
             return true;
         }
 
@@ -605,14 +612,14 @@ class ModuleManager
 
             // Load it
             require_once $filename;
-            $this->loaded[ $module_id ] = true;
+            $this->loaded[$module_id] = true;
         } else {
             // Virtual modules don't need to be explicitly loaded, but they must
             // be registered.
             if (! array_key_exists($module_id, $this->_virtual_modules)) {
                 return false;
             }
-            $this->loaded[ $module_id ] = true;
+            $this->loaded[$module_id] = true;
         }
 
         // Instantiate the main module class unless lazy init is on (default is off)
@@ -635,9 +642,11 @@ class ModuleManager
     function init_module($module_id, $module_data = null)
     {
         // Each module is only instantiated once.
-        if (isset($this->instances[ $module_id ])) {
-            return $this->instances[ $module_id ];
+        if (isset($this->instances[$module_id])) {
+            return $this->instances[$module_id];
         }
+
+
 
         if (! isset($module_data)) {
             $module_data = $this->get_module_data($module_id);
@@ -646,15 +655,16 @@ class ModuleManager
             }
         }
 
+       
         if (! empty($module_data['ModuleClassName']) && class_exists($module_data['ModuleClassName'])) {
             $className                     = $module_data['ModuleClassName'];
-            $this->instances[ $module_id ] = new $className(
+            $this->instances[$module_id] = new $className(
                 $module_id,
                 $module_data,
                 $this->plugin_conf,
                 $this
             );
-            return $this->instances[ $module_id ];
+            return $this->instances[$module_id];
         }
 
         return null;
@@ -662,7 +672,7 @@ class ModuleManager
 
     function is_instantiated($module_id)
     {
-        return ! empty($this->instances[ $module_id ]);
+        return ! empty($this->instances[$module_id]);
     }
 
     /**
@@ -679,7 +689,7 @@ class ModuleManager
     {
         $module_data                          = $this->normalize_module_header($module_data, $module_id);
         $module_data['virtual']               = true;
-        $this->_virtual_modules[ $module_id ] = $module_data;
+        $this->_virtual_modules[$module_id] = $module_data;
     }
 
     /**
@@ -729,7 +739,7 @@ class ModuleManager
         foreach ($active as $module_id => $module_data) {
             $rez = $this->validate_module($module_data);
             if (is_wp_error($rez)) {
-                $invalid[ $module_id ] = $rez;
+                $invalid[$module_id] = $rez;
                 $this->deactivate($module_id);
             }
         }
@@ -824,7 +834,7 @@ class ModuleManager
             'ModuleHidden'       => 'false',
             'ModuleAlwaysActive' => 'false',
             'ModuleRequiresPro'  => 'false',
-            'TextDomain'         => 'broken-link-checker', // For translating module headers
+            'TextDomain'         => 'link-checker', // For translating module headers
         );
 
         $module_header['ModuleID'] = $module_id;   // Just for consistency
@@ -832,8 +842,8 @@ class ModuleManager
 
         // Apply defaults
         foreach ($defaults as $field => $default_value) {
-            if (empty($module_header[ $field ])) {
-                $module_header[ $field ] = $default_value;
+            if (empty($module_header[$field])) {
+                $module_header[$field] = $default_value;
             }
         }
 
@@ -876,7 +886,7 @@ class ModuleManager
 
         $strings = array();
         foreach ($modules as $module_id => $module_header) {
-            if ($module_header['ModuleHidden'] || ( 'write-module-placeholders' == $module_id )) {
+            if ($module_header['ModuleHidden'] || ('write-module-placeholders' == $module_id)) {
                 continue;
             }
             if (! empty($module_header['Name'])) {
@@ -890,7 +900,7 @@ class ModuleManager
         return "<?php\n" . implode("\n", $strings) . "\n";
     }
 
-     /**
+    /**
      * Get the parser matching a parser type ID.
      *
      * @uses ModuleManager::get_module()
@@ -900,9 +910,8 @@ class ModuleManager
      */
     public function get_parser($parser_type)
     {
-    
+
         return $this->get_module($parser_type, true, 'parser');
-        
     }
 
     /**
@@ -918,7 +927,7 @@ class ModuleManager
         $found = array();
 
         // Retrieve a list of active parsers
-      
+
         $active_parsers = $this->get_modules_by_category('parser');
 
         // Try each one
@@ -935,5 +944,4 @@ class ModuleManager
 
         return $found;
     }
-
 }

@@ -33,7 +33,7 @@ class blcSmartYouTubeURL extends PlaintextUrlParser
         }
 
         // The URL should contain a domain name. AFAIK, Smart YouTube doesn't accept relative URLs.
-        if (empty($parts['host']) || ! strpos($parts['host'], '.')) {
+        if (empty($parts['host']) || !str_contains($parts['host'], '.')) {
             return false;
         }
 
@@ -60,7 +60,7 @@ class blcSmartYouTubeURL extends PlaintextUrlParser
         // If the user manually prefixes the URL with "httpv://" or other Smart YouTube scheme
         // then use the URL as-is. Otherwise change the scheme to the prefix from the old URL (if available).
         $new_scheme = @parse_url($new_url, PHP_URL_SCHEME);
-        if (empty($new_scheme) || ( stripos($new_scheme, 'httpv') !== 0 )) {
+        if (empty($new_scheme) || (stripos($new_scheme, 'httpv') !== 0)) {
             if (! empty($old_raw_url)) {
                 $scheme = parse_url($old_raw_url, PHP_URL_SCHEME);
             } else {

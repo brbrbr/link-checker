@@ -57,6 +57,7 @@ class blcHttpChecker extends Checker
         }
     }
 
+
     function can_check($url, $parsed)
     {
         if (isset($this->implementation)) {
@@ -75,8 +76,8 @@ class blcHttpChecker extends Checker
         if ($domain) {
             $this->token_bucket_list->takeToken($domain);
         }
-
-        $blclog->debug('HTTP module checking "' . $url . '"');
+        //this makes the module name translatable
+        $blclog->debug(_x("Basic HTTP", "module name", "broken-link-checker") . ' checking "' . $url . '"');
         return $this->implementation->check($url, $use_get);
     }
 }
@@ -94,6 +95,7 @@ class blcHttpCheckerBase extends Checker
     protected $acceptLanguage         = 'en-US,en;q=0.5';
     protected $userAgent              = "";
     protected string $splitOption = "#(;|,|\r\n|\n|\r)#";
+
     function clean_url($url)
     {
         $url = html_entity_decode($url);
@@ -114,6 +116,7 @@ class blcHttpCheckerBase extends Checker
 
         return $url;
     }
+
 
     public static function is_error_code($http_code)
     {
@@ -278,15 +281,36 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         $log                = '';
         $this->last_headers = '';
-        $url                = wp_http_validate_url($url);
 
 
-        if (empty($url)) {
-            $blclog->error(__CLASS__ . ' Invalid URL:', $url);
+        if (!$this->has_valid_dns($url)) {
+            $blclog->error(__CLASS__ . ' Invalid URL DNS Failed:', $url);
+
+            $result = array(
+                'error'     => true,
+                'broken' => true,
+                'warning'     => false,
+                'log'         => "Invalid URL.\nUnable to look up DNS",
+                'status_text' => __('Invalid DNS', 'link-checker'),
+                'error_code'  => 'invalid_url',
+                'status_code' => BLC_LINK_STATUS_ERROR,
+                'http_code' => Link::BLC_DNS_HTTP_CODE
+            );
+
+            return $result;
+        }
+        $url = $this->clean_url($url);
+
+        $cleaned_url = wp_kses_bad_protocol($url, ['http', 'https']);
+
+
+        if (! $url || strtolower($url) !== strtolower($cleaned_url)) {
+
+            $blclog->error(__CLASS__ . ' Invalid Protocol:', $url);
 
             $result = array(
                 'warning'     => true,
-                'log'         => "Invalid URL.\nURL fails to pass validation for safe use in the HTTP API.",
+                'log'         => "Invalid Protokol.\nOnly http and https links are checked",
                 'status_text' => __('Invalid URL', 'link-checker'),
                 'error_code'  => 'invalid_url',
                 'status_code' => BLC_LINK_STATUS_WARNING,
@@ -295,7 +319,7 @@ class blcCurlHttp extends blcHttpCheckerBase
             return $result;
         }
 
-        $url = wp_kses_bad_protocol($this->clean_url($url), array('http', 'https', 'ssl'));
+
 
         $result             = array(
             'broken'  => false,
@@ -430,7 +454,7 @@ class blcCurlHttp extends blcHttpCheckerBase
 
         $info = curl_getinfo($ch);
 
-        // var_dump( $info ); die();
+
         // Store the results
         $result['http_code']        = intval($info['http_code']);
         $result['final_url']        = $info['url'];

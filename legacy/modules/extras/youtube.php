@@ -31,6 +31,8 @@ class blcYouTubeChecker extends Checker
 
     function check($url)
     {
+        global $blclog;
+        $blclog->info(__CLASS__ . ' Checking link', $url);
         // Throttle API requests to avoid getting blocked due to quota violation.
         $delta = microtime(true) - $this->last_api_request;
         if ($delta < $this->api_grace_period) {
@@ -42,17 +44,46 @@ class blcYouTubeChecker extends Checker
             'redirect_count' => 0,
             'timeout'        => false,
             'broken'         => false,
-            'log'            => "<em>(Using YouTube API)</em>\n\n",
+            'log'            => sprintf("<em>(%s)</em>\n\n", _x("YouTube API", "module name", "broken-link-checker")), //this meakes the module name translatable
             'result_hash'    => '',
         );
 
-        $url = wp_http_validate_url($url);
-        if (empty($url)) {
-            $result['status_text'] = 'Invalid URL';
-            $result['status_code'] = BLC_LINK_STATUS_UNKNOWN;
+        if (!$this->has_valid_dns($url)) {
+            $blclog->error(__CLASS__ . ' Invalid URL DNS Failed:', $url);
+
+            $result = array(
+                'error'     => true,
+                'broken' => true,
+                'warning'     => false,
+                'log'         => "Invalid URL.\nUnable to look up DNS",
+                'status_text' => __('Invalid DNS', 'link-checker'),
+                'error_code'  => 'invalid_url',
+                'status_code' => BLC_LINK_STATUS_ERROR,
+                'http_code' => Link::BLC_DNS_HTTP_CODE
+            );
 
             return $result;
         }
+        $url = $this->clean_url($url);
+
+        $cleaned_url = wp_kses_bad_protocol($url, ['http', 'https']);
+
+
+        if (! $url || strtolower($url) !== strtolower($cleaned_url)) {
+
+            $blclog->error(__CLASS__ . ' Invalid Protocol:', $url);
+
+            $result = array(
+                'warning'     => true,
+                'log'         => "Invalid Protokol.\nOnly http and https links are checked",
+                'status_text' => __('Invalid URL', 'link-checker'),
+                'error_code'  => 'invalid_url',
+                'status_code' => BLC_LINK_STATUS_WARNING,
+            );
+
+            return $result;
+        }
+
 
 
         $components = parse_url($url);

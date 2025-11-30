@@ -33,6 +33,7 @@ abstract class Parser extends Module
 {
     var $parser_type;
     var $supported_formats    = array();
+    //todo remove
     var $supported_containers = array();
 
     /**

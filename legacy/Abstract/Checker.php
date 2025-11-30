@@ -1,6 +1,7 @@
 <?php
 
 namespace Blc\Abstract;
+
 use Blc\Abstract\Module;
 
 
@@ -36,10 +37,7 @@ abstract class Checker extends Module
      * @param array|bool $parsed_url The result of parsing $url with parse_url(). See PHP docs for details.
      * @return bool
      */
-    function can_check($url, $parsed_url)
-    {
-        return false;
-    }
+    abstract  public function can_check($url, $parsed_url);
 
     /**
      * Check an URL.
@@ -62,10 +60,54 @@ abstract class Checker extends Module
      * @param string $url
      * @return array
      */
-    function check($url)
+    abstract public function check($url);
+
+    /**
+     * 'gethostbyname' for ipv6. Returns $host on failure like gethostbymanem
+     * 
+     * 
+     * @since __DEPLOY_VERSION__
+     * 
+     * 
+     */
+
+    protected function gethostbyname6(string $host): string
     {
-        trigger_error('Function Checker::check() must be over-ridden in a subclass', E_USER_ERROR);
+        foreach ([DNS_A, DNS_AAAA, DNS_CNAME] as $resource) {
+            if ($records = dns_get_record($host, $resource)) {
+                //dns get record should resolve cnames to final ip - so this should
+                if ($resource === DNS_CNAME) {
+                    return gethostbyname6($records[0]['target']);
+                }
+                $record = $records[0];
+                return $resource === DNS_A ? $record['ip'] : $record['ipv6'];
+            }
+        }
+        return $host;
+    }
+
+    /**
+     * 'gethostbyname' for ipv6. Returns $host on failure like gethostbymanem
+     * 
+     * 
+     * @since __DEPLOY_VERSION__
+     * 
+     * 
+     */
+
+    protected function has_valid_dns(string $url): bool
+    {
+        $parsed_url = parse_url($url);
+        $host        = trim($parsed_url['host'], '.');
+
+
+        if (! preg_match('#^(([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)\.){3}([1-9]?\d|1\d\d|25[0-5]|2[0-4]\d)$#', $host)) {
+
+            $ip = $this->gethostbyname6($host);
+            if ($ip === $host) { // Error condition for gethostbyname().
+                return false;
+            }
+        }
+        return true;
     }
 }
-
-

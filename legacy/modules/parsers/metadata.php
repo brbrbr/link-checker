@@ -10,7 +10,7 @@
  * ModuleClassName: blcMetadataParser
  * ModuleContext: on-demand
  * ModuleLazyInit: true
- * ModuleAlwaysActive: true
+ * ModuleAlwaysActive: false
  * ModuleHidden: true
  */
 

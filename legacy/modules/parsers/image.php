@@ -21,7 +21,7 @@ use Blc\Controller\LinkInstance;
 
 class blcHTMLImage extends Parser
 {
-    var $supported_formats = array( 'html' );
+    var $supported_formats = array('html');
 
     // \1                        \2      \3 URL    \4
     var $img_pattern = '/(<img[\s]+[^>]*src\s*=\s*)([\"\'])([^>]+?)\2([^<>]*>)/i';
@@ -61,8 +61,8 @@ class blcHTMLImage extends Parser
             foreach ($matches as $link) {
                 $url     = $link[3];
                 $raw_url = $link[3];
-                // FB::log($url, "Found image");
-                $blclog->info('Found image. SRC attribute: "' . $raw_url . '"');
+
+                $blclog->debug(__CLASS__ . ':' . __FUNCTION__ . ' Found a link, raw URL = "' . $raw_url . '"',"broken-link-checker");
 
                 // Decode &amp; and other entities
                 $url = html_entity_decode($url, ENT_QUOTES, $charset);
@@ -97,11 +97,11 @@ class blcHTMLImage extends Parser
                 }
 
                 // Skip invalid URLs (again)
-                if (! $url || ( strlen($url) < 6 )) {
+                if (! $url || (strlen($url) < 6)) {
                     continue;
                 }
+             
 
-                $blclog->info('Final URL: "' . $url . '"');
                 // The URL is okay, create and populate a new link instance.
                 $instance = new LinkInstance();
 

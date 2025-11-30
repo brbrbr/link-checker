@@ -70,7 +70,7 @@ class PostMeta extends Container
     function get_field($field = '', $single = false)
     {
 
-        $get_only_first_field = ('metadata' !== $this->fields[$field]);
+        $get_only_first_field = ('metadata' !== ($this->fields[$field]??'metadata'));
 
         // override the get only first by a param
         if ($single) {

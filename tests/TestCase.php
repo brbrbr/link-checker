@@ -16,16 +16,32 @@ class TestCase extends PHPunitTestCase
         $this->assertNotEquals(0, \count($logs), 'Log entries expected');
     }
 
-     protected function clearLog()
+    protected function clearLog()
     {
         global $blclog;
-         $blclog->clear_logs();
-       
+        $blclog->clear_logs();
+    }
+    protected function getInstance($args,$invalidLink=true)
+    {
+        global $wpdb;
+        $ands = [];
+        foreach ($args as $key => $value) {
+          $key=esc_sql($key);
+             $value=esc_sql($value);
+            $ands[]="`i`.`$key` like '$value'"; 
+        }
+        if ( $invalidLink) {
+            $ands[]=" `i`.`raw_url` like '%.invalid%'";
+
+        }
+        $where=join(' AND ',$ands);
+        $q="SELECT * FROM `{$wpdb->prefix}blc_instances` `i` WHERE $where ORDER BY instance_id DESC LIMIT 1";
+     return $wpdb->get_row($q, ARRAY_A);
     }
 
-    protected function getAPost($type = 'post')
+    protected function getAPost($args = [])
     {
-        $args = array(
+        $args = array_merge(array(
             'numberposts'      => 1,
             'category'         => 0,
             'orderby'          => 'date',
@@ -34,9 +50,10 @@ class TestCase extends PHPunitTestCase
             'exclude'          => array(),
             'meta_key'         => '',
             'meta_value'       => '',
-            'post_type'        => $type,
+            'post_type'        => 'post',
             'suppress_filters' => true,
-        );
+        ), $args);
+        $args['numberposts'] = 1;
         $posts = get_posts($args);
         return $posts[0];
     }

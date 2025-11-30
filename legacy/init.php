@@ -88,17 +88,38 @@ if (defined('BLC_ACTIVE')) {
                     WPMutex::release('blc_dbupdate');
                 }
             }
+            /*
+                     if (is_admin() || wp_doing_cron() || is_user_logged_in()) {
+                require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
+                new BrokenLinkChecker();
+                if (!is_admin() && ! wp_doing_cron()) {
+
+                    new BrokenLinkCheckerSite();
+                }
+         
+            }
+                */
+
             if (is_admin() || wp_doing_cron()) {
                 require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
-       
-    
+
+
                 new BrokenLinkChecker();
             } else {
+
                 new BrokenLinkCheckerSite();
             }
-          
+        }
+
+        function blc_rest_api_init()
+        {
+            if (defined('REST_REQUEST')) {
+                require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
+                new BrokenLinkChecker();
+            }
         }
         add_action('init', 'blc_init', 2000);
+        add_action('rest_api_init', 'blc_rest_api_init', 2000);
     } else {
         if (get_option('blc_activation_enabled')) {
             // Display installation errors (if any) on the Dashboard.

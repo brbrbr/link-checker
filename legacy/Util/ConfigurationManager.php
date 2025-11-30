@@ -55,16 +55,16 @@ final class ConfigurationManager
      *
      * @param string $name
      */
-    private function load_options() : void
+    private function load_options(): void
     {
 
         $new_options = get_option($this->name);
-        
+
         // Decode JSON (if applicable).
         if (is_string($new_options) && !empty($new_options)) {
             $new_options = json_decode($new_options, true);
         }
-      
+
 
         if (!is_array($new_options)) {
             $this->options = $this->defaults;
@@ -75,6 +75,7 @@ final class ConfigurationManager
         }
 
         $this->options = apply_filters("broken-link-checker-options-loaded", $this->options, $this->name);
+       
     }
 
     /**
@@ -86,13 +87,25 @@ final class ConfigurationManager
      */
     public function save_options()
     {
-    
+
         return update_option($this->name, json_encode($this->options));
     }
 
     public function delete(): bool
     {
         return delete_option($this->name);
+    }
+
+    /**
+     * blcOptionManager::save_options()
+     * Save plugin options to the database.
+     *
+     * @param string $name (Optional) Save the options under this name
+     * @return bool True if settings were saved, false if settings haven't been changed or if there was an error.
+     */
+    public function set_options(array $new_options)
+    {
+        $this->options = array_merge($this->defaults, $new_options);
     }
 
 

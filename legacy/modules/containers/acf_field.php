@@ -17,8 +17,6 @@ use Blc\Abstract\Container;
 use Blc\Util\Utility;
 
 
-
-
 // Note : If it ever becomes necessary to check metadata on objects other than posts, it will
 // be fairly easy to extract a more general metadata container class from blcAcfMeta.
 
@@ -75,7 +73,7 @@ class blcAcfMeta extends Container
      */
     function get_field($field = '')
     {
-        global $wpdb;
+
 
         $meta = get_metadata('post', $this->container_id, '_' . $field, true);
         $key  = explode('|', str_replace('_field', '|field', $meta));
@@ -143,7 +141,9 @@ class blcAcfMeta extends Container
         if ($rez) {
             return true;
         } else {
-            return new \WP_Error('metadata_delete_failed', sprintf(__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'link-checker'), $field_name, $this->meta_type, $this->container_id));
+            return new \WP_Error(
+                'metadata_delete_failed', 
+                sprintf(__("Failed to delete the meta field '%1\$s' on %2\$s [%3\$d]", 'link-checker'), $field_name, $this->meta_type, $this->container_id));
         }
     }
 

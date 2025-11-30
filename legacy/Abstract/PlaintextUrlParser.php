@@ -93,7 +93,7 @@ abstract class PlaintextUrlParser extends Parser
             }
         }
         $parts = @parse_url($url);
-        if (empty($parts['host']) || ! strpos($parts['host'], '.')) {
+        if (empty($parts['host']) || !str_contains($parts['host'], '.')) {
             return false;
         }
         return $url;

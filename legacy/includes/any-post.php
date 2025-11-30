@@ -37,7 +37,7 @@ class blcPostTypeOverlord
     {
 
         $this->plugin_conf = ConfigurationManager::getInstance();
-      
+
 
         if (isset($this->plugin_conf->options['enabled_post_statuses'])) {
             $this->enabled_post_statuses = $this->plugin_conf->options['enabled_post_statuses'];
@@ -47,7 +47,28 @@ class blcPostTypeOverlord
         $module_manager = ModuleManager::getInstance();
 
         $post_types = get_post_types(array(), 'objects');
-        $exceptions = array('revision', 'nav_menu_item', 'attachment');
+
+        $exceptions = [
+            //'post',
+            //'page',
+            'attachment',
+            'revision',
+            'nav_menu_item',
+            'custom_css',
+            'customize_changeset',
+            'oembed_cache',
+            'user_request',
+        //    'wp_block',
+            'wp_template',
+            'wp_template_part',
+            'wp_global_styles',
+            'wp_navigation',
+            'wp_font_family',
+            'wp_font_face',
+
+        ];
+
+
 
         foreach ($post_types as $data) {
             $post_type = $data->name;
@@ -684,7 +705,7 @@ class blcAnyPostContainerManager extends ContainerManager
      */
     function get_containers($containers, $purpose = '', $load_wrapped_objects = false)
     {
-       
+
         $containers = $this->make_containers($containers);
 
         // Preload post data if it is likely to be useful later

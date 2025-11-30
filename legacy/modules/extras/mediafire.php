@@ -55,7 +55,7 @@ class blcMediaFireChecker extends Checker
             'redirect_count' => 0,
             'timeout'        => false,
             'broken'         => false,
-            'log'            => "<em>(Using MediaFire checker module)</em>\n\n",
+            'log'            => sprintf("<em>(%s)</em>\n\n", _x("MediaFire API", "module name", "broken-link-checker")),  //this meakes the module name translatable
             'http_code'      => 0,
             'result_hash'    => '',
         );

@@ -5,7 +5,7 @@
 /**
  * Plugin Name: JSON -> content
  * Description: Parses for JSON arrays with html in 'content' field. (footnotes)
- * Version: 1.0
+ * Version: __DEPLOY_VERSION__
  * Author: Bram Brambring
  * ModuleID: json_content
  * ModuleCategory: parser
@@ -17,7 +17,6 @@
  */
 
 use Blc\Abstract\Parser;
-use Blc\Controller\Link;
 use Blc\Controller\LinkInstance;
 use Blc\Controller\ModuleManager;
 
@@ -33,6 +32,7 @@ class JsonContentParser extends Parser
      * @param string       $base_url The base URL to use for normalizing relative URLs. If ommitted, the blog's root URL will be used.
      * @param string       $default_link_text
      * @return array An array of new LinkInstance objects.
+     * @since __DEPLOY_VERSION__
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -82,6 +82,9 @@ class JsonContentParser extends Parser
      * @param string $old_raw_url The current meta value.
      *
      * @return array|\WP_Error
+     * 
+     * @since __DEPLOY_VERSION__
+     * 
      */
     function edit($content, $new_url, $old_url, $old_raw_url)
     {
@@ -98,7 +101,7 @@ class JsonContentParser extends Parser
             }
 
             foreach ($parsers as $parser) {
-               
+
                 // function edit($content, $new_url, $old_url, $old_raw_url)
                 if ($parser->is_url_editable()) {
                     $result = $parser->edit($content, $new_url, $old_url, $old_raw_url);
@@ -110,7 +113,7 @@ class JsonContentParser extends Parser
         }
 
         return array(
-            'content' => wp_slash(json_encode($contentDecoded,JSON_UNESCAPED_SLASHES)),
+            'content' => wp_slash(json_encode($contentDecoded, JSON_UNESCAPED_SLASHES)),
             'raw_url' => $new_url,
         );
     }

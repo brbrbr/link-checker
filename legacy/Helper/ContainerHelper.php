@@ -53,6 +53,7 @@ class ContainerHelper
     {
         global $wpdb; /* @var wpdb $wpdb */
 
+      
 
         if (! is_array($container) || (count($container) < 2)) {
             return null;
@@ -69,9 +70,7 @@ class ContainerHelper
                     $container[1]
                 ),
                 ARRAY_A
-            );
-
-            if (empty($rez)) {
+            );            if (empty($rez)) {
                 // The container wasn't found, so we'll create a new one.
                 $container = array(
                     'container_type' => $container[0],
@@ -80,10 +79,12 @@ class ContainerHelper
             } else {
                 $container = $rez;
             }
+        } else {
+             return null;
         }
-      
-        $manager = self::get_manager($container['container_type']);
        
+        $manager = self::get_manager($container['container_type']);
+     
         if (! $manager) {
             return null;
         }

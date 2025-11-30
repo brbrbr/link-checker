@@ -150,6 +150,7 @@ abstract class Container
             // FB::log($parsers, "Applicable parsers");
 
             if (empty($parsers)) {
+                throw new \Exception('no parser found for:'. $format);
                 continue;
             }
 
@@ -187,7 +188,7 @@ abstract class Container
     {
         global $wpdb; /* @var wpdb $wpdb */
 
-       
+
 
         $arr = $wpdb->get_row(
             $wpdb->prepare(
@@ -203,8 +204,8 @@ abstract class Container
             ARRAY_A
         );
 
-        
-        return $arr??[];
+
+        return $arr ?? [];
     }
 
     /**
@@ -387,6 +388,7 @@ abstract class Container
         Therefore, it is necessary to re-load the wrapped object before editing it.
         */
         $this->get_wrapped_object(true);
+      
 
         // Get the current value of the field that needs to be edited.
         $old_value = $this->get_field($field_name);

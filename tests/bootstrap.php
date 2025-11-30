@@ -16,11 +16,10 @@ define('COOKIE_DOMAIN', 'localhost');
 $_SERVER ??= [];
 $_SERVER['HTTP_HOST'] = 'localhost';
 define('BASEDIR', realpath(__DIR__ . '/../../../../'));
-
+require_once 'vendor/autoload.php';
 require_once BASEDIR . '/wp-includes/class-wp-network.php';
 require_once BASEDIR . '/wp-load.php';
 require_once BASEDIR . '/wp-includes/ms-load.php';
-require_once '../vendor/autoload.php';
 
 global $blclog;
 $blclog = new DebugLogger('phpunit.log');

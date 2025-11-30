@@ -33,6 +33,7 @@ ModuleClassName: PostMetaManager
 
 use Blc\Abstract\ContainerManager;
 use Blc\Container\PostMeta as Container;
+use Blc\Controller\ModuleManager;
 use Blc\Util\Utility;
 
 
@@ -51,6 +52,7 @@ class PostMetaManager extends ContainerManager
             $prefix_formats = array(
                 'html' => 'html',
                 'url'  => 'metadata',
+                'footnotes'  => 'json_content',
             );
             foreach ($this->plugin_conf->options['custom_fields'] as $meta_name) {
                 // The user can add an optional "format:" prefix to specify the format of the custom field.
@@ -59,7 +61,11 @@ class PostMetaManager extends ContainerManager
                     $type                               = strtolower($parts[0]);
                     $this->selected_fields[$parts[1]] = $prefix_formats[$type] ?? 'metadata';
                 } else {
-                    $this->selected_fields[$meta_name] = 'metadata';
+                    if ($meta_name == 'footnotes') {
+                        $this->selected_fields[$meta_name] =  $prefix_formats['footnotes'];
+                    } else {
+                        $this->selected_fields[$meta_name] = 'metadata';
+                    }
                 }
             }
         }
@@ -216,12 +222,13 @@ class PostMetaManager extends ContainerManager
      */
     function meta_modified($meta_id, $object_id = 0, $meta_key = '')
     {
-
+       
         // Metadata changes only matter to us if the modified key
         // is one that the user wants checked.
         if (empty($this->selected_fields)) {
             return;
         }
+
         global $blclog;
         global $wpdb;
         /** @var wpdb $wpdb */
@@ -246,7 +253,7 @@ class PostMetaManager extends ContainerManager
         if (! array_key_exists($meta_key, $this->selected_fields)) {
             return;
         }
-
+       
         // Skip revisions. We only care about custom fields on the main post.
         $post = get_post($object_id);
         if (empty($post) || ! isset($post->post_type) || ('revision' === $post->post_type)) {
@@ -256,7 +263,7 @@ class PostMetaManager extends ContainerManager
         $container = $this->get_container(array('container_type' => $this->container_type, 'container_id' => intval($object_id)));
 
         $container->mark_as_unsynched();
-        $blclog->log('Container marked unsynhced', array($this->container_type, $object_id));
+        $blclog->log('Container meta unsynhced', array($meta_key, $this->container_type, $object_id));
     }
 
     /**
@@ -294,5 +301,36 @@ class PostMetaManager extends ContainerManager
         $container = $this->get_container(array('container_type' => $this->container_type, 'container_id' => intval($post_id)));
         $container->mark_as_unsynched();
         $blclog->log('Container untrashed',  $post_id);
+    }
+
+
+    /**
+     * Activate the parsers
+     *
+     * 
+     *
+     * @return void
+     */
+    function activated()
+    {
+        parent::activated();
+        $moduleManager = ModuleManager::getInstance();
+        $moduleManager->activate('metadata');
+        $moduleManager->activate('json_content');
+    }
+
+    /**
+     * Activate the parsers
+     *
+     * 
+     *
+     * @return void
+     */
+    function deactivated()
+    {
+        parent::deactivated();
+        $moduleManager = ModuleManager::getInstance();
+        $moduleManager->deactivate('metadata');
+        $moduleManager->deactivate('json_content');
     }
 }

@@ -77,7 +77,7 @@ class blcHTMLLink extends Parser
         $url     = $link['href'];
         $raw_url = $link['href'];
         $url     = trim($url);
-        // $blclog->debug(__CLASS__ .':' . __FUNCTION__ . ' Found a link, raw URL = "' . $raw_url . '"');
+        $blclog->debug(__CLASS__ .':' . __FUNCTION__ . ' Found a link, raw URL = "' . $raw_url . '"');
 
         // Sometimes links may contain shortcodes. Execute them.
         $url = do_shortcode($url);

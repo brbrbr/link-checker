@@ -14,7 +14,7 @@
  * Description:       Checks your website for broken links and notifies you on the dashboard if any are found. This is a Fork of the broken link checker maintained by WPMU DEV with only the legacy version. 
  * Version:           2.4.7.7906
  * Requires at least: 6.5
- * Requires PHP:      8.1
+ * Requires PHP:      8.3
  * Author:            Bram Brambring
  * Author URI:        https://brambring.nl/
  * Update URI:        https://downloads.brokenlinkchecker.dev/link-checker.json

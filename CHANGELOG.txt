@@ -18,7 +18,7 @@
  * L Language
  * N Note
 
-2.4.7.__DEPLOY_VERSION__
+2.4.7.7944
  # wp_http_validate_url does not support ipv6 and local links
  + Added parser for footnotes - Add footnotes to the configuration of custom fields 'Look for links in'. Be aware that footnotes will not work if you have the custom field tab open in your editor. This is a bug in the gutenberg editor. See for a patch: https://github.com/WordPress/gutenberg/issues/54653
  ^ Rework of Custom fields and Dummy Container

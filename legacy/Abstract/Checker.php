@@ -66,7 +66,7 @@ abstract class Checker extends Module
      * 'gethostbyname' for ipv6. Returns $host on failure like gethostbymanem
      * 
      * 
-     * @since __DEPLOY_VERSION__
+     * @since 2.4.7.7944
      * 
      * 
      */
@@ -90,7 +90,7 @@ abstract class Checker extends Module
      * 'gethostbyname' for ipv6. Returns $host on failure like gethostbymanem
      * 
      * 
-     * @since __DEPLOY_VERSION__
+     * @since 2.4.7.7944
      * 
      * 
      */

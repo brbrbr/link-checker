@@ -5,7 +5,7 @@
 /**
  * Plugin Name: JSON -> content
  * Description: Parses for JSON arrays with html in 'content' field. (footnotes)
- * Version: __DEPLOY_VERSION__
+ * Version: 2.4.7.7944
  * Author: Bram Brambring
  * ModuleID: json_content
  * ModuleCategory: parser
@@ -32,7 +32,7 @@ class JsonContentParser extends Parser
      * @param string       $base_url The base URL to use for normalizing relative URLs. If ommitted, the blog's root URL will be used.
      * @param string       $default_link_text
      * @return array An array of new LinkInstance objects.
-     * @since __DEPLOY_VERSION__
+     * @since 2.4.7.7944
      */
     function parse($content, $base_url = '', $default_link_text = '')
     {
@@ -83,7 +83,7 @@ class JsonContentParser extends Parser
      *
      * @return array|\WP_Error
      * 
-     * @since __DEPLOY_VERSION__
+     * @since 2.4.7.7944
      * 
      */
     function edit($content, $new_url, $old_url, $old_raw_url)

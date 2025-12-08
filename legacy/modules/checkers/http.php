@@ -89,7 +89,7 @@ class blcHttpChecker extends Checker
  * @package Broken Link Checker
  * @access public
  */
-class blcHttpCheckerBase extends Checker
+abstract class blcHttpCheckerBase extends Checker
 {
     protected $headers = [];
     protected $acceptLanguage         = 'en-US,en;q=0.5';

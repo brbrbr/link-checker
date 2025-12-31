@@ -80,33 +80,12 @@ if (defined('BLC_ACTIVE')) {
 
         function blc_init()
         {
-            $plugin_config = ConfigurationManager::getInstance();
-            // Ensure the database is up to date
-            if (BLC_DATABASE_VERSION !== $plugin_config->options['current_db_version']) {
-                if (WPMutex::acquire('blc_dbupdate')) {
-                    DatabaseUpgrader::upgrade_database();
-                    WPMutex::release('blc_dbupdate');
-                }
-            }
-            /*
-                     if (is_admin() || wp_doing_cron() || is_user_logged_in()) {
-                require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
-                new BrokenLinkChecker();
-                if (!is_admin() && ! wp_doing_cron()) {
-
-                    new BrokenLinkCheckerSite();
-                }
+           
          
-            }
-                */
-
             if (is_admin() || wp_doing_cron()) {
                 require_once BLC_DIRECTORY_LEGACY . '/includes/any-post.php';
-
-
                 new BrokenLinkChecker();
             } else {
-
                 new BrokenLinkCheckerSite();
             }
         }

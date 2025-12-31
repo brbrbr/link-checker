@@ -99,6 +99,19 @@ class BrokenLinkChecker
         }
         $method_called = true;
 
+        $this->plugin_config = ConfigurationManager::getInstance();
+
+        // Ensure the database is up to date
+        if (BLC_DATABASE_VERSION !== $this->plugin_config->options['current_db_version']) {
+            if (WPMutex::acquire('blc_dbupdate')) {
+                DatabaseUpgrader::upgrade_database();
+                WPMutex::release('blc_dbupdate');
+            }
+        }
+
+
+        $this->loader = BLC_PLUGIN_FILE_LEGACY;
+
         // Start up the post overlord and module- must runoutside the 'init' action
         //defaults are set during activation
         $moduleManager = ModuleManager::getInstance();
@@ -116,9 +129,6 @@ class BrokenLinkChecker
         if (is_object($moduleManager) && method_exists($moduleManager, 'load_modules')) {
             $moduleManager->load_modules();
         }
-
-        $this->plugin_config = ConfigurationManager::getInstance();
-        $this->loader = BLC_PLUGIN_FILE_LEGACY;
 
 
         //the constructor is called in the in 'init' hook. That's after after_setup_theme 
@@ -139,7 +149,7 @@ class BrokenLinkChecker
 
         // The dashboard widget.
         add_action('wp_dashboard_setup', $this->hook_wp_dashboard_setup(...));
-   
+
         //add_action('blc_test', $this->test(...));
         // AJAXy hooks.
         add_action('wp_ajax_blc_full_status', $this->ajax_full_status(...));
@@ -2791,7 +2801,7 @@ class BrokenLinkChecker
         if (session_id() != '') {
             session_write_close();
         }
-  
+
         if (!$this->acquire_lock()) {
             // FB::warn("Another instance of BLC is already working. Stop.");
             $blclog->info('Another instance of BLC is already working. Stop.');
@@ -2895,7 +2905,7 @@ class BrokenLinkChecker
 
                 foreach ($containers as $container) {
                     $synch_start_time = microtime(true);
-                   
+
 
                     // FB::log($container, "Parsing container");
                     $container->synch();
@@ -3389,8 +3399,8 @@ class BrokenLinkChecker
         );
     }
 
-     function test()
-    {   
+    function test()
+    {
         $this->work();
         die();
     }
@@ -4403,8 +4413,7 @@ class BrokenLinkChecker
      */
     function load_language()
     {
-       
+
         $this->is_textdomain_loaded = load_plugin_textdomain('link-checker', false, 'link-checker/languages');
-      
     }
 } //class ends here

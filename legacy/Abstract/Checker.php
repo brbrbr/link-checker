@@ -61,6 +61,32 @@ abstract class Checker extends Module
      * @return array
      */
     abstract public function check($url);
+    
+    /**
+     *  
+     */
+
+
+    protected  function clean_url($url)
+    {
+        $url = html_entity_decode($url);
+
+        $ltrm = preg_quote(json_decode('"\u200E"'), '/');
+        $url  = preg_replace(
+            array(
+                '/([\?&]PHPSESSID=\w+)$/i', // remove session ID
+                '/(#[^\/]*)$/',             // and anchors/fragments
+                '/&amp;/',                  // convert improper HTML entities
+                '/([\?&]sid=\w+)$/i',       // remove another flavour of session ID
+                '/' . $ltrm . '/',          // remove Left-to-Right marks that can show up when copying from Word.
+            ),
+            array('', '', '&', '', ''),
+            $url
+        );
+        $url  = trim($url);
+
+        return $url;
+    }
 
     /**
      * 'gethostbyname' for ipv6. Returns $host on failure like gethostbymanem
